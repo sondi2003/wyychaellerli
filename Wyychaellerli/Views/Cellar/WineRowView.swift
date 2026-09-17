@@ -11,35 +11,36 @@ struct WineRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            LabelThumbnail(wine: wine, size: 40)
+            LabelThumbnail(wine: wine, size: 44)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(wine.name)
                     .font(.body.weight(.semibold))
                     .lineLimit(1)
                 HStack(spacing: 5) {
-                    // Die Flagge steht vor der Herkunft, weil sie dazugehört.
-                    // Sie ersetzt den Landesnamen im Text, statt ihn zu wiederholen.
                     if let flag = CountryFlag.emoji(for: wine.country) {
                         Text(flag)
                             .accessibilityLabel(wine.country)
-                        Text(wine.subtitleWithoutCountry)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        Text(wine.subtitle)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                    Text([wine.country, wine.vintageText].filter { !$0.isEmpty }.joined(separator: " · "))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .font(.subheadline)
+
+                if !wine.region.isEmpty {
+                    Text(wine.region)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 // Eigene Zeile für die kleinen Abzeichen. Der Alkoholgehalt stand vorher
                 // hinter der Herkunft und hat sie auf zwei Buchstaben zusammengedrückt;
                 // hier hat beides Platz, und die Trinkreife teilt sich die Zeile.
-                if wine.strength != nil || wine.needsDrinkingSoon {
+                if wine.strength != nil || wine.needsDrinkingSoon || !wine.grape.isEmpty {
                     HStack(spacing: 10) {
                         // Auf einen Blick, ob die Flasche schwer ist – Tacho plus Zahl.
                         // Ohne Angabe steht hier nichts, statt eine Null zu behaupten.
@@ -47,7 +48,15 @@ struct WineRowView: View {
                             Label(wine.alcoholText, systemImage: strength.symbolName)
                                 .foregroundStyle(.secondary)
                                 .monospacedDigit()
+                                .fixedSize()
                                 .accessibilityLabel("\(strength.title), \(wine.alcoholText) Alkohol")
+                        }
+                        // Die Rebsorte hat auf den oberen Zeilen keinen Platz mehr, ist
+                        // aber das, wonach man sucht – hier passt sie klein daneben.
+                        if !wine.grape.isEmpty {
+                            Text(wine.grape)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         // Nur die beiden Zustände, die zum Handeln auffordern. „Trinkreif“
                         // und „zu jung“ stünden bei fast jeder Flasche – nur Rauschen.
