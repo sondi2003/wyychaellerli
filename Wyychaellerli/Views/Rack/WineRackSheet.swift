@@ -217,10 +217,11 @@ struct WineRackSheet: View {
                     columns: rack.columnCount,
                     occupancy: rack.occupancy(),
                     highlighted: highlighted(in: rack),
-                    tile: rack.columnCount > 10 ? 40 : 50
-                ) { position in
-                    tapped(position, in: rack)
-                }
+                    tile: rack.columnCount > 10 ? 40 : 50,
+                    // Benannt, weil ein namenloser Schluss-Block sonst auf
+                    // `onDragOver` fällt – dann feuert schon das Wischen darüber.
+                    onTap: { position in tapped(position, in: rack) }
+                )
                 .padding(.horizontal, 4)
                 .padding(.vertical, 8)
             }

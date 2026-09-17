@@ -17,6 +17,11 @@
 	</array>
 	<key>CKSharingSupported</key>
 	<true/>
+	<!-- Eine empfangene .wyy-Datei wird nur gelesen und in den Keller übernommen,
+	     nie zurückgeschrieben. iOS reicht sie deshalb im Original durch, statt eine
+	     Kopie in den Posteingang zu legen, die niemand wieder aufräumt. -->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

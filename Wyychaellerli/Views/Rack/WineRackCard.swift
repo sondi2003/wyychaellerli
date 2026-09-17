@@ -66,11 +66,14 @@ struct WineRackCard: View {
                                 columns: entry.columnCount,
                                 occupancy: entry.occupancy(),
                                 highlighted: Set(ownSlots(in: entry).map(\.position)),
-                                tile: entry.columnCount > 10 ? 30 : 38
-                            ) { position in
-                                guard let slot = entry.occupancy()[position], slot.wine == wine else { return }
-                                pendingSlot = slot
-                            }
+                                tile: entry.columnCount > 10 ? 30 : 38,
+                                // Benannt, weil ein namenloser Schluss-Block sonst auf
+                                // `onDragOver` fällt – dann feuert schon das Wischen darüber.
+                                onTap: { position in
+                                    guard let slot = entry.occupancy()[position], slot.wine == wine else { return }
+                                    pendingSlot = slot
+                                }
+                            )
                             .padding(.vertical, 6)
                         }
                         Text(positionsLine(in: entry))

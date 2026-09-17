@@ -1,3 +1,4 @@
+import CoreData
 import SwiftUI
 
 /// Die drei Tabs der App.

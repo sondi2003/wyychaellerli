@@ -170,10 +170,11 @@ struct RackView: View {
                         rows: rack.rowCount,
                         columns: rack.columnCount,
                         occupancy: rack.occupancy(),
-                        tile: tileSize(for: rack)
-                    ) { position in
-                        tapped(position, in: rack)
-                    }
+                        tile: tileSize(for: rack),
+                        // Benannt, weil ein namenloser Schluss-Block sonst auf
+                        // `onDragOver` fällt – dann feuert schon das Wischen darüber.
+                        onTap: { position in tapped(position, in: rack) }
+                    )
                     .padding(.horizontal, 4)
                     .padding(.vertical, 8)
                 }
