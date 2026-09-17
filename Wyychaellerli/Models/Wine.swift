@@ -429,18 +429,6 @@ final class Wine: NSManagedObject, Identifiable {
             .joined(separator: " · ")
     }
 
-    /// Wie `subtitle`, aber ohne das Land: "2019 · Grenache · Collioure" bleibt,
-    /// "2019 · Grenache · Frankreich" wird zu "2019 · Grenache".
-    ///
-    /// In der Kellerliste steht die Flagge direkt davor – das Land ein zweites Mal
-    /// auszuschreiben kostet nur Platz, den der Rest der Zeile dringender braucht.
-    var subtitleWithoutCountry: String {
-        [vintageText, grape, region]
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
-            .joined(separator: " · ")
-    }
-
     /// Anzeigename inklusive Produzent, falls vorhanden.
     var fullName: String {
         producer.isEmpty ? name : "\(producer) – \(name)"

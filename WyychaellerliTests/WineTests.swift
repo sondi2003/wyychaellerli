@@ -77,22 +77,6 @@ struct WineTests {
         #expect(!sparse.subtitle.contains("·"))
     }
 
-    @Test("Ohne Land, weil die Flagge davorsteht")
-    func subtitleWithoutCountry() {
-        let context = TestStack.makeContext()
-
-        // Die Region bleibt – sie sagt mehr als die Flagge.
-        let withRegion = Wine.create(in: context, cellar: Cellar.active(in: context),
-                                     name: "Collioure", vintage: 2019, grape: "Grenache",
-                                     region: "Collioure", country: "Frankreich", type: .red, quantity: 1)
-        #expect(withRegion.subtitleWithoutCountry == "2019 · Grenache · Collioure")
-
-        // Ohne Region fällt die Herkunft im Text ganz weg, statt das Land zu wiederholen.
-        let countryOnly = TestStack.makeWine(in: context, vintage: 2019, grape: "Grenache", country: "Frankreich")
-        #expect(countryOnly.subtitleWithoutCountry == "2019 · Grenache")
-        #expect(countryOnly.subtitle.contains("Frankreich"))
-    }
-
     @Test("Verortete Flaschen und offene Plätze")
     func placement() {
         let context = TestStack.makeContext()
