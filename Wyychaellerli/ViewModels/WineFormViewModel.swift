@@ -30,6 +30,8 @@ final class WineFormViewModel {
     var type: WineType
     var quantity: Int
     var notes: String
+    /// Volumenprozent; 0 heisst „keine Angabe“.
+    var alcoholPercent: Double
     /// Kommagetrennt im Formular, als Liste am Wein.
     var foodPairings: String
     /// Zugeschnittenes Etikett-Foto der Vorderseite (JPEG), wird mit dem Wein gespeichert.
@@ -72,6 +74,7 @@ final class WineFormViewModel {
             type = .red
             quantity = 1
             notes = ""
+            alcoholPercent = 0
             foodPairings = ""
             labelImageData = nil
             backLabelImageData = nil
@@ -88,6 +91,7 @@ final class WineFormViewModel {
             type = wine.type
             quantity = Int(wine.quantity)
             notes = wine.notes
+            alcoholPercent = wine.alcoholPercent
             foodPairings = wine.foodPairings.joined(separator: ", ")
             labelImageData = wine.labelImageData
             backLabelImageData = wine.backLabelImageData
@@ -142,11 +146,12 @@ final class WineFormViewModel {
             foodPairings = extraction.foodPairings.joined(separator: ", ")
         }
 
+        // Der Alkoholgehalt hat ein eigenes Feld – früher wurde er als Textzeile in die
+        // Notizen geschrieben und für die Anzeige per Mustersuche wieder herausgeklaubt.
+        if extraction.alcoholPercent > 0 { alcoholPercent = extraction.alcoholPercent }
+
         var extraNotes: [String] = []
         if !extraction.notes.isEmpty { extraNotes.append(extraction.notes) }
-        if extraction.alcoholPercent > 0 {
-            extraNotes.append("Alkohol: \(extraction.alcoholPercent.formatted(.number.precision(.fractionLength(0...1)))) % vol.")
-        }
         if !extraNotes.isEmpty {
             let existing = notes.trimmingCharacters(in: .whitespacesAndNewlines)
             notes = ([existing] + extraNotes).filter { !$0.isEmpty }.joined(separator: "\n")
@@ -204,6 +209,7 @@ final class WineFormViewModel {
                 type: type,
                 quantity: quantity,
                 notes: trimmed(notes),
+                alcoholPercent: alcoholPercent,
                 foodPairings: pairingList,
                 labelImageData: labelImageData,
                 backLabelImageData: backLabelImageData,
@@ -221,6 +227,7 @@ final class WineFormViewModel {
             wine.type = type
             wine.quantity = Int64(max(0, quantity))
             wine.notes = trimmed(notes)
+            wine.alcoholPercent = max(0, alcoholPercent)
             wine.foodPairings = pairingList
             wine.labelImageData = labelImageData
             wine.backLabelImageData = backLabelImageData

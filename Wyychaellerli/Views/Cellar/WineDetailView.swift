@@ -12,6 +12,7 @@ struct WineDetailView: View {
     private let backLabelTip = BackLabelTip()
 
     @State private var isEditing = false
+    @State private var isSharing = false
     @State private var isConfirmingDelete = false
     @State private var consumeCount = 0
     @State private var isRating = false
@@ -42,11 +43,22 @@ struct WineDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isSharing = true
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .accessibilityLabel("Wein empfehlen")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button("Bearbeiten") { isEditing = true }
             }
         }
         .sheet(isPresented: $isEditing) {
             WineFormView(mode: .edit(wine))
+        }
+        .sheet(isPresented: $isSharing) {
+            WineShareSheet(wine: wine)
         }
         .sheet(isPresented: $isRating) {
             RatingSheet(wine: wine)
@@ -253,7 +265,9 @@ struct WineDetailView: View {
             let flag = CountryFlag.emoji(for: wine.country).map { "\($0) " } ?? ""
             result.append(Fact(label: "Land", value: flag + wine.country))
         }
-        if let alcohol = alcoholFromNotes { result.append(Fact(label: "Alkohol", value: alcohol)) }
+        if wine.hasAlcohol, let strength = wine.strength {
+            result.append(Fact(label: "Alkohol", value: "\(wine.alcoholText) · \(strength.title)"))
+        }
         if !wine.drinkWindowText.isEmpty {
             result.append(Fact(label: "Trinkreife", value: wine.drinkWindowText + (wine.drinkWindowFromLabel ? " (Etikett)" : " (geschätzt)")))
         }
@@ -261,17 +275,6 @@ struct WineDetailView: View {
             result.append(Fact(label: "Erfasst", value: date.formatted(date: .abbreviated, time: .omitted)))
         }
         return result
-    }
-
-    /// Der Alkoholgehalt wird nicht als Feld gespeichert, sondern beim Scannen in die
-    /// Notizen geschrieben („Alkohol: 13,5 % vol.“). Hier wird er wieder herausgelesen.
-    private var alcoholFromNotes: String? {
-        guard let range = wine.notes.range(of: #"Alkohol:\s*([0-9]+(?:[.,][0-9])?)\s*%"#, options: .regularExpression) else {
-            return nil
-        }
-        let match = String(wine.notes[range])
-        guard let numberRange = match.range(of: #"[0-9]+(?:[.,][0-9])?"#, options: .regularExpression) else { return nil }
-        return "\(match[numberRange]) % Vol."
     }
 
     // MARK: Speiseempfehlung vom Etikett

@@ -332,10 +332,14 @@ private struct UnplacedWineRow: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
+            // Der Text bekommt den freien Platz zuerst, sonst teilt er ihn sich mit
+            // dem Spacer und bricht ab, obwohl rechts noch Luft wäre.
+            .layoutPriority(1)
             Spacer(minLength: 4)
             Text("\(wine.unplacedCount)×")
                 .font(.subheadline.monospacedDigit())
                 .foregroundStyle(.secondary)
+                .fixedSize()
             Image(systemName: "chevron.right")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.tertiary)

@@ -42,6 +42,9 @@ struct PartyDrawView: View {
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
                             }
+                            // Der Text bekommt den freien Platz zuerst, sonst teilt er
+                            // ihn sich mit dem Spacer und bricht zu früh ab.
+                            .layoutPriority(1)
                             Spacer(minLength: 0)
                         }
                         .padding(14)
@@ -241,10 +244,12 @@ struct PartyPodiumView: View {
                         Text(wine.name)
                             .font(.subheadline)
                             .lineLimit(1)
+                            .layoutPriority(1)
                         Spacer(minLength: 8)
                         Text("\(entry.votes)")
                             .font(.subheadline.weight(.semibold).monospacedDigit())
                             .foregroundStyle(entry.votes > 0 ? .primary : .tertiary)
+                            .fixedSize()
                     }
                 }
             }

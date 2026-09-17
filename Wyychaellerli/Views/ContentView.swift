@@ -9,6 +9,19 @@ enum AppTab: Hashable {
 
 struct ContentView: View {
 
+    /// Liest eine Empfehlungsdatei ein.
+    ///
+    /// Kommt sie aus einer anderen App, liegt sie ausserhalb unseres Sandkastens –
+    /// ohne `startAccessingSecurityScopedResource` gäbe es keinen Lesezugriff.
+    static func readShare(at url: URL) -> WineShare? {
+        guard url.pathExtension.lowercased() == WineShare.fileExtension else { return nil }
+        let needsAccess = url.startAccessingSecurityScopedResource()
+        defer { if needsAccess { url.stopAccessingSecurityScopedResource() } }
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        return try? WineShare.decoded(from: data)
+    }
+
+
     @Environment(\.managedObjectContext) private var context
     @Environment(PartySession.self) private var party
 
@@ -16,6 +29,8 @@ struct ContentView: View {
     @State private var isShowingSplash = true
     @AppStorage(WalkthroughView.seenKey) private var hasSeenWalkthrough = false
     @State private var isShowingWalkthrough = false
+    /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
+    @State private var incomingShare: WineShare?
 
     var body: some View {
         ZStack {
@@ -49,6 +64,14 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: party.isRunning)
         .onAppear { party.restoreIfNeeded(in: context) }
+        // Eine .wyy-Datei aus Nachrichten, Mail oder Dateien: erst zeigen, dann übernehmen.
+        .onOpenURL { url in
+            guard !party.isRunning, let share = Self.readShare(at: url) else { return }
+            incomingShare = share
+        }
+        .sheet(item: $incomingShare) { share in
+            WineImportSheet(share: share)
+        }
         .task {
             try? await Task.sleep(for: SplashView.displayDuration)
             withAnimation(.easeInOut(duration: 0.5)) {

@@ -131,6 +131,9 @@ struct PartyWineCard: View {
                             .foregroundStyle(wine.type.color)
                             .padding(.top, 2)
                     }
+                    // Der Text bekommt den freien Platz zuerst, sonst teilt er ihn sich
+                    // mit dem Spacer und bricht unnötig um.
+                    .layoutPriority(1)
 
                     Spacer(minLength: 0)
 

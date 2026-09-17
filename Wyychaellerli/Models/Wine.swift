@@ -73,6 +73,8 @@ final class Wine: NSManagedObject, Identifiable {
     @NSManaged var isArchived: Bool
     /// Freitext, z. B. Terroir, Vinifikation, "bis 2030 trinken".
     @NSManaged var notes: String
+    /// Volumenprozent. 0 heisst **unbekannt**, nicht alkoholfrei.
+    @NSManaged var alcoholPercent: Double
     /// Zugeschnittenes Foto des Vorderseiten-Etiketts als JPEG.
     @NSManaged var labelImageData: Data?
     /// Zugeschnittenes Foto des Rückseiten-Etiketts als JPEG – dort stehen Terroir,
@@ -118,6 +120,7 @@ final class Wine: NSManagedObject, Identifiable {
         type: WineType,
         quantity: Int = 1,
         notes: String = "",
+        alcoholPercent: Double = 0,
         foodPairings: [String] = [],
         labelImageData: Data? = nil,
         backLabelImageData: Data? = nil,
@@ -144,6 +147,7 @@ final class Wine: NSManagedObject, Identifiable {
         wine.type = type
         wine.quantity = Int64(max(0, quantity))
         wine.notes = notes
+        wine.alcoholPercent = max(0, alcoholPercent)
         wine.foodPairings = foodPairings
         wine.labelImageData = labelImageData
         wine.backLabelImageData = backLabelImageData
@@ -353,6 +357,60 @@ final class Wine: NSManagedObject, Identifiable {
 
     // MARK: Darstellung
 
+    /// Wie schwer ein Wein ist – als Einordnung statt als Zahl.
+    ///
+    /// Für Nicht-Kenner ist „kräftig“ verständlicher als „14,5 %“. Die Grenzen sind die
+    /// übliche Faustregel; sie gelten quer über alle Weinarten, weil eine Aufteilung nach
+    /// Rot und Weiss die Liste nur unvergleichbar machen würde.
+    enum Strength: String, CaseIterable, Identifiable, Sendable {
+        case light, medium, strong
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .light:  return "Leicht"
+            case .medium: return "Mittel"
+            case .strong: return "Kräftig"
+            }
+        }
+
+        /// Tacho-Symbol: auf einen Blick niedrig, mittel oder hoch.
+        var symbolName: String {
+            switch self {
+            case .light:  return "gauge.low"
+            case .medium: return "gauge.medium"
+            case .strong: return "gauge.high"
+            }
+        }
+
+        var range: String {
+            switch self {
+            case .light:  return "unter 12 %"
+            case .medium: return "12 bis 13,5 %"
+            case .strong: return "über 13,5 %"
+            }
+        }
+
+        static func from(percent: Double) -> Strength? {
+            guard percent > 0 else { return nil }
+            if percent < 12 { return .light }
+            if percent <= 13.5 { return .medium }
+            return .strong
+        }
+    }
+
+    /// `true`, wenn ein Alkoholgehalt bekannt ist.
+    var hasAlcohol: Bool { alcoholPercent > 0 }
+
+    /// „13,5 %“ – leer, wenn nichts bekannt ist.
+    var alcoholText: String {
+        guard hasAlcohol else { return "" }
+        return "\(alcoholPercent.formatted(.number.precision(.fractionLength(0...1)))) %"
+    }
+
+    var strength: Strength? { Strength.from(percent: alcoholPercent) }
+
     /// `true`, wenn ein Jahrgang bekannt ist.
     ///
     /// **0 heisst „nicht erkannt“, nicht „Jahr null“.** Steht auf dem Etikett kein
@@ -366,6 +424,18 @@ final class Wine: NSManagedObject, Identifiable {
     /// Kurzform für Listen: "2019 · Grenache · Collioure".
     var subtitle: String {
         [vintageText, grape, region.isEmpty ? country : region]
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " · ")
+    }
+
+    /// Wie `subtitle`, aber ohne das Land: "2019 · Grenache · Collioure" bleibt,
+    /// "2019 · Grenache · Frankreich" wird zu "2019 · Grenache".
+    ///
+    /// In der Kellerliste steht die Flagge direkt davor – das Land ein zweites Mal
+    /// auszuschreiben kostet nur Platz, den der Rest der Zeile dringender braucht.
+    var subtitleWithoutCountry: String {
+        [vintageText, grape, region]
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
             .joined(separator: " · ")

@@ -111,6 +111,9 @@ struct StockBadge: View {
         .background(
             Capsule().fill(quantity > 0 ? Color(.tertiarySystemFill) : Color.red)
         )
+        // Eine Zahl, die sich zusammendrücken lässt, verschwindet in der Kapsel.
+        // In einer Zeile mit langem Namen gewinnt sonst der Text den Platz.
+        .fixedSize()
         .accessibilityLabel(quantity > 0 ? "\(quantity) Flaschen" : "Keine Flaschen")
     }
 }

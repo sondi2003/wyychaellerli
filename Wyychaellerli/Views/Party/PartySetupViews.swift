@@ -68,6 +68,9 @@ struct PartyCandidatesView: View {
                                             .lineLimit(1)
                                     }
                                 }
+                                // Der Text bekommt den freien Platz zuerst, sonst teilt
+                                // er ihn sich mit dem Spacer und bricht zu früh ab.
+                                .layoutPriority(1)
                                 Spacer(minLength: 4)
                                 Image(systemName: model.isSelected(wine) ? "checkmark.circle.fill" : "circle")
                                     .font(.title3)

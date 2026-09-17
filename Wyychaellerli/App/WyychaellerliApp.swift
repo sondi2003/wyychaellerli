@@ -41,6 +41,8 @@ struct WyychaellerliApp: App {
                 .task {
                     // Einmalige Übernahme aus der früheren SwiftData-Ablage.
                     LegacyImporter.importIfNeeded(into: persistence.viewContext)
+                    // Alkoholgehalt aus den Notizen ins eigene Feld holen.
+                    AlcoholNoteMigration.run(in: persistence.viewContext)
                     await rater.refresh()
                     rater.adoptExistingRatings(in: persistence.viewContext)
                 }

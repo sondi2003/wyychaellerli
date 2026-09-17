@@ -397,6 +397,7 @@ final class PersistenceController: @unchecked Sendable {
             attribute("quantity", .integer64AttributeType, default: 1),
             attribute("isArchived", .booleanAttributeType, default: false),
             attribute("notes", .stringAttributeType, default: ""),
+            attribute("alcoholPercent", .doubleAttributeType, default: 0.0),
             attribute("foodPairingsRaw", .stringAttributeType, default: ""),
             binaryAttribute("labelImageData"),
             binaryAttribute("backLabelImageData"),

@@ -117,7 +117,9 @@ struct CellarView: View {
         return List {
             Section {
                 summaryHeader
-                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    // Ohne seitlichen Rand, damit die Filterknöpfe bis an den
+                    // Bildschirmrand laufen – dann sieht man, dass sie scrollen.
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                     .listRowBackground(Color.clear)
                 // Erst wenn es etwas abzubuchen gibt; im leeren Keller wäre er nur Rauschen.
                 if !groups.isEmpty {
@@ -207,6 +209,7 @@ struct CellarView: View {
                     .font(.headline)
                 Spacer()
             }
+            .padding(.horizontal, 16)
             typeFilterChips
         }
     }
@@ -229,6 +232,10 @@ struct CellarView: View {
                 }
             }
         }
+        // Der Rand gehört in die Scroll-Fläche: Der erste Knopf steht bündig, der
+        // letzte schiebt sich sichtbar unter den Bildschirmrand, statt abgeschnitten
+        // dort zu kleben.
+        .contentMargins(.horizontal, 16, for: .scrollContent)
     }
 
     // MARK: Leerer Keller
@@ -268,6 +275,14 @@ struct CellarView: View {
                 }
                 Toggle(isOn: $viewModel.showOnlyDrinkSoon) {
                     Label("Nur was dran ist", systemImage: "clock.badge.exclamationmark")
+                }
+                // Nach Schwere filtern: „heute nur was Leichtes“.
+                Picker("Alkoholgehalt", selection: $viewModel.strengthFilter) {
+                    Text("Alle").tag(Wine.Strength?.none)
+                    ForEach(Wine.Strength.allCases) { strength in
+                        Label("\(strength.title) (\(strength.range))", systemImage: strength.symbolName)
+                            .tag(Wine.Strength?.some(strength))
+                    }
                 }
                 Divider()
                 Button {

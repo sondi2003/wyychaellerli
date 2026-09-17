@@ -91,11 +91,15 @@ struct RatingsOverviewView: View {
                         .lineLimit(1)
                 }
             }
+            // Der Text bekommt den freien Platz zuerst, sonst teilt er ihn sich mit
+            // dem Spacer und bricht ab, obwohl rechts noch Luft wäre.
+            .layoutPriority(1)
             Spacer(minLength: 4)
             if wine.isArchived || wine.isOutOfStock {
                 Text(wine.isArchived ? "Archiv" : "leer")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
+                    .fixedSize()
             }
         }
         .padding(.vertical, 2)

@@ -278,6 +278,9 @@ struct AdvisorView: View {
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                // Der Text bekommt den freien Platz zuerst, sonst teilt er ihn sich mit
+                // dem Spacer und bricht unnötig um.
+                .layoutPriority(1)
                 Spacer(minLength: 0)
             }
             .padding(12)
@@ -392,6 +395,9 @@ private struct LabelMatchCard: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+                // Der Text bekommt den freien Platz zuerst, sonst teilt er ihn sich mit
+                // dem Spacer und bricht unnötig um.
+                .layoutPriority(1)
                 Spacer(minLength: 0)
             }
 

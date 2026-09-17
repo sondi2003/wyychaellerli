@@ -12,6 +12,21 @@ struct WineFormView: View {
 
     private enum Field { case name, producer, grape, region, country, notes }
 
+    /// Vom leeren Feld aus wären es 25 Tipper bis zu einem üblichen Wert – der erste
+    /// Tipp landet deshalb gleich bei 12,5 %, mitten im Bereich, in dem Wein liegt.
+    private var alcoholBinding: Binding<Double> {
+        Binding(
+            get: { viewModel.alcoholPercent },
+            set: { newValue in
+                if viewModel.alcoholPercent == 0, newValue > 0 {
+                    viewModel.alcoholPercent = 12.5
+                } else {
+                    viewModel.alcoholPercent = newValue
+                }
+            }
+        )
+    }
+
     /// - Parameter startWithScanner: öffnet sofort den Etikett-Scanner (Plus-Menü „Etikett scannen“).
     init(mode: WineFormViewModel.Mode, startWithScanner: Bool = false) {
         _viewModel = State(initialValue: WineFormViewModel(mode: mode))
@@ -106,6 +121,40 @@ struct WineFormView: View {
                     }
                     .pickerStyle(.inline)
                     .labelsHidden()
+                }
+
+                Section {
+                    // Halbe Schritte: Etiketten nennen 12,5 oder 13,5 – ganze Prozente
+                    // wären zu grob, Zehntel zu fummelig.
+                    Stepper(value: alcoholBinding, in: 0...20, step: 0.5) {
+                        HStack {
+                            Text("Alkohol")
+                            Spacer()
+                            if viewModel.alcoholPercent > 0 {
+                                Text("\(viewModel.alcoholPercent.formatted(.number.precision(.fractionLength(0...1)))) %")
+                                    .font(.body.monospacedDigit().weight(.semibold))
+                                    .contentTransition(.numericText())
+                            } else {
+                                Text("keine Angabe")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .animation(.snappy, value: viewModel.alcoholPercent)
+                    if let strength = Wine.Strength.from(percent: viewModel.alcoholPercent) {
+                        Label("\(strength.title) – \(strength.range)", systemImage: strength.symbolName)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    // Der Weg zurück zu „keine Angabe“ wären sonst zwei Dutzend Tipper.
+                    if viewModel.alcoholPercent > 0 {
+                        Button("Keine Angabe") { viewModel.alcoholPercent = 0 }
+                            .font(.footnote)
+                    }
+                } header: {
+                    Text("Alkoholgehalt")
+                } footer: {
+                    Text("Wird beim Scannen vom Etikett übernommen. Auf 0 stellen heisst „keine Angabe“ – dann wird nichts angezeigt.")
                 }
 
                 Section("Bestand") {

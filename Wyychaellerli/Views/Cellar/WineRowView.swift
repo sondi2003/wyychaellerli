@@ -19,24 +19,53 @@ struct WineRowView: View {
                     .lineLimit(1)
                 HStack(spacing: 5) {
                     // Die Flagge steht vor der Herkunft, weil sie dazugehört.
+                    // Sie ersetzt den Landesnamen im Text, statt ihn zu wiederholen.
                     if let flag = CountryFlag.emoji(for: wine.country) {
                         Text(flag)
                             .accessibilityLabel(wine.country)
+                        Text(wine.subtitleWithoutCountry)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        Text(wine.subtitle)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    Text(wine.subtitle)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
                 }
                 .font(.subheadline)
-                // Nur die beiden Zustände, die zum Handeln auffordern. „Trinkreif“ und
-                // „zu jung“ stünden bei fast jeder Flasche und wären dann nur Rauschen.
-                if wine.needsDrinkingSoon {
-                    Label(wine.maturity.title, systemImage: wine.maturity.symbolName)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(wine.maturity == .pastPeak ? .red : .orange)
-                        .lineLimit(1)
+
+                // Eigene Zeile für die kleinen Abzeichen. Der Alkoholgehalt stand vorher
+                // hinter der Herkunft und hat sie auf zwei Buchstaben zusammengedrückt;
+                // hier hat beides Platz, und die Trinkreife teilt sich die Zeile.
+                if wine.strength != nil || wine.needsDrinkingSoon {
+                    HStack(spacing: 10) {
+                        // Auf einen Blick, ob die Flasche schwer ist – Tacho plus Zahl.
+                        // Ohne Angabe steht hier nichts, statt eine Null zu behaupten.
+                        if let strength = wine.strength {
+                            Label(wine.alcoholText, systemImage: strength.symbolName)
+                                .foregroundStyle(.secondary)
+                                .monospacedDigit()
+                                .accessibilityLabel("\(strength.title), \(wine.alcoholText) Alkohol")
+                        }
+                        // Nur die beiden Zustände, die zum Handeln auffordern. „Trinkreif“
+                        // und „zu jung“ stünden bei fast jeder Flasche – nur Rauschen.
+                        if wine.needsDrinkingSoon {
+                            Label(wine.maturity.title, systemImage: wine.maturity.symbolName)
+                                .foregroundStyle(wine.maturity == .pastPeak ? .red : .orange)
+                        }
+                    }
+                    .font(.caption2.weight(.semibold))
+                    .labelStyle(.titleAndIcon)
+                    .lineLimit(1)
+                    .padding(.top, 1)
                 }
             }
+            // Ohne Vorrang teilt sich der Textblock den freien Platz gleichmässig mit
+            // dem Spacer darunter – dann bricht die Herkunft mitten im Wort ab, während
+            // rechts daneben Leerraum steht. Der Text bekommt den Platz zuerst.
+            .layoutPriority(1)
 
             Spacer(minLength: 8)
 

@@ -18,9 +18,12 @@ final class CellarViewModel {
     var showArchived = false
     /// Zeigt nur Flaschen, deren Trinkfenster dieses Jahr endet oder schon vorbei ist.
     var showOnlyDrinkSoon = false
+    /// `nil` = alle Stärken. Flaschen ohne Angabe fallen bei gesetztem Filter heraus –
+    /// „leicht“ zu behaupten, wo nichts bekannt ist, wäre geraten.
+    var strengthFilter: Wine.Strength?
 
     /// Für das Symbol in der Toolbar: Ist gerade irgendein Filter aktiv?
-    var isFiltering: Bool { showArchived || showOnlyDrinkSoon }
+    var isFiltering: Bool { showArchived || showOnlyDrinkSoon || strengthFilter != nil }
 
     // MARK: Sheet- und Dialog-Zustand
 
@@ -51,6 +54,7 @@ final class CellarViewModel {
             guard wine.isArchived == showArchived else { return false }
             if showOnlyDrinkSoon, !wine.needsDrinkingSoon { return false }
             if let typeFilter, wine.type != typeFilter { return false }
+            if let strengthFilter, wine.strength != strengthFilter { return false }
             guard !query.isEmpty else { return true }
             return wine.name.lowercased().contains(query)
                 || wine.producer.lowercased().contains(query)
