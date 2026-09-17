@@ -18,9 +18,14 @@ struct WineRowView: View {
             LabelThumbnail(wine: wine, size: 44)
 
             VStack(alignment: .leading, spacing: 2) {
+                // Zwei Zeilen für den Namen. Die Spalte ist rund 200 pt breit – mehr gibt
+                // die Zeile nicht her, solange Bild, Bestand, Minus und Pfeil daneben
+                // stehen. Umbrechen statt abschneiden ist der einzige Weg, bei dem der
+                // ganze Name lesbar bleibt; nur lange Namen kosten dann Höhe.
                 Text(wine.name)
                     .font(.body.weight(.semibold))
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
                 // Herkunft und Jahrgang. Die Flagge sagt das Land bereits – der Name
                 // stünde nur doppelt daneben. Ohne Flagge (unbekanntes Land) tritt der
                 // Landesname an ihre Stelle, damit die Angabe nicht verschwindet.
