@@ -175,9 +175,9 @@ struct PartyPodiumView: View {
             }
 
             if let votes = places.first?.votes {
-                Text(model.state.wasDrawn
-                     ? "\(votes) \(votes == 1 ? "Stimme" : "Stimmen") – per Los entschieden"
-                     : "\(votes) von \(model.state.totalVotes) Stimmen")
+                Text(verbatim: model.state.wasDrawn
+                     ? tr("\(votes) Stimmen – per Los entschieden")
+                     : "\(votes) " + tr("von \(model.state.totalVotes) Stimmen"))
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)
@@ -216,7 +216,7 @@ struct PartyPodiumView: View {
                 .font(.caption.weight(.medium))
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
-            Text("\(entry.votes) \(entry.votes == 1 ? "Stimme" : "Stimmen")")
+            Text("\(entry.votes) Stimmen")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
             ZStack {

@@ -46,12 +46,12 @@ struct WineFormView: View {
                         Label("Etikett scannen", systemImage: "text.viewfinder")
                     }
                     labelPhotoRow(
-                        title: "Vorderseite",
+                        title: tr("Vorderseite"),
                         data: viewModel.labelImageData,
                         remove: { viewModel.labelImageData = nil }
                     )
                     labelPhotoRow(
-                        title: "Rückseite",
+                        title: tr("Rückseite"),
                         data: viewModel.backLabelImageData,
                         remove: { viewModel.backLabelImageData = nil }
                     )
@@ -84,7 +84,7 @@ struct WineFormView: View {
                         // „Ohne Jahrgang“ muss wählbar sein: Manche Etiketten nennen
                         // keinen, und geraten wird hier nichts.
                         ForEach(WineFormViewModel.vintageChoices, id: \.self) { year in
-                            Text(year == 0 ? "Ohne Jahrgang" : String(year)).tag(year)
+                            Text(year == 0 ? tr("Ohne Jahrgang") : String(year)).tag(year)
                         }
                     }
                 }
@@ -298,9 +298,9 @@ struct WineFormView: View {
     }
 
     private func stateText(_ wine: Wine) -> String {
-        if wine.isArchived { return "Im Archiv" }
-        if wine.isOutOfStock { return "Keine Flasche mehr im Keller" }
-        return wine.quantity == 1 ? "1 Flasche im Keller" : "\(wine.quantity) Flaschen im Keller"
+        if wine.isArchived { return tr("Im Archiv") }
+        if wine.isOutOfStock { return tr("Keine Flasche mehr im Keller") }
+        return tr("\(Int(wine.quantity)) Flaschen im Keller")
     }
 
     /// Eine Zeile pro Etikettseite – nur sichtbar, wenn ein Foto vorliegt.

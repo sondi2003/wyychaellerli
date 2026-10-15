@@ -91,12 +91,12 @@ struct PartyView: View {
 
     private var phaseTitle: String {
         switch model.state.phase {
-        case .candidates: return "Flaschen wählen"
-        case .guests:     return "Wer ist dabei?"
-        case .handover:   return "Weitergeben"
-        case .voting:     return "Abstimmen"
-        case .draw:       return "Auslosung"
-        case .podium:     return "Ergebnis"
+        case .candidates: return tr("Flaschen wählen")
+        case .guests:     return tr("Wer ist dabei?")
+        case .handover:   return tr("Weitergeben")
+        case .voting:     return tr("Abstimmen")
+        case .draw:       return tr("Auslosung")
+        case .podium:     return tr("Ergebnis")
         }
     }
 
@@ -174,7 +174,7 @@ struct PartyHandoverView: View {
                         .multilineTextAlignment(.center)
                 }
 
-                Text("\(model.state.votesPerGuest) \(model.state.votesPerGuest == 1 ? "Stimme" : "Stimmen") – höchstens eine je Flasche.")
+                Text("\(model.state.votesPerGuest) Stimmen – höchstens eine je Flasche.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

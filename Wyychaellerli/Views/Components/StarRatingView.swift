@@ -30,7 +30,7 @@ struct StarRatingView: View {
         .animation(.snappy(duration: 0.15), value: value)
         .accessibilityElement()
         .accessibilityLabel("Bewertung")
-        .accessibilityValue(value > 0 ? "\(value.formatted(.number.precision(.fractionLength(0...1)))) von 5" : "keine")
+        .accessibilityValue(value > 0 ? tr("\(value.formatted(.number.precision(.fractionLength(0...1)))) von 5") : tr("keine"))
         .accessibilityAdjustableAction { direction in
             guard isEditable else { return }
             switch direction {

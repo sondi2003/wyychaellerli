@@ -105,7 +105,7 @@ struct RatingSheet: View {
                 selectedTags.insert(tag.rawValue)
             }
         } label: {
-            Text(tag.rawValue)
+            Text(verbatim: tag.title)
                 .font(.subheadline)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 7)

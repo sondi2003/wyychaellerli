@@ -20,11 +20,11 @@ enum WineType: String, Codable, CaseIterable, Identifiable, Sendable {
     /// Deutscher Anzeigename für die UI und für den Prompt an die KI.
     var displayName: String {
         switch self {
-        case .red:       return "Rotwein"
-        case .white:     return "Weisswein"
-        case .sparkling: return "Schaumwein"
-        case .rose:      return "Rosé"
-        case .mulled:    return "Glühwein"
+        case .red:       return tr("Rotwein")
+        case .white:     return tr("Weisswein")
+        case .sparkling: return tr("Schaumwein")
+        case .rose:      return tr("Rosé")
+        case .mulled:    return tr("Glühwein")
         }
     }
 
@@ -223,10 +223,10 @@ final class Wine: NSManagedObject, Identifiable {
 
         var title: String {
             switch self {
-            case .unrated: return "Noch nicht bewertet"
-            case .yes:     return "Wieder kaufen"
-            case .maybe:   return "Kann man wieder"
-            case .no:      return "Eher nicht wieder"
+            case .unrated: return tr("Noch nicht bewertet")
+            case .yes:     return tr("Wieder kaufen")
+            case .maybe:   return tr("Kann man wieder")
+            case .no:      return tr("Eher nicht wieder")
             }
         }
 
@@ -281,10 +281,10 @@ final class Wine: NSManagedObject, Identifiable {
         var title: String {
             switch self {
             case .unknown:   return ""
-            case .tooYoung:  return "Noch zu jung"
-            case .ready:     return "Trinkreif"
-            case .drinkSoon: return "Bald trinken"
-            case .pastPeak:  return "Über dem Höhepunkt"
+            case .tooYoung:  return tr("Noch zu jung")
+            case .ready:     return tr("Trinkreif")
+            case .drinkSoon: return tr("Bald trinken")
+            case .pastPeak:  return tr("Über dem Höhepunkt")
             }
         }
 
@@ -369,9 +369,9 @@ final class Wine: NSManagedObject, Identifiable {
 
         var title: String {
             switch self {
-            case .light:  return "Leicht"
-            case .medium: return "Mittel"
-            case .strong: return "Kräftig"
+            case .light:  return tr("Leicht")
+            case .medium: return tr("Mittel")
+            case .strong: return tr("Kräftig")
             }
         }
 
@@ -386,9 +386,9 @@ final class Wine: NSManagedObject, Identifiable {
 
         var range: String {
             switch self {
-            case .light:  return "unter 12 %"
-            case .medium: return "12 bis 13,5 %"
-            case .strong: return "über 13,5 %"
+            case .light:  return tr("unter 12 %")
+            case .medium: return tr("12 bis 13,5 %")
+            case .strong: return tr("über 13,5 %")
             }
         }
 

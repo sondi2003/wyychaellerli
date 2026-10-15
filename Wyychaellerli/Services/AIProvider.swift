@@ -49,9 +49,9 @@ enum AIProvider: String, CaseIterable, Identifiable, Codable, Sendable {
     /// Hilfetext für das API-Key-Feld.
     var apiKeyHint: String {
         switch self {
-        case .openAI:    return "Beginnt mit „sk-…“ – erstellen unter platform.openai.com/api-keys"
-        case .gemini:    return "Erstellen unter aistudio.google.com/app/apikey"
-        case .anthropic: return "Beginnt mit „sk-ant-…“ – erstellen unter console.anthropic.com"
+        case .openAI:    return tr("Beginnt mit „sk-…“ – erstellen unter platform.openai.com/api-keys")
+        case .gemini:    return tr("Erstellen unter aistudio.google.com/app/apikey")
+        case .anthropic: return tr("Beginnt mit „sk-ant-…“ – erstellen unter console.anthropic.com")
         }
     }
 

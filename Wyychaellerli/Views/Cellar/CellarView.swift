@@ -205,7 +205,7 @@ struct CellarView: View {
     private var summaryHeader: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(viewModel.showArchived ? "Archiv" : viewModel.summary(for: wines))
+                Text(viewModel.showArchived ? tr("Archiv") : viewModel.summary(for: wines))
                     .font(.headline)
                 Spacer()
             }
@@ -217,7 +217,7 @@ struct CellarView: View {
     private var typeFilterChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                FilterChip(title: "Alle", color: .accentColor, isSelected: viewModel.typeFilter == nil) {
+                FilterChip(title: tr("Alle"), color: .accentColor, isSelected: viewModel.typeFilter == nil) {
                     viewModel.typeFilter = nil
                 }
                 ForEach(WineType.allCases) { type in

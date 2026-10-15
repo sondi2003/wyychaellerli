@@ -37,14 +37,14 @@ final class PartyWin: NSManagedObject, Identifiable {
 
     /// „7 von 12 Stimmen“ – oder der Hinweis aufs Los.
     var resultText: String {
-        let base = "\(votes) von \(totalVotes) \(totalVotes == 1 ? "Stimme" : "Stimmen")"
-        return wasDrawn ? base + ", per Los entschieden" : base
+        let base = "\(votes) " + tr("von \(totalVotes) Stimmen")
+        return wasDrawn ? base + tr(", per Los entschieden") : base
     }
 
     var displayTitle: String {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isEmpty else { return trimmed }
-        return date.map { $0.formatted(date: .abbreviated, time: .omitted) } ?? "Party"
+        return date.map { $0.appShortDate } ?? tr("Party")
     }
 
     // MARK: Anlegen und Lesen

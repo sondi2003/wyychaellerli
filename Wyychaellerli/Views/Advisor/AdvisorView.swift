@@ -133,7 +133,7 @@ struct AdvisorView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
-                Text("\(provider.shortName) · \(model) · \(availableWines.count) \(availableWines.count == 1 ? "Wein" : "Weine") mit Bestand")
+                Text(verbatim: "\(provider.shortName) · \(model) · " + tr("\(availableWines.count) Weine mit Bestand"))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -330,8 +330,8 @@ struct AdvisorView: View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Keine passende Flasche im Keller", systemImage: "wineglass")
                 .font(.headline)
-            Text(response.generalNote.isEmpty
-                 ? "Zu diesem Gericht passt nichts aus deinem aktuellen Bestand wirklich – da bin ich lieber ehrlich."
+            Text(verbatim: response.generalNote.isEmpty
+                 ? tr("Zu diesem Gericht passt nichts aus deinem aktuellen Bestand wirklich – da bin ich lieber ehrlich.")
                  : response.generalNote)
                 .font(.subheadline)
                 .fixedSize(horizontal: false, vertical: true)

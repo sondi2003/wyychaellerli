@@ -25,6 +25,9 @@ struct WyychaellerliApp: App {
     /// Hell, dunkel oder dem System folgen. Gilt für die ganze App.
     @AppStorage(AppearanceSetting.storageKey) private var appearance: AppearanceSetting = .system
 
+    /// Sprache der Oberfläche. `Text("…")` löst über die Locale der Umgebung auf.
+    @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
+
     init() {
         QuickTips.configure()
     }
@@ -38,6 +41,7 @@ struct WyychaellerliApp: App {
                 .environment(\.aiService, aiService)
                 .environment(\.managedObjectContext, persistence.viewContext)
                 .preferredColorScheme(appearance.colorScheme)
+                .environment(\.locale, language.locale)
                 .task {
                     // Einmalige Übernahme aus der früheren SwiftData-Ablage.
                     LegacyImporter.importIfNeeded(into: persistence.viewContext)

@@ -114,7 +114,7 @@ struct StockBadge: View {
         // Eine Zahl, die sich zusammendrücken lässt, verschwindet in der Kapsel.
         // In einer Zeile mit langem Namen gewinnt sonst der Text den Platz.
         .fixedSize()
-        .accessibilityLabel(quantity > 0 ? "\(quantity) Flaschen" : "Keine Flaschen")
+        .accessibilityLabel(quantity > 0 ? Text("\(quantity) Flaschen") : Text("Keine Flaschen"))
     }
 }
 

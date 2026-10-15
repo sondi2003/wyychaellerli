@@ -31,10 +31,10 @@ enum FitLevel: String, Codable, Sendable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .excellent:  return "Perfekt"
-        case .good:       return "Passt gut"
-        case .acceptable: return "Geht"
-        case .poor:       return "Notlösung"
+        case .excellent:  return tr("Perfekt")
+        case .good:       return tr("Passt gut")
+        case .acceptable: return tr("Geht")
+        case .poor:       return tr("Notlösung")
         }
     }
 
@@ -159,11 +159,11 @@ enum RecommendationSchema {
                 ],
                 "reasoning": [
                     "type": "string",
-                    "description": "Konkrete Begründung auf Deutsch (2–4 Sätze), warum und wie gut der Wein zum Gericht passt."
+                    "description": "Konkrete Begründung in der Antwortsprache (2–4 Sätze), warum und wie gut der Wein zum Gericht passt."
                 ],
                 "servingTip": [
                     "type": "string",
-                    "description": "Kurzer Serviertipp auf Deutsch (Temperatur, Dekantieren, Glas)."
+                    "description": "Kurzer Serviertipp in der Antwortsprache (Temperatur, Dekantieren, Glas)."
                 ]
             ],
             "required": ["rank", "wineName", "vintage", "fit", "reasoning", "servingTip"]
@@ -179,7 +179,7 @@ enum RecommendationSchema {
                 ],
                 "generalNote": [
                     "type": "string",
-                    "description": "Allgemeiner Hinweis auf Deutsch zur Auswahl (1–3 Sätze)."
+                    "description": "Allgemeiner Hinweis in der Antwortsprache zur Auswahl (1–3 Sätze)."
                 ],
                 "noGoodMatch": [
                     "type": "boolean",

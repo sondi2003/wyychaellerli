@@ -92,7 +92,7 @@ struct WineImportSheet: View {
             Label("Den hast du schon", systemImage: "exclamationmark.triangle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.orange)
-            Text("„\(wine.nameWithVintage)“ liegt bereits in deinem Keller\(wine.isArchived ? " (im Archiv)" : ", Bestand \(wine.quantity)"). Übernimmst du ihn trotzdem, steht er zweimal in der Liste.")
+            Text("„\(wine.nameWithVintage)“ liegt bereits in deinem Keller\(wine.isArchived ? tr(" (im Archiv)") : tr(", Bestand \(Int(wine.quantity))")). Übernimmst du ihn trotzdem, steht er zweimal in der Liste.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -148,24 +148,24 @@ struct WineImportSheet: View {
 
     private var facts: [Fact] {
         var result: [Fact] = []
-        if !share.producer.isEmpty { result.append(Fact(label: "Produzent", value: share.producer)) }
-        if share.hasVintage { result.append(Fact(label: "Jahrgang", value: String(share.vintage))) }
-        result.append(Fact(label: "Weinart", value: share.wineType.displayName))
-        if !share.grape.isEmpty { result.append(Fact(label: "Rebsorte", value: share.grape)) }
+        if !share.producer.isEmpty { result.append(Fact(label: tr("Produzent"), value: share.producer)) }
+        if share.hasVintage { result.append(Fact(label: tr("Jahrgang"), value: String(share.vintage))) }
+        result.append(Fact(label: tr("Weinart"), value: share.wineType.displayName))
+        if !share.grape.isEmpty { result.append(Fact(label: tr("Rebsorte"), value: share.grape)) }
         if let strength = Wine.Strength.from(percent: share.alcoholPercent) {
             let percent = share.alcoholPercent.formatted(.number.precision(.fractionLength(0...1)))
-            result.append(Fact(label: "Alkohol", value: "\(percent) % · \(strength.title)"))
+            result.append(Fact(label: tr("Alkohol"), value: "\(percent) % · \(strength.title)"))
         }
-        if !share.region.isEmpty { result.append(Fact(label: "Region", value: share.region)) }
+        if !share.region.isEmpty { result.append(Fact(label: tr("Region"), value: share.region)) }
         if !share.country.isEmpty {
             let flag = CountryFlag.emoji(for: share.country).map { "\($0) " } ?? ""
-            result.append(Fact(label: "Land", value: flag + share.country))
+            result.append(Fact(label: tr("Land"), value: flag + share.country))
         }
         if share.drinkFrom > 0, share.drinkTo >= share.drinkFrom {
-            result.append(Fact(label: "Trinkreife", value: "\(share.drinkFrom)–\(share.drinkTo)"))
+            result.append(Fact(label: tr("Trinkreife"), value: "\(share.drinkFrom)–\(share.drinkTo)"))
         }
         if !share.foodPairings.isEmpty {
-            result.append(Fact(label: "Passt zu", value: share.foodPairings.joined(separator: ", ")))
+            result.append(Fact(label: tr("Passt zu"), value: share.foodPairings.joined(separator: ", ")))
         }
         return result
     }

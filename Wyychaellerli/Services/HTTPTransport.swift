@@ -38,51 +38,51 @@ enum AIServiceError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .noProviderConfigured:
-            return "Es ist noch kein API-Key hinterlegt. Bitte in den Einstellungen einen Anbieter einrichten."
+            return tr("Es ist noch kein API-Key hinterlegt. Bitte in den Einstellungen einen Anbieter einrichten.")
         case .missingAPIKey(let provider):
-            return "Für \(provider.displayName) ist kein API-Key hinterlegt."
+            return tr("Für \(provider.displayName) ist kein API-Key hinterlegt.")
         case .invalidAPIKey(let provider):
-            return "\(provider.shortName) hat den API-Key abgelehnt. Bitte den Key in den Einstellungen prüfen."
+            return tr("\(provider.shortName) hat den API-Key abgelehnt. Bitte den Key in den Einstellungen prüfen.")
         case .quotaExceeded(let provider):
-            return "Das Guthaben bei \(provider.shortName) ist aufgebraucht oder das Kontingent erschöpft."
+            return tr("Das Guthaben bei \(provider.shortName) ist aufgebraucht oder das Kontingent erschöpft.")
         case .rateLimited(let provider):
-            return "\(provider.shortName) bremst gerade (zu viele Anfragen). Bitte in ein paar Sekunden erneut versuchen."
+            return tr("\(provider.shortName) bremst gerade (zu viele Anfragen). Bitte in ein paar Sekunden erneut versuchen.")
         case .providerUnavailable(let provider, let status):
-            return "\(provider.shortName) ist im Moment nicht erreichbar (HTTP \(status)). Bitte später erneut versuchen."
+            return tr("\(provider.shortName) ist im Moment nicht erreichbar (HTTP \(status)). Bitte später erneut versuchen.")
         case .unknownModel(let provider):
-            return "\(provider.shortName) kennt das eingestellte Modell nicht. Bitte den Modellnamen in den Einstellungen prüfen oder leer lassen."
+            return tr("\(provider.shortName) kennt das eingestellte Modell nicht. Bitte den Modellnamen in den Einstellungen prüfen oder leer lassen.")
         case .invalidURL:
-            return "Die Anfrage-URL konnte nicht erstellt werden."
+            return tr("Die Anfrage-URL konnte nicht erstellt werden.")
         case .httpError(let status, let message):
-            return "Der Anbieter hat mit HTTP \(status) geantwortet: \(message)"
+            return tr("Der Anbieter hat mit HTTP \(status) geantwortet: \(message)")
         case .emptyResponse:
-            return "Die Antwort des Anbieters war leer."
+            return tr("Die Antwort des Anbieters war leer.")
         case .decodingFailed(let detail):
-            return "Die Antwort konnte nicht gelesen werden: \(detail)"
+            return tr("Die Antwort konnte nicht gelesen werden: \(detail)")
         case .refused(let reason):
-            return "Die Anfrage wurde vom Anbieter abgelehnt." + (reason.map { " (\($0))" } ?? "")
+            return tr("Die Anfrage wurde vom Anbieter abgelehnt.") + (reason.map { " (\($0))" } ?? "")
         case .truncated:
-            return "Die Antwort wurde abgeschnitten. Bitte erneut versuchen."
+            return tr("Die Antwort wurde abgeschnitten. Bitte erneut versuchen.")
         case .unusableResponse:
-            return "Die KI hat zweimal keine brauchbare Empfehlung geliefert (Platzhalter oder unbekannte Weine). Bitte erneut versuchen oder das Gericht genauer beschreiben."
+            return tr("Die KI hat zweimal keine brauchbare Empfehlung geliefert (Platzhalter oder unbekannte Weine). Bitte erneut versuchen oder das Gericht genauer beschreiben.")
         case .network(let detail):
-            return "Netzwerkfehler: \(detail)"
+            return tr("Netzwerkfehler: \(detail)")
         }
     }
 
     /// Kurzer Titel für die Fehlerbox in der UI.
     var title: String {
         switch self {
-        case .noProviderConfigured, .missingAPIKey: return "Kein API-Key"
-        case .invalidAPIKey:                       return "API-Key ungültig"
-        case .quotaExceeded:                       return "Guthaben aufgebraucht"
-        case .rateLimited:                         return "Zu viele Anfragen"
-        case .providerUnavailable:                 return "Anbieter nicht erreichbar"
-        case .unknownModel:                        return "Modell unbekannt"
-        case .network:                             return "Keine Verbindung"
-        case .refused:                             return "Anfrage abgelehnt"
-        case .truncated, .unusableResponse:        return "Unbrauchbare Antwort"
-        default:                                   return "Fehler"
+        case .noProviderConfigured, .missingAPIKey: return tr("Kein API-Key")
+        case .invalidAPIKey:                       return tr("API-Key ungültig")
+        case .quotaExceeded:                       return tr("Guthaben aufgebraucht")
+        case .rateLimited:                         return tr("Zu viele Anfragen")
+        case .providerUnavailable:                 return tr("Anbieter nicht erreichbar")
+        case .unknownModel:                        return tr("Modell unbekannt")
+        case .network:                             return tr("Keine Verbindung")
+        case .refused:                             return tr("Anfrage abgelehnt")
+        case .truncated, .unusableResponse:        return tr("Unbrauchbare Antwort")
+        default:                                   return tr("Fehler")
         }
     }
 
@@ -199,7 +199,7 @@ struct HTTPTransport: Sendable {
             if !combined.isEmpty { return combined }
         }
         let raw = String(decoding: data, as: UTF8.self)
-        return raw.isEmpty ? "(kein Fehlertext)" : String(raw.prefix(400))
+        return raw.isEmpty ? tr("(kein Fehlertext)") : String(raw.prefix(400))
     }
 }
 

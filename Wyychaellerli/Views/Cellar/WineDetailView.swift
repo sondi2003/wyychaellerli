@@ -83,8 +83,8 @@ struct WineDetailView: View {
     /// Vorhandene Etikettseiten in fester Reihenfolge.
     private var labelPages: [LabelPage] {
         var pages: [LabelPage] = []
-        if let image = wine.labelImage { pages.append(LabelPage(title: "Vorderseite", image: image)) }
-        if let image = wine.backLabelImage { pages.append(LabelPage(title: "Rückseite", image: image)) }
+        if let image = wine.labelImage { pages.append(LabelPage(title: tr("Vorderseite"), image: image)) }
+        if let image = wine.backLabelImage { pages.append(LabelPage(title: tr("Rückseite"), image: image)) }
         return pages
     }
 
@@ -199,7 +199,7 @@ struct WineDetailView: View {
                     Text("\(wine.quantity)")
                         .font(.system(size: 48, weight: .bold, design: .rounded).monospacedDigit())
                         .contentTransition(.numericText())
-                    Text(wine.quantity == 1 ? "Flasche" : "Flaschen")
+                    Text(verbatim: bottleWord(Int(wine.quantity)))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -216,7 +216,7 @@ struct WineDetailView: View {
             .animation(.snappy, value: wine.quantity)
 
             if wine.isOutOfStock {
-                CalloutBox(kind: .warning, text: "Keine Flasche mehr übrig. Du kannst den Wein archivieren oder löschen.")
+                CalloutBox(kind: .warning, text: tr("Keine Flasche mehr übrig. Du kannst den Wein archivieren oder löschen."))
             }
         }
         .cardStyle()
@@ -256,23 +256,23 @@ struct WineDetailView: View {
     /// Nur, was tatsächlich erfasst ist – leere Zeilen wären nur Rauschen.
     private var facts: [Fact] {
         var result: [Fact] = []
-        if !wine.producer.isEmpty { result.append(Fact(label: "Produzent", value: wine.producer)) }
-        if wine.vintage > 0 { result.append(Fact(label: "Jahrgang", value: String(wine.vintage))) }
-        result.append(Fact(label: "Weinart", value: wine.type.displayName))
-        if !wine.grape.isEmpty { result.append(Fact(label: "Rebsorte", value: wine.grape)) }
-        if !wine.region.isEmpty { result.append(Fact(label: "Region", value: wine.region)) }
+        if !wine.producer.isEmpty { result.append(Fact(label: tr("Produzent"), value: wine.producer)) }
+        if wine.vintage > 0 { result.append(Fact(label: tr("Jahrgang"), value: String(wine.vintage))) }
+        result.append(Fact(label: tr("Weinart"), value: wine.type.displayName))
+        if !wine.grape.isEmpty { result.append(Fact(label: tr("Rebsorte"), value: wine.grape)) }
+        if !wine.region.isEmpty { result.append(Fact(label: tr("Region"), value: wine.region)) }
         if !wine.country.isEmpty {
             let flag = CountryFlag.emoji(for: wine.country).map { "\($0) " } ?? ""
-            result.append(Fact(label: "Land", value: flag + wine.country))
+            result.append(Fact(label: tr("Land"), value: flag + wine.country))
         }
         if wine.hasAlcohol, let strength = wine.strength {
-            result.append(Fact(label: "Alkohol", value: "\(wine.alcoholText) · \(strength.title)"))
+            result.append(Fact(label: tr("Alkohol"), value: "\(wine.alcoholText) · \(strength.title)"))
         }
         if !wine.drinkWindowText.isEmpty {
-            result.append(Fact(label: "Trinkreife", value: wine.drinkWindowText + (wine.drinkWindowFromLabel ? " (Etikett)" : " (geschätzt)")))
+            result.append(Fact(label: tr("Trinkreife"), value: wine.drinkWindowText + " (" + (wine.drinkWindowFromLabel ? tr("Etikett") : tr("geschätzt")) + ")"))
         }
         if let date = wine.createdAt {
-            result.append(Fact(label: "Erfasst", value: date.formatted(date: .abbreviated, time: .omitted)))
+            result.append(Fact(label: tr("Erfasst"), value: date.appShortDate))
         }
         return result
     }

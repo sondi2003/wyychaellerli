@@ -161,7 +161,7 @@ final class Rack: NSManagedObject, Identifiable {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         rack.uuid = UUID()
         rack.cellar = cellar
-        rack.name = trimmed.isEmpty ? "Regal" : trimmed
+        rack.name = trimmed.isEmpty ? tr("Regal") : trimmed
         rack.rows = Int64(rows)
         rack.columns = Int64(columns)
         rack.createdAt = .now

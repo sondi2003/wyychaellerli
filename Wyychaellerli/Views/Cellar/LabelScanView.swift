@@ -104,14 +104,14 @@ struct LabelScanView: View {
     /// Sagt vorab, womit die Zuordnung voraussichtlich gemacht wird.
     private var structuringHint: String {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, *), OnDeviceLabelParser.isAvailable {
-            return "Texterkennung und Zuordnung laufen komplett auf dem Gerät (Apple Intelligence)."
+        if #available(iOS 26.0, *), AppLanguage.current.isGerman, OnDeviceLabelParser.isAvailable {
+            return tr("Texterkennung und Zuordnung laufen komplett auf dem Gerät (Apple Intelligence).")
         }
         #endif
         if let provider = settings.activeProvider {
-            return "Texterkennung auf dem Gerät, Zuordnung der Felder über \(provider.shortName). Es wird nur der erkannte Text gesendet, nicht das Foto."
+            return tr("Texterkennung auf dem Gerät, Zuordnung der Felder über \(provider.shortName). Es wird nur der erkannte Text gesendet, nicht das Foto.")
         }
-        return "Texterkennung auf dem Gerät. Ohne API-Key werden die Felder regelbasiert zugeordnet – Jahrgang, Typ und bekannte Rebsorten klappen gut, Name und Produzent bitte prüfen."
+        return tr("Texterkennung auf dem Gerät. Ohne API-Key werden die Felder regelbasiert zugeordnet – Jahrgang, Typ und bekannte Rebsorten klappen gut, Name und Produzent bitte prüfen.")
     }
 
     private var scanButton: some View {
@@ -304,7 +304,7 @@ private struct LabelPhotoSlot: View {
             }
             Text(extras.isEmpty
                  ? "Schrift läuft um die Flasche? Von links und rechts nachfotografieren."
-                 : "\(extras.count) weitere \(extras.count == 1 ? "Ansicht" : "Ansichten") – der Text wird zusammengeführt.")
+                 : "\(extras.count) weitere Ansichten – der Text wird zusammengeführt.")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)

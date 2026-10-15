@@ -88,8 +88,8 @@ struct LabelPager: View {
 #Preview {
     LabelPager(
         pages: [
-            LabelPage(title: "Vorderseite", image: UIImage(systemName: "tag.fill")!),
-            LabelPage(title: "Rückseite", image: UIImage(systemName: "text.alignleft")!)
+            LabelPage(title: tr("Vorderseite"), image: UIImage(systemName: "tag.fill")!),
+            LabelPage(title: tr("Rückseite"), image: UIImage(systemName: "text.alignleft")!)
         ],
         wineName: "La Pinède"
     )

@@ -9,8 +9,8 @@ final class PairingViewModel {
 
     /// Schnellvorschläge für die Eingabe.
     static let suggestions = [
-        "Raclette", "Spaghetti Bolognese", "Gegrillter Lachs", "Rindsfilet",
-        "Pizza Margherita", "Sushi", "Käseplatte", "Thai-Curry", "Apéro"
+        tr("Raclette"), tr("Spaghetti Bolognese"), tr("Gegrillter Lachs"), tr("Rindsfilet"),
+        tr("Pizza Margherita"), tr("Sushi"), tr("Käseplatte"), tr("Thai-Curry"), tr("Apéro")
     ]
 
     /// Ein Wein, dessen Etikett das gesuchte Gericht ausdrücklich nennt.

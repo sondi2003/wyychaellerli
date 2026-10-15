@@ -32,7 +32,7 @@ final class LabelScanViewModel {
     enum Side: String, Identifiable {
         case front, back
         var id: String { rawValue }
-        var title: String { self == .front ? "Vorderseite" : "Rückseite" }
+        var title: String { self == .front ? tr("Vorderseite") : tr("Rückseite") }
     }
 
     /// Was die Kamera gerade aufnimmt: das Hauptfoto einer Seite oder eine weitere Ansicht.

@@ -122,38 +122,38 @@ struct WalkthroughPage {
     let text: String
     let illustration: AnyView
 
-    static let all: [WalkthroughPage] = [
+    static var all: [WalkthroughPage] { [
         WalkthroughPage(
-            title: "Willkommen im Wyychällerli",
-            text: "Dein Weinkeller in der Hosentasche: was da ist, wo es liegt und wozu es passt. Ein paar Wischer zeigen dir das Wichtigste.",
+            title: tr("Willkommen im Wyychällerli"),
+            text: tr("Dein Weinkeller in der Hosentasche: was da ist, wo es liegt und wozu es passt. Ein paar Wischer zeigen dir das Wichtigste."),
             illustration: AnyView(WelcomeIllustration())
         ),
         WalkthroughPage(
-            title: "Etikett scannen statt tippen",
-            text: "Tippe oben rechts auf + und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit.",
+            title: tr("Etikett scannen statt tippen"),
+            text: tr("Tippe oben rechts auf + und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit."),
             illustration: AnyView(ScanIllustration())
         ),
         WalkthroughPage(
-            title: "Bestand im Blick",
-            text: "Jede Zeile zeigt, wie viele Flaschen da sind. Mit dem Minus buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll.",
+            title: tr("Bestand im Blick"),
+            text: tr("Jede Zeile zeigt, wie viele Flaschen da sind. Mit dem Minus buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll."),
             illustration: AnyView(StockIllustration())
         ),
         WalkthroughPage(
-            title: "Dein Regal",
-            text: "Unter dem Menü oben links legst du dein Regal an – mit so vielen Ebenen und Fächern, wie es wirklich hat. Tippe auf einen Wein und wisch über die freien Fächer, um seine Flaschen einzuräumen. Später pulsiert auf der Detailseite das Fach, in dem er liegt.",
+            title: tr("Dein Regal"),
+            text: tr("Unter dem Menü oben links legst du dein Regal an – mit so vielen Ebenen und Fächern, wie es wirklich hat. Tippe auf einen Wein und wisch über die freien Fächer, um seine Flaschen einzuräumen. Später pulsiert auf der Detailseite das Fach, in dem er liegt."),
             illustration: AnyView(RackIllustration())
         ),
         WalkthroughPage(
-            title: "Der Wein-Berater",
-            text: "Sag, was es zu essen gibt. Der Berater schlägt bis zu drei Flaschen aus deinem Bestand vor und sagt ehrlich, wie gut sie passen. Geht auch per Siri.",
+            title: tr("Der Wein-Berater"),
+            text: tr("Sag, was es zu essen gibt. Der Berater schlägt bis zu drei Flaschen aus deinem Bestand vor und sagt ehrlich, wie gut sie passen. Geht auch per Siri."),
             illustration: AnyView(AdvisorIllustration())
         ),
         WalkthroughPage(
-            title: "Zu zweit über iCloud",
-            text: "In den Einstellungen teilst du deinen Keller mit einer zweiten Apple-ID. Bestand, Regal und Bewertungen bleiben auf allen Geräten gleich – nimmt jemand eine Flasche, sehen es alle.",
+            title: tr("Zu zweit über iCloud"),
+            text: tr("In den Einstellungen teilst du deinen Keller mit einer zweiten Apple-ID. Bestand, Regal und Bewertungen bleiben auf allen Geräten gleich – nimmt jemand eine Flasche, sehen es alle."),
             illustration: AnyView(ShareIllustration())
         ),
-    ]
+    ] }
 }
 
 #Preview {

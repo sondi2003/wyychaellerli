@@ -27,6 +27,8 @@ struct ContentView: View {
     @Environment(PartySession.self) private var party
 
     @State private var selectedTab: AppTab = .cellar
+    /// Ein Sprachwechsel baut die Tabs neu auf, damit auch berechnete Texte nachziehen.
+    @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
     @State private var isShowingSplash = true
     @AppStorage(WalkthroughView.seenKey) private var hasSeenWalkthrough = false
     @State private var isShowingWalkthrough = false
@@ -37,14 +39,17 @@ struct ContentView: View {
         ZStack {
             TabView(selection: $selectedTab) {
                 CellarView()
+                    .id(language)
                     .tabItem { Label("Wyychällerli", systemImage: "cabinet") }
                     .tag(AppTab.cellar)
 
                 AdvisorView(selectedTab: $selectedTab)
+                    .id(language)
                     .tabItem { Label("Wein-Berater", systemImage: "sparkles") }
                     .tag(AppTab.advisor)
 
                 SettingsView()
+                    .id(language)
                     .tabItem { Label("Einstellungen", systemImage: "gearshape") }
                     .tag(AppTab.settings)
             }

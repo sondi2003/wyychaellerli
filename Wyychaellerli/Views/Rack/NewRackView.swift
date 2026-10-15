@@ -15,7 +15,7 @@ struct NewRackView: View {
     @State private var columns = 12
     @FocusState private var isNameFocused: Bool
 
-    private let suggestions = ["Keller", "Küche", "Garage", "Vorrat", "Schrank"]
+    private let suggestions = [tr("Keller"), tr("Küche"), tr("Garage"), tr("Vorrat"), tr("Schrank")]
 
     var body: some View {
         NavigationStack {

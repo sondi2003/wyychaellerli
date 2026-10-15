@@ -111,8 +111,8 @@ struct WineShare: Codable, Equatable, Sendable, Identifiable {
         }
         lines.append("")
         lines.append(senderName.isEmpty
-                     ? "Geteilt aus Wyychällerli"
-                     : "Von \(senderName), geteilt aus Wyychällerli")
+                     ? tr("Geteilt aus Wyychällerli")
+                     : tr("Von \(senderName), geteilt aus Wyychällerli"))
         return lines.joined(separator: "\n")
     }
 

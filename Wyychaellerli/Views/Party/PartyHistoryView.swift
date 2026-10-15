@@ -126,7 +126,7 @@ struct PartyHistoryView: View {
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(1)
                     if let date = win.date {
-                        Text(date.formatted(date: .abbreviated, time: .omitted))
+                        Text(date.appShortDate)
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
@@ -140,7 +140,7 @@ struct PartyHistoryView: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
-                Text("\(win.resultText) · \(win.guestCount) \(win.guestCount == 1 ? "Gast" : "Gäste") · \(win.candidateCount) zur Wahl")
+                Text(verbatim: [win.resultText, tr("\(win.guestCount) Gäste"), tr("\(win.candidateCount) zur Wahl")].joined(separator: " · "))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .lineLimit(1)

@@ -27,12 +27,12 @@ enum PartyLock {
     static var methodName: String {
         let context = LAContext()
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) else {
-            return "den Gerätecode"
+            return tr("den Gerätecode")
         }
         switch context.biometryType {
-        case .faceID:  return "Face ID"
-        case .touchID: return "Touch ID"
-        default:       return "den Gerätecode"
+        case .faceID:  return tr("Face ID")
+        case .touchID: return tr("Touch ID")
+        default:       return tr("den Gerätecode")
         }
     }
 

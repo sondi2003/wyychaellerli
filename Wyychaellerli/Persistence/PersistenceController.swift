@@ -231,7 +231,7 @@ final class PersistenceController: @unchecked Sendable {
     enum SharingError: LocalizedError {
         case notReady
         var errorDescription: String? {
-            "Die Freigabe ist gerade nicht möglich. Prüfe, ob du in iCloud angemeldet bist."
+            tr("Die Freigabe ist gerade nicht möglich. Prüfe, ob du in iCloud angemeldet bist.")
         }
     }
 

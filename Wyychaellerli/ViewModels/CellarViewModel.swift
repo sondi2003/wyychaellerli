@@ -78,7 +78,7 @@ final class CellarViewModel {
     func summary(for wines: [Wine]) -> String {
         let active = wines.filter { !$0.isArchived }
         let bottles = active.reduce(0) { $0 + Int($1.quantity) }
-        return "\(bottles) \(bottles == 1 ? "Flasche" : "Flaschen") · \(active.count) \(active.count == 1 ? "Wein" : "Weine")"
+        return tr("\(bottles) Flaschen") + " · " + tr("\(active.count) Weine")
     }
 
     // MARK: Bestandsaktionen

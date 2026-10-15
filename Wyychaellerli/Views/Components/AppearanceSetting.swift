@@ -17,9 +17,9 @@ enum AppearanceSetting: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .system: return "System"
-        case .light:  return "Hell"
-        case .dark:   return "Dunkel"
+        case .system: return tr("System")
+        case .light:  return tr("Hell")
+        case .dark:   return tr("Dunkel")
         }
     }
 

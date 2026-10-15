@@ -96,7 +96,7 @@ struct RatingCard: View {
                 Text(rating.displayName)
                     .font(.caption.weight(.semibold))
                 if !rating.tags.isEmpty {
-                    Text(rating.tags.joined(separator: " · "))
+                    Text(rating.tags.map(RatingTag.title(forStored:)).joined(separator: " · "))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

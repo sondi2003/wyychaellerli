@@ -16,7 +16,7 @@ enum OnDeviceLabelParser {
     }
 
     static func parse(recognizedText: String) async throws -> WineLabelExtraction {
-        let session = LanguageModelSession(instructions: PromptBuilder.labelSystemPrompt)
+        let session = LanguageModelSession(instructions: PromptBuilder.labelSystemPrompt(language: .german))
         let response = try await session.respond(
             to: PromptBuilder.labelUserPrompt(recognizedText: recognizedText),
             generating: GeneratedWineLabel.self

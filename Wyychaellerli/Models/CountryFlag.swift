@@ -35,7 +35,7 @@ enum CountryFlag {
     // MARK: Nachschlagen
 
     /// Sprachen, in denen ein Ländername auf einem Etikett oder im Formular stehen kann.
-    private static let languages = ["de", "en", "fr", "it", "es", "pt"]
+    private static let languages = ["de", "en", "fr", "it", "es", "pt", "sr-Latn"]
 
     /// Einmal aufgebaut: jeder Ländername in jeder Sprache → Code. Rund 1500 Einträge.
     private static let table: [String: String] = {

@@ -158,22 +158,22 @@ struct CellarSharingSection: View {
         if let ckError = error as? CKError {
             switch ckError.code {
             case .notAuthenticated:
-                return "Du bist auf diesem Gerät nicht in iCloud angemeldet. Melde dich in den Systemeinstellungen an und versuch es erneut."
+                return tr("Du bist auf diesem Gerät nicht in iCloud angemeldet. Melde dich in den Systemeinstellungen an und versuch es erneut.")
             case .networkUnavailable, .networkFailure:
-                return "Keine Verbindung zu iCloud. Bitte später erneut versuchen."
+                return tr("Keine Verbindung zu iCloud. Bitte später erneut versuchen.")
             case .quotaExceeded:
-                return "Dein iCloud-Speicher ist voll."
+                return tr("Dein iCloud-Speicher ist voll.")
             default:
                 break
             }
         }
         if text.contains("ckaccountstatusnoaccount") || text.contains("without an icloud account") {
-            return "Du bist auf diesem Gerät nicht in iCloud angemeldet. Melde dich in den Systemeinstellungen an und versuch es erneut."
+            return tr("Du bist auf diesem Gerät nicht in iCloud angemeldet. Melde dich in den Systemeinstellungen an und versuch es erneut.")
         }
         if text.contains("network") {
-            return "Keine Verbindung zu iCloud. Bitte später erneut versuchen."
+            return tr("Keine Verbindung zu iCloud. Bitte später erneut versuchen.")
         }
-        return "Die Freigabe hat nicht geklappt. Bitte später erneut versuchen."
+        return tr("Die Freigabe hat nicht geklappt. Bitte später erneut versuchen.")
     }
 
     private func prepareShare() async {

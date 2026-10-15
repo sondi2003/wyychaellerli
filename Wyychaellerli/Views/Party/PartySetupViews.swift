@@ -100,7 +100,7 @@ struct PartyCandidatesView: View {
                 Spacer()
                 if model.canStartGuests {
                     // Die Stimmenzahl folgt automatisch der Zahl der Flaschen.
-                    Text("\(model.state.votesPerGuest) \(model.state.votesPerGuest == 1 ? "Stimme" : "Stimmen") je Gast")
+                    Text("\(model.state.votesPerGuest) Stimmen je Gast")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }

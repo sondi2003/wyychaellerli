@@ -45,9 +45,9 @@ enum LabelExtractionSource: Sendable, Equatable {
 
     var displayName: String {
         switch self {
-        case .onDevice:            return "Apple Intelligence (auf dem Gerät)"
+        case .onDevice:            return tr("Apple Intelligence (auf dem Gerät)")
         case .cloud(let provider): return provider.shortName
-        case .heuristic:           return "einfache Erkennung ohne KI"
+        case .heuristic:           return tr("einfache Erkennung ohne KI")
         }
     }
 }
@@ -70,7 +70,9 @@ struct LabelScanResult: Sendable, Identifiable, Equatable {
 /// Alle Felder sind Pflicht (strict-kompatibel); „unbekannt“ = leerer String bzw. 0.
 enum LabelSchema {
 
-    static func jsonSchema(includeAdditionalProperties: Bool) -> [String: Any] {
+    static func jsonSchema(includeAdditionalProperties: Bool, language: AppLanguage = .current) -> [String: Any] {
+        let target = language.promptName
+        let targetAccusative = language.promptTarget
         var schema: [String: Any] = [
             "type": "object",
             "properties": [
@@ -79,13 +81,13 @@ enum LabelSchema {
                 "vintage": ["type": "integer", "description": "Jahrgang als vierstellige Zahl, nur wenn er wörtlich im Text steht. Nie raten, nie das aktuelle Jahr einsetzen, Postleitzahlen in Adressen nicht verwechseln. 0, wenn keiner auf dem Etikett steht."],
                 "grape": ["type": "string", "description": "Rebsorten, kommagetrennt, in Originalschreibweise. Leer, wenn unbekannt."],
                 "region": ["type": "string", "description": "Region oder Appellation, z. B. \"Collioure\". Leer, wenn unbekannt."],
-                "country": ["type": "string", "description": "Herkunftsland auf Deutsch, z. B. \"Frankreich\". Auch ableiten, wenn nur die Appellation genannt ist. Leer, wenn unklar."],
+                "country": ["type": "string", "description": "Herkunftsland auf \(target), z. B. \(language.promptCountryExamples.components(separatedBy: ", ")[0].replacingOccurrences(of: "\"", with: "\\\"")). Auch ableiten, wenn nur die Appellation genannt ist. Leer, wenn unklar."],
                 "type": ["type": "string", "enum": ["red", "white", "sparkling", "rose", "mulled", "unknown"], "description": "Weintyp. \"mulled\" für Glühwein und verwandte Winter-Heissgetränke."],
                 "alcoholPercent": ["type": "number", "description": "Alkoholgehalt in Volumenprozent, 0 wenn unbekannt."],
-                "notes": ["type": "string", "description": "Kurze Notiz zu Terroir, Vinifikation und Ausbau (max. 2 Sätze), zwingend auf Deutsch – fremdsprachigen Etikett-Text übersetzen, nicht kopieren. Leer, wenn nichts dazu auf dem Etikett steht."],
+                "notes": ["type": "string", "description": "Kurze Notiz zu Terroir, Vinifikation und Ausbau (max. 2 Sätze), zwingend auf \(target) – fremdsprachigen Etikett-Text übersetzen, nicht kopieren. Leer, wenn nichts dazu auf dem Etikett steht."],
                 "foodPairings": [
                     "type": "array",
-                    "description": "Speiseempfehlungen, die auf dem Etikett stehen, ins Deutsche übersetzt. Je Eintrag ein kurzer Begriff, z. B. \"Gegrilltes Fleisch\". Leeres Array, wenn das Etikett nichts dazu sagt.",
+                    "description": "Speiseempfehlungen, die auf dem Etikett stehen, ins \(targetAccusative) übersetzt. Je Eintrag ein kurzer Begriff. Leeres Array, wenn das Etikett nichts dazu sagt.",
                     "items": ["type": "string"]
                 ],
                 "drinkFrom": ["type": "integer", "description": "Erstes empfohlenes Trinkjahr als vierstellige Zahl, 0 wenn nicht bestimmbar."],

@@ -71,27 +71,27 @@ struct WinePairingIntent: AppIntent {
         let gericht = gerichtRoh.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !gericht.isEmpty else {
             return Ausgabe(
-                gesprochen: "Ich habe nicht verstanden, was es zu essen gibt.",
-                titel: "Kein Gericht erkannt",
-                text: "Sag zum Beispiel: Lasagne, Raclette oder gegrillter Lachs."
+                gesprochen: tr("Ich habe nicht verstanden, was es zu essen gibt."),
+                titel: tr("Kein Gericht erkannt"),
+                text: tr("Sag zum Beispiel: Lasagne, Raclette oder gegrillter Lachs.")
             )
         }
 
         let settings = AISettings()
         guard settings.activeProvider != nil else {
             return Ausgabe(
-                gesprochen: "In deinem Weinkeller ist noch kein Schlüssel für den Wein-Berater hinterlegt. Trag ihn in den Einstellungen der App ein.",
-                titel: "Kein Anbieter eingerichtet",
-                text: "Der Wein-Berater braucht einen API-Key. Du findest das in den Einstellungen der App."
+                gesprochen: tr("In deinem Weinkeller ist noch kein Schlüssel für den Wein-Berater hinterlegt. Trag ihn in den Einstellungen der App ein."),
+                titel: tr("Kein Anbieter eingerichtet"),
+                text: tr("Der Wein-Berater braucht einen API-Key. Du findest das in den Einstellungen der App.")
             )
         }
 
         let wines = PersistenceController.shared.availableWines()
         guard !wines.isEmpty else {
             return Ausgabe(
-                gesprochen: "In deinem Weinkeller liegt gerade keine Flasche mit Bestand.",
-                titel: "Keller ist leer",
-                text: "Lege zuerst Flaschen an, damit ich etwas empfehlen kann."
+                gesprochen: tr("In deinem Weinkeller liegt gerade keine Flasche mit Bestand."),
+                titel: tr("Keller ist leer"),
+                text: tr("Lege zuerst Flaschen an, damit ich etwas empfehlen kann.")
             )
         }
 
@@ -105,8 +105,8 @@ struct WinePairingIntent: AppIntent {
         } catch {
             logger.error("Siri-Empfehlung fehlgeschlagen: \(error.localizedDescription)")
             return Ausgabe(
-                gesprochen: "Das hat gerade nicht geklappt. Versuch es in der App noch einmal.",
-                titel: "Keine Empfehlung möglich",
+                gesprochen: tr("Das hat gerade nicht geklappt. Versuch es in der App noch einmal."),
+                titel: tr("Keine Empfehlung möglich"),
                 text: error.localizedDescription
             )
         }
@@ -119,14 +119,14 @@ struct WinePairingIntent: AppIntent {
         guard let beste = response.sortedRecommendations.first else {
             // Ehrliche Absage – genau wie in der App.
             let begruendung = response.generalNote.isEmpty
-                ? "Zu \(gericht) passt aus deinem Keller gerade nichts wirklich."
+                ? tr("Zu \(gericht) passt aus deinem Keller gerade nichts wirklich.")
                 : response.generalNote
             let gesprochen = response.shoppingTip.isEmpty
                 ? begruendung
                 : "\(begruendung) \(response.shoppingTip)"
             return Ausgabe(
                 gesprochen: gesprochen,
-                titel: "Keine passende Flasche",
+                titel: tr("Keine passende Flasche"),
                 text: begruendung,
                 kauftipp: response.shoppingTip
             )
@@ -136,9 +136,9 @@ struct WinePairingIntent: AppIntent {
         let bezeichnung = wein.map { $0.producer.isEmpty ? $0.name : "\($0.name) von \($0.producer)" } ?? beste.wineName
         let jahrgang = wein.map { Int($0.vintage) } ?? beste.vintage
 
-        var gesprochen = "Zu \(gericht) empfehle ich \(bezeichnung), Jahrgang \(String(jahrgang))."
+        var gesprochen = tr("Zu \(gericht) empfehle ich \(bezeichnung), Jahrgang \(String(jahrgang)).")
         if beste.fit == .acceptable || beste.fit == .poor {
-            gesprochen += " Perfekt passt es nicht, aber es ist die beste Flasche im Keller."
+            gesprochen += " " + tr("Perfekt passt es nicht, aber es ist die beste Flasche im Keller.")
         }
         if !beste.reasoning.isEmpty {
             gesprochen += " \(beste.reasoning)"

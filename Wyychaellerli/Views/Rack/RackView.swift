@@ -63,7 +63,7 @@ struct RackView: View {
                     }
                 }
             }
-            .navigationTitle(rack?.name ?? "Regal")
+            .navigationTitle(rack?.name ?? tr("Regal"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -146,7 +146,7 @@ struct RackView: View {
             }
         } label: {
             HStack(spacing: 4) {
-                Text(rack?.name ?? "Regal")
+                Text(rack?.name ?? tr("Regal"))
                     .font(.headline)
                 Image(systemName: "chevron.down")
                     .font(.caption2.weight(.semibold))
@@ -228,7 +228,7 @@ struct RackView: View {
             Label("Gleichnamige Regale gefunden", systemImage: "exclamationmark.triangle.fill")
                 .font(.headline)
                 .foregroundStyle(.orange)
-            Text("Es gibt \(duplicateCount == 1 ? "zwei Regale" : "mehrere Regale") mit demselben Namen. Das passiert, wenn auf zwei Geräten gleichzeitig eines angelegt wurde, bevor das erste über iCloud ankam. Willst du wirklich zwei getrennte Regale, gib ihnen unter „Bearbeiten“ verschiedene Namen.")
+            Text(duplicateCount == 1 ? "Es gibt zwei Regale mit demselben Namen. Das passiert, wenn auf zwei Geräten gleichzeitig eines angelegt wurde, bevor das erste über iCloud ankam. Willst du wirklich zwei getrennte Regale, gib ihnen unter „Bearbeiten“ verschiedene Namen." : "Es gibt mehrere Regale mit demselben Namen. Das passiert, wenn auf zwei Geräten gleichzeitig eines angelegt wurde, bevor das erste über iCloud ankam. Willst du wirklich getrennte Regale, gib ihnen unter „Bearbeiten“ verschiedene Namen.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             Button {
@@ -261,8 +261,8 @@ struct RackView: View {
         guard let cellar = Cellar.current(in: context) else { return }
         let result = Rack.mergeDuplicates(in: context, for: cellar)
         mergeResult = result.released == 0
-            ? "\(result.moved) Fächer übernommen."
-            : "\(result.moved) Fächer übernommen, \(result.released) Flaschen aus dem Regal genommen, weil das Fach schon belegt war. Der Bestand ist unverändert."
+            ? tr("\(result.moved) Fächer übernommen.")
+            : tr("\(result.moved) Fächer übernommen, \(result.released) Flaschen aus dem Regal genommen, weil das Fach schon belegt war. Der Bestand ist unverändert.")
     }
 
     /// Weine mit Bestand, von denen noch nicht jede Flasche einen Platz hat.
@@ -277,7 +277,7 @@ struct RackView: View {
         let used = rack.usedCount
         let capacity = rack.capacity
         let free = rack.freeCount
-        return "\(used) von \(capacity) Fächern belegt · \(free) frei"
+        return tr("\(used) von \(capacity) Fächern belegt · \(free) frei")
     }
 
     /// Kleinere Fächer, sobald das Regal breit wird, damit möglichst viel aufs Bild passt.

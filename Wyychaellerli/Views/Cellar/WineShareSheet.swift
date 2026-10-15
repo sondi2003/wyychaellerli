@@ -20,11 +20,11 @@ struct WineShareSheet: View {
 
     /// Häufige Anlässe – spart Tippen und trifft meistens.
     private let suggestions = [
-        "Den kann ich empfehlen.",
-        "Gerade im Angebot.",
-        "Gibt's bei Coop.",
-        "Gibt's bei Denner.",
-        "Der passt gut zum Essen."
+        tr("Den kann ich empfehlen."),
+        tr("Gerade im Angebot."),
+        tr("Gibt's bei Coop."),
+        tr("Gibt's bei Denner."),
+        tr("Der passt gut zum Essen.")
     ]
 
     private var share: WineShare {

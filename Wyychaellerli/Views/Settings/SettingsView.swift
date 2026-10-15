@@ -9,6 +9,7 @@ struct SettingsView: View {
     @Environment(AISettings.self) private var settings
     @Environment(CurrentRater.self) private var rater
     @AppStorage(AppearanceSetting.storageKey) private var appearance: AppearanceSetting = .system
+    @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
     @State private var isShowingWalkthrough = false
     @State private var didResetTips = false
 
@@ -16,6 +17,18 @@ struct SettingsView: View {
         @Bindable var settings = settings
         NavigationStack {
             Form {
+                Section {
+                    Picker("Sprache", selection: $language) {
+                        ForEach(AppLanguage.allCases) { option in
+                            Text(verbatim: option.title).tag(option)
+                        }
+                    }
+                } header: {
+                    Text("Sprache")
+                } footer: {
+                    Text("Gilt für die ganze App, auch für die Antworten der KI.")
+                }
+
                 Section {
                     Picker("Erscheinungsbild", selection: $appearance) {
                         ForEach(AppearanceSetting.allCases) { option in

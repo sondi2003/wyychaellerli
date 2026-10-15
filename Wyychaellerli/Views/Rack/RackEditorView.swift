@@ -75,16 +75,14 @@ struct RackEditorView: View {
                     } footer: {
                         Text(rack.usedCount == 0
                              ? "Das Regal ist leer und wird einfach entfernt."
-                             : "\(rack.usedCount) \(rack.usedCount == 1 ? "Flasche wird" : "Flaschen werden") aus dem Regal genommen. Der Bestand im Keller bleibt unverändert.")
+                             : "\(rack.usedCount) Flaschen werden aus dem Regal genommen. Der Bestand im Keller bleibt unverändert.")
                     }
                 }
 
                 if !losingSlots.isEmpty {
                     Section {
                         Label {
-                            Text(losingSlots.count == 1
-                                 ? "1 Flasche liegt ausserhalb des neuen Rasters und wird aus dem Regal genommen. Der Bestand bleibt unverändert."
-                                 : "\(losingSlots.count) Flaschen liegen ausserhalb des neuen Rasters und werden aus dem Regal genommen. Der Bestand bleibt unverändert.")
+                            Text("\(losingSlots.count) Flaschen liegen ausserhalb des neuen Rasters und werden aus dem Regal genommen. Der Bestand bleibt unverändert.")
                                 .font(.footnote)
                         } icon: {
                             Image(systemName: "exclamationmark.triangle.fill")
@@ -132,7 +130,7 @@ struct RackEditorView: View {
             context.delete(slot)
         }
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        rack.name = trimmed.isEmpty ? "Regal" : trimmed
+        rack.name = trimmed.isEmpty ? tr("Regal") : trimmed
         rack.rows = Int64(rows)
         rack.columns = Int64(columns)
         context.saveChanges()

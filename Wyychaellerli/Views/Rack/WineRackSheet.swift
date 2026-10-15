@@ -15,15 +15,15 @@ struct WineRackSheet: View {
 
         var title: String {
             switch self {
-            case .take:  return "Flasche entnehmen"
-            case .place: return "Flasche einräumen"
+            case .take:  return tr("Flasche entnehmen")
+            case .place: return tr("Flasche einräumen")
             }
         }
 
         var hint: String {
             switch self {
-            case .take:  return "Tippe auf das Fach, aus dem du die Flasche nimmst. Der Bestand geht um eins runter und das Fach wird frei."
-            case .place: return "Wisch über die freien Fächer oder tippe sie an. Mehr als du Flaschen hast, lässt sich nicht auswählen."
+            case .take:  return tr("Tippe auf das Fach, aus dem du die Flasche nimmst. Der Bestand geht um eins runter und das Fach wird frei.")
+            case .place: return tr("Wisch über die freien Fächer oder tippe sie an. Mehr als du Flaschen hast, lässt sich nicht auswählen.")
             }
         }
     }
@@ -93,7 +93,7 @@ struct WineRackSheet: View {
                 }
                 if mode == .place {
                     ToolbarItem(placement: .confirmationAction) {
-                        Button(selection.count == 1 ? "Einräumen" : "\(selection.count) einräumen") {
+                        Button(selection.count == 1 ? tr("Einräumen") : tr("\(selection.count) einräumen")) {
                             placeSelection()
                         }
                         .fontWeight(.semibold)
@@ -243,12 +243,10 @@ struct WineRackSheet: View {
 
     private var selectionStatus: String {
         if selection.isEmpty {
-            return wine.unplacedCount == 1
-                ? "1 Flasche ohne Platz"
-                : "\(wine.unplacedCount) Flaschen ohne Platz"
+            return tr("\(Int(wine.unplacedCount)) Flaschen ohne Platz")
         }
-        if remaining == 0 { return "\(selection.count) ausgewählt – mehr Flaschen hast du nicht" }
-        return "\(selection.count) ausgewählt, noch \(remaining) möglich"
+        if remaining == 0 { return tr("\(selection.count) ausgewählt – mehr Flaschen hast du nicht") }
+        return tr("\(selection.count) ausgewählt, noch \(remaining) möglich")
     }
 
     // MARK: Bedienung

@@ -66,7 +66,7 @@ struct LabelScanService: Sendable {
         extraction = Self.verifyingFoodPairings(extraction, against: text)
         // Die Modelle übernehmen den Rückseitentext gern in der Originalsprache.
         if !extraction.notes.isEmpty {
-            extraction.notes = await LabelNotesTranslator.germanized(
+            extraction.notes = await LabelNotesTranslator.localized(
                 extraction.notes,
                 aiService: aiService,
                 cloud: cloud
@@ -138,7 +138,8 @@ struct LabelScanService: Sendable {
 
         // 1. Apple Intelligence auf dem Gerät
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, *), OnDeviceLabelParser.isAvailable {
+        // Das Modell auf dem Gerät antwortet nur auf Deutsch; für Serbisch geht es gleich zur Cloud.
+        if #available(iOS 26.0, *), AppLanguage.current.isGerman, OnDeviceLabelParser.isAvailable {
             do {
                 let extraction = try await OnDeviceLabelParser.parse(recognizedText: text)
                 if extraction.hasContent {
@@ -228,9 +229,9 @@ enum LabelScanError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noTextFound:
-            return "Auf den Fotos wurde kein Text erkannt. Bitte das Etikett näher und bei gutem Licht fotografieren."
+            return tr("Auf den Fotos wurde kein Text erkannt. Bitte das Etikett näher und bei gutem Licht fotografieren.")
         case .nothingRecognized:
-            return "Der Text konnte keinem Feld zugeordnet werden. Du kannst die Angaben manuell eintragen."
+            return tr("Der Text konnte keinem Feld zugeordnet werden. Du kannst die Angaben manuell eintragen.")
         }
     }
 }

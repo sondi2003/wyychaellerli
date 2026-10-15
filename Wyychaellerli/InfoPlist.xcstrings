@@ -1,0 +1,26 @@
+{
+  "sourceLanguage": "de",
+  "strings": {
+    "NSCameraUsageDescription": {
+      "localizations": {
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kamera se koristi za fotografisanje etiketa vina i automatsko očitavanje podataka."
+          }
+        }
+      }
+    },
+    "NSFaceIDUsageDescription": {
+      "localizations": {
+        "sr-Latn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Face ID otključava režim žurke kako gosti ne bi mogli sami da ga napuste."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

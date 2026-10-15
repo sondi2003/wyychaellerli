@@ -87,7 +87,7 @@ struct WineRackCard: View {
                         isPlacing = true
                     } label: {
                         Label(
-                            wine.unplacedCount == 1 ? "Flasche einräumen" : "\(wine.unplacedCount) Flaschen einräumen",
+                            "\(Int(wine.unplacedCount)) Flaschen einräumen",
                             systemImage: "plus.square.on.square"
                         )
                         .frame(maxWidth: .infinity)
@@ -121,15 +121,15 @@ struct WineRackCard: View {
     }
 
     private var status: String {
-        if wine.placedCount == 0 { return "noch nicht verortet" }
-        if wine.unplacedCount == 0 { return "alle verortet" }
-        return "\(wine.placedCount) von \(wine.quantity) verortet"
+        if wine.placedCount == 0 { return tr("noch nicht verortet") }
+        if wine.unplacedCount == 0 { return tr("alle verortet") }
+        return tr("\(wine.placedCount) von \(wine.quantity) verortet")
     }
 
     private func positionsLine(in rack: Rack) -> String {
         // Der Regalname steht schon in der Überschrift – hier genügt das Fach.
         let labels = ownSlots(in: rack).map(\.position.label)
-        if labels.count == 1 { return "Fach \(labels[0]). Tippen entnimmt die Flasche." }
-        return "Fächer \(labels.joined(separator: ", ")). Tippen entnimmt die Flasche."
+        if labels.count == 1 { return tr("Fach \(labels[0]). Tippen entnimmt die Flasche.") }
+        return tr("Fächer \(labels.joined(separator: ", ")). Tippen entnimmt die Flasche.")
     }
 }

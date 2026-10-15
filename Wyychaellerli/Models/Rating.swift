@@ -46,7 +46,7 @@ final class Rating: NSManagedObject, Identifiable {
 
     /// Name für die Anzeige; fällt auf etwas Neutrales zurück, wenn keiner gesetzt ist.
     var displayName: String {
-        raterName.isEmpty ? "Ohne Namen" : raterName
+        raterName.isEmpty ? tr("Ohne Namen") : raterName
     }
 
     /// Legt eine Bewertung an und hängt sie an den Wein.
@@ -104,6 +104,34 @@ enum RatingTag: String, CaseIterable, Identifiable {
     case corked = "Korkig"
 
     var id: String { rawValue }
+
+    /// Anzeigetext in der App-Sprache. Gespeichert wird weiter der deutsche `rawValue`,
+    /// damit Bewertungen auf allen Geräten dieselbe Kennung tragen, egal welche Sprache läuft.
+    var title: String {
+        switch self {
+        case .wantAgain:  return tr("Gerne wieder")
+        case .balanced:   return tr("Harmonisch")
+        case .fruity:     return tr("Fruchtig")
+        case .fresh:      return tr("Schön frisch")
+        case .easy:       return tr("Süffig")
+        case .velvety:    return tr("Samtig")
+        case .bold:       return tr("Kräftig")
+        case .longFinish: return tr("Langer Abgang")
+        case .tooSour:    return tr("Zu sauer")
+        case .tooTannic:  return tr("Zu herb")
+        case .tooSweet:   return tr("Zu süss")
+        case .weakAroma:  return tr("Wenig Aroma")
+        case .oddAroma:   return tr("Aroma passt nicht")
+        case .tooHeavy:   return tr("Zu schwer")
+        case .tooThin:    return tr("Zu dünn")
+        case .corked:     return tr("Korkig")
+        }
+    }
+
+    /// Übersetzt einen gespeicherten Rohwert; Unbekanntes bleibt, wie es ist.
+    static func title(forStored stored: String) -> String {
+        RatingTag(rawValue: stored)?.title ?? stored
+    }
 
     /// `true` bei einem Lob – für Gruppierung und Farbe.
     var isPositive: Bool {

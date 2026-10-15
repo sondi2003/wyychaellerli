@@ -109,9 +109,9 @@ struct RackGridView: View {
     }
 
     private func label(for position: Position, slot: Slot?) -> String {
-        if selected.contains(position) { return "Fach \(position.label), ausgewählt" }
-        guard let wine = slot?.wine else { return "Fach \(position.label), frei" }
-        return "Fach \(position.label), \(wine.name)"
+        if selected.contains(position) { return tr("Fach \(position.label), ausgewählt") }
+        guard let wine = slot?.wine else { return tr("Fach \(position.label), frei") }
+        return tr("Fach \(position.label), \(wine.name)")
     }
 }
 

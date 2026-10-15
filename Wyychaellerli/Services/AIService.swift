@@ -57,7 +57,7 @@ extension AIProviderClient {
     /// Etikett-Text zu Feldern zuordnen.
     func extractLabel(recognizedText: String, apiKey: String, model: String) async throws -> WineLabelExtraction {
         let text = try await structuredText(
-            system: PromptBuilder.labelSystemPrompt,
+            system: PromptBuilder.labelSystemPrompt(),
             user: PromptBuilder.labelUserPrompt(recognizedText: recognizedText),
             schemaName: "wine_label",
             schema: LabelSchema.jsonSchema(includeAdditionalProperties: supportsAdditionalProperties),
@@ -68,11 +68,11 @@ extension AIProviderClient {
         return try JSONDecoding.decode(WineLabelExtraction.self, fromModelText: text)
     }
 
-    /// Übersetzt einen kurzen Etikett-Text ins Deutsche. Wird nur aufgerufen, wenn die
-    /// Spracherkennung sicher ist, dass der Text nicht deutsch ist.
+    /// Übersetzt einen kurzen Etikett-Text in die gewählte App-Sprache. Wird nur aufgerufen,
+    /// wenn die Spracherkennung sicher ist, dass der Text noch nicht in dieser Sprache ist.
     func translateToGerman(_ text: String, apiKey: String, model: String) async throws -> String {
         let answer = try await structuredText(
-            system: PromptBuilder.translationSystemPrompt,
+            system: PromptBuilder.translationSystemPrompt(),
             user: PromptBuilder.translationUserPrompt(text: text),
             schemaName: "translation",
             schema: TranslationSchema.jsonSchema(includeAdditionalProperties: supportsAdditionalProperties),
@@ -94,7 +94,7 @@ enum TranslationSchema {
         var schema: [String: Any] = [
             "type": "object",
             "properties": [
-                "german": ["type": "string", "description": "Der Text auf Deutsch, ohne Zusätze."]
+                "german": ["type": "string", "description": "Der übersetzte Text in der verlangten Zielsprache, ohne Zusätze."]
             ],
             "required": ["german"]
         ]
@@ -156,7 +156,7 @@ final class AIService: Sendable {
             // Kein Netzwerkaufruf nötig – die KI könnte ohnehin nichts empfehlen.
             return PairingResponse(
                 recommendations: [],
-                generalNote: "Der Weinkeller ist leer. Lege zuerst Flaschen an, damit ich etwas empfehlen kann."
+                generalNote: tr("Der Weinkeller ist leer. Lege zuerst Flaschen an, damit ich etwas empfehlen kann.")
             )
         }
 

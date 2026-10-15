@@ -91,8 +91,8 @@ struct PartyWineCard: View {
 
     private var pages: [LabelPage] {
         var result: [LabelPage] = []
-        if let image = wine.labelImage { result.append(LabelPage(title: "Vorderseite", image: image)) }
-        if let image = wine.backLabelImage { result.append(LabelPage(title: "Rückseite", image: image)) }
+        if let image = wine.labelImage { result.append(LabelPage(title: tr("Vorderseite"), image: image)) }
+        if let image = wine.backLabelImage { result.append(LabelPage(title: tr("Rückseite"), image: image)) }
         return result
     }
 

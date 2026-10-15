@@ -9,14 +9,14 @@ SwiftUI-App „Wyychällerli“ (iOS 17+, Core Data mit CloudKit, MVVM) mit Mult
 ## Sprache und Stil
 
 - Kommunikation mit dem Nutzer auf **Deutsch** (Schweizer Schreibweise ist willkommen).
-- Code-Kommentare und UI-Texte auf Deutsch, Bezeichner (Typen, Variablen, Funktionen) auf Englisch.
+- Code-Kommentare und UI-Texte auf Deutsch (Quellsprache; Serbisch siehe „Sprachen“), Bezeichner (Typen, Variablen, Funktionen) auf Englisch.
 - Deutsche Anführungszeichen in UI-Texten: „…“.
 - **Schweizer Schreibweise, kein ß.** Gilt für UI-Texte, Kommentare, Prompts und diese Doku. Einzige Ausnahme: das Suchwort `"weiß"` in `HeuristicLabelParser.typeKeywords` – auf deutschen Etiketten steht es so gedruckt, und die Erkennung würde sonst Weissweine verpassen. Beide Schreibweisen stehen dort nebeneinander.
 - Keine Emojis in Code oder UI.
 
 ## Tests
 
-- **Target `WyychaellerliTests`**, Swift Testing (`@Test`, `#expect`), 50 Tests in sechs Bereichen: Party-Abstimmung, Landesflaggen, Speiseabgleich, Doppelerkennung, Regal, Wein. Laufen in unter einer Sekunde.
+- **Target `WyychaellerliTests`**, Swift Testing (`@Test`, `#expect`), 94 Tests in zehn Suiten: Party-Abstimmung, Landesflaggen, Speiseabgleich, Doppelerkennung, Regal, Wein, Alkohol, Jahrgang, Weitergabe, Sprache. Die Sprachtests lösen mit ausdrücklicher Locale auf (Pluralformen, Wortstellung) und fassen die gespeicherte App-Sprache nicht an; `TestStack.makeContext()` setzt sie auf Deutsch, weil der Simulator sie zwischen Läufen behält. Laufen in unter einer Sekunde.
 - Ausführen: `xcodebuild -project Wyychaellerli.xcodeproj -scheme Wyychaellerli -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test`. Das Scheme liegt geteilt unter `xcshareddata/xcschemes/` und gehört ins Repo.
 - **Core Data im Test**: `TestStack.makeContext()` gibt je Test einen frischen In-Memory-Stack ohne CloudKit (`PersistenceController(inMemory: true, useCloudKit: false)`). Nie einen geteilten Stack verwenden – sonst hängt ein Fehlschlag von der Reihenfolge ab.
 - **Tests halten Entscheidungen fest, nicht nur Code.** Die Schwellen der Doppelerkennung, „Riserva ist ein anderer Wein“, „der Bestand ändert sich beim Zusammenführen nie“, „ohne Stimme kein Sieger“ – wer eine Zahl verschiebt, sieht sofort, welcher Fall kippt.
@@ -67,6 +67,23 @@ Es gibt noch keine Unit-Tests. Logik ohne UI (Schema, Prompt, Decoding, Fehler-K
 - **Feste Farben brauchen eine Dunkelvariante.** Systemfarben (`Color(.systemGroupedBackground)`, `.secondary`, Materialien) passen sich selbst an, `Color(red:green:blue:)` nicht. Die Weintyp-Farben liefen deshalb im Dunkelmodus ins Leere, Bordeaux war praktisch unlesbar. `Color.adaptive(light:dark:)` in `Theme.swift` baut aus zwei Tönen eine mitlaufende Farbe; jede neue feste Farbe gehört dort hinein. Die Akzentfarbe hat ihre Dunkelvariante bereits im Asset-Katalog.
 - Schema-Änderungen brauchen Migrationsüberlegungen, da bestehende Installationen Daten haben. Neue Attribute immer mit Standardwert (CloudKit-Pflicht).
 - **Weintypen** (`WineType` in `Models/Wine.swift`): `red`, `white`, `sparkling`, `rose`, `mulled` (Glühwein und verwandte Winter-Heissgetränke). Der Rohwert steht als String am `Wine`, ein neuer Fall braucht deshalb keine Migration. Ein neuer Typ ist an fünf Stellen nachzuziehen: `displayName` und `symbolName` (Wine.swift), `color` (Theme.swift), `LabelSchema` (enum-Liste), `PromptBuilder.labelSystemPrompt`, `GeneratedWineLabel` (`@Guide`) und `HeuristicLabelParser.typeKeywords`. Bei den Stichwörtern zählt die **Reihenfolge**: Glühwein steht vor den Farbbegriffen, weil solche Etiketten fast immer zusätzlich „Rotwein“ oder „vin rouge“ nennen.
+
+## Sprachen (Deutsch und Serbisch)
+
+Seit 15.10.2026 gibt es die App auch auf Serbisch (lateinische Schrift, ekavisch). Gewählt wird in den Einstellungen ganz oben: System, Deutsch oder Srpski.
+
+- **Quelle ist Deutsch.** Der deutsche Text ist zugleich der Schlüssel. Die Übersetzung steht in `Wyychaellerli/Localizable.xcstrings` (Sprache `sr-Latn`), die Berechtigungstexte für Kamera und Face ID in `InfoPlist.xcstrings`. Der Katalog braucht `STRING_CATALOG_GENERATE_SYMBOLS = NO`, sonst scheitert der Build an Schlüsseln wie „%lld“ oder an „Leer“/„leer“.
+- **Auswahl**: `AppLanguage` (`Models/AppLanguage.swift`), gespeichert in `UserDefaults` unter `appLanguage` – Geräte-Einstellung wie das Erscheinungsbild. Angewendet über `.environment(\.locale, …)` an der Wurzel und `.id(language)` an den drei Tabs in `ContentView`; die Oberfläche wechselt sofort, der gewählte Tab bleibt.
+- **Zwei Wege für Texte.** Literale in `Text("…")`, `Label`, `Button`, `Section`, `navigationTitle` usw. übersetzt SwiftUI selbst. **Berechnete Strings** (Enum-Namen, Fehlermeldungen, Texte in `Fact(label:)` oder `FilterChip(title:)`) werden nicht übersetzt, auch wenn dasselbe Literal im Katalog steht – dort `tr("…")` verwenden. `tr` nimmt eine `LocalizedStringResource`, Interpolationen (`tr("\(n) Flaschen")`) landen als `%lld`/`%@` im Katalog. Gefunden wurde der Fehler nur durch Ausprobieren in der Serbisch-Fassung: Nach jeder neuen Ansicht einmal Serbisch durchklicken.
+- **Plural nie von Hand** (`n == 1 ? "Flasche" : "Flaschen"`). Serbisch kennt drei Formen (1, 2–4, 5+). Stattdessen ein Schlüssel mit `%lld` und Pluralvarianten im Katalog (de: one/other, sr-Latn: one/few/other). Steht die Zahl gross daneben und das Wort allein da, gibt `bottleWord(_:)` die Pluralform ohne Zahl. Zwei Zahlen in einem Satz („7 von 12 Stimmen“): Satz teilen, die Pluralzahl in den hinteren Teil.
+- **Wortstellung** bei mehreren Platzhaltern: im Katalog `%1$@`, `%2$@` verwenden.
+- **Neue Texte**: im Xcode-IDE trägt der Build neue Schlüssel selbst in den Katalog ein, dann `sr-Latn` ergänzen. Ein Build mit `xcodebuild` schreibt nichts zurück.
+- **Daten bleiben, wie sie erfasst wurden**: Notizen, Regalnamen, Land und Bewertungsgründe werden nicht nachträglich übersetzt. Die Bewertungsgründe (`RatingTag`) speichern weiter den deutschen `rawValue`, angezeigt wird `RatingTag.title`; ohne das wären Bewertungen zwischen Geräten mit verschiedener Sprache nicht vergleichbar.
+- **KI**: `PromptBuilder` und die JSON-Schemas lesen `AppLanguage.current`. Die Prompts selbst bleiben deutsch, nur die verlangte Antwortsprache wechselt. Das Modell auf dem Gerät (Apple Intelligence) antwortet nur Deutsch und wird bei Serbisch übersprungen. `LabelNotesTranslator` übersetzt in die App-Sprache; Apples Übersetzung kennt kein Serbisch, dort springt die Cloud ein. Kroatisch und Bosnisch gelten beim Prüfen als Zielsprache, weil die Spracherkennung sie nicht sicher trennt.
+- **Länder und Flaggen**: `CountryFlag` versteht auch serbische Ländernamen, sonst fehlt die Flagge.
+- **Datum** über `Date.appShortDate`, damit es der App-Sprache folgt und nicht der Region des Geräts. Zahlen (Alkohol) folgen weiter der Region.
+- **Siri**: Die Sätze in `WyychaellerliShortcuts` gibt es nur auf Deutsch und Englisch; Siri kennt kein Serbisch. Die Antworttexte des Intents folgen aber der App-Sprache.
+- **Im Simulator umstellen**: `defaults write` über `simctl spawn` greift nicht mehr, sobald die App den Wert selbst gesetzt hat. Den Picker in den Einstellungen benutzen.
 
 ## KI-Layer
 

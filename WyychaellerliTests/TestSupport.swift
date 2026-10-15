@@ -10,7 +10,11 @@ import Foundation
 enum TestStack {
 
     static func makeContext() -> NSManagedObjectContext {
-        PersistenceController(inMemory: true, useCloudKit: false).viewContext
+        // Die Tests prüfen deutsche Texte. Der Simulator behält die gewählte App-Sprache
+        // zwischen Läufen; ohne diese Zeile hinge ein Fehlschlag davon ab, was dort zuletzt
+        // eingestellt war.
+        UserDefaults.standard.set(AppLanguage.german.rawValue, forKey: AppLanguage.storageKey)
+        return PersistenceController(inMemory: true, useCloudKit: false).viewContext
     }
 
     /// Keller mit einer Flasche darin – die Ausgangslage der meisten Tests.

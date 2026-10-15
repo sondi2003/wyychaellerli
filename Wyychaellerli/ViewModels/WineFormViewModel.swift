@@ -13,8 +13,8 @@ final class WineFormViewModel {
 
         var title: String {
             switch self {
-            case .add:  return "Wein hinzufügen"
-            case .edit: return "Wein bearbeiten"
+            case .add:  return tr("Wein hinzufügen")
+            case .edit: return tr("Wein bearbeiten")
             }
         }
     }

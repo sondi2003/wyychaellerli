@@ -6,7 +6,8 @@ import OSLog
 import Translation
 #endif
 
-/// Sorgt dafür, dass die Notizen vom Etikett auf Deutsch in der App landen.
+/// Sorgt dafür, dass die Notizen vom Etikett in der gewählten App-Sprache landen
+/// (Deutsch oder Serbisch).
 ///
 /// Der Prompt verlangt Deutsch, aber die Modelle halten sich nicht zuverlässig daran –
 /// besonders das kleine Modell auf dem Gerät übernimmt den französischen oder italienischen
@@ -31,17 +32,18 @@ enum LabelNotesTranslator {
     /// als eine deutsche Notiz „übersetzen“ zu lassen.
     private static let minimumConfidence = 0.65
 
-    /// Liefert die Notiz auf Deutsch, oder unverändert, wenn sie es schon ist.
-    static func germanized(
+    /// Liefert die Notiz in der App-Sprache, oder unverändert, wenn sie es schon ist.
+    static func localized(
         _ notes: String,
         aiService: AIService,
-        cloud: CloudCredentials?
+        cloud: CloudCredentials?,
+        target: AppLanguage = .current
     ) async -> String {
         let trimmed = notes.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let language = foreignLanguage(in: trimmed) else { return notes }
-        logger.info("Notiz ist nicht deutsch (\(language.rawValue)) – wird übersetzt")
+        guard let language = foreignLanguage(in: trimmed, target: target) else { return notes }
+        logger.info("Notiz ist nicht in der App-Sprache (\(language.rawValue)) – wird übersetzt")
 
-        if let translated = await appleTranslation(of: trimmed, from: language) {
+        if let translated = await appleTranslation(of: trimmed, from: language, target: target) {
             logger.info("Notiz mit Apples Übersetzung auf dem Gerät übersetzt")
             return translated
         }
@@ -60,12 +62,17 @@ enum LabelNotesTranslator {
 
     // MARK: Spracherkennung
 
-    /// Die erkannte Sprache, falls es sicher **nicht** Deutsch ist. Sonst `nil`.
-    static func foreignLanguage(in text: String) -> NLLanguage? {
+    /// Die erkannte Sprache, falls es sicher **nicht** die Zielsprache ist. Sonst `nil`.
+    ///
+    /// Beim Serbischen zählen auch Kroatisch und Bosnisch als Zielsprache: Die Erkennung
+    /// trennt die drei nicht zuverlässig, und eine Übersetzung wäre dort nur Rauschen.
+    static func foreignLanguage(in text: String, target: AppLanguage = .german) -> NLLanguage? {
         guard text.count >= minimumLength else { return nil }
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(text)
-        guard let language = recognizer.dominantLanguage, language != .german else { return nil }
+        guard let language = recognizer.dominantLanguage else { return nil }
+        let targetCodes: Set<String> = target.isSerbian ? ["sr", "sr-Latn", "hr", "bs"] : ["de"]
+        guard !targetCodes.contains(language.rawValue) else { return nil }
         let confidence = recognizer.languageHypotheses(withMaximum: 3)[language] ?? 0
         guard confidence >= minimumConfidence else { return nil }
         return language
@@ -77,15 +84,15 @@ enum LabelNotesTranslator {
     ///
     /// Ein fehlendes Paket wird bewusst **nicht** nachgeladen: Das ginge nur über einen
     /// Systemdialog aus einer View heraus, und der gehört nicht mitten in einen Scan.
-    private static func appleTranslation(of text: String, from language: NLLanguage) async -> String? {
+    private static func appleTranslation(of text: String, from language: NLLanguage, target: AppLanguage) async -> String? {
         #if canImport(Translation)
         guard #available(iOS 26.0, *) else { return nil }
         let source = Locale.Language(identifier: language.rawValue)
-        let target = Locale.Language(identifier: "de")
-        guard await LanguageAvailability().status(from: source, to: target) == .installed else {
+        let targetLanguage = Locale.Language(identifier: target.resolvedIdentifier)
+        guard await LanguageAvailability().status(from: source, to: targetLanguage) == .installed else {
             return nil
         }
-        let session = TranslationSession(installedSource: source, target: target)
+        let session = TranslationSession(installedSource: source, target: targetLanguage)
         guard let response = try? await session.translate(text) else { return nil }
         let translated = response.targetText.trimmingCharacters(in: .whitespacesAndNewlines)
         return translated.isEmpty ? nil : translated

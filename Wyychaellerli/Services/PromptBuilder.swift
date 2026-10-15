@@ -7,7 +7,7 @@ enum PromptBuilder {
     // MARK: Wein-Empfehlung
 
     /// Rolle, Regeln und Ausgabeformat. Wird als `system` / `system_instruction` übergeben.
-    static func systemPrompt(maxRecommendations: Int) -> String {
+    static func systemPrompt(maxRecommendations: Int, language: AppLanguage = .current) -> String {
         """
         Du bist ein erfahrener Sommelier und berätst einen privaten Weinkeller.
 
@@ -47,7 +47,7 @@ enum PromptBuilder {
         7. `generalNote`: In ein bis drei Sätzen die Gesamtlogik. Fehlt der klassische Partner \
         im Keller, sag das offen.
         8. Fülle alle Felder mit echtem Inhalt – keine Platzhalter, keine leeren Texte.
-        9. Antworte auf Deutsch, in einem freundlichen, aber fachlich präzisen Ton.
+        9. Antworte auf \(language.promptName), in einem freundlichen, aber fachlich präzisen Ton.
 
         Nicht fantasieren:
         - Verwende über die Weine ausschliesslich die Angaben aus dem Inventar (Name, Produzent, \
@@ -113,7 +113,8 @@ enum PromptBuilder {
 
     /// Anweisungen für die Zuordnung von OCR-Text zu Feldern – identisch für
     /// Apple Intelligence (auf dem Gerät) und die Cloud-Anbieter.
-    static let labelSystemPrompt = """
+    static func labelSystemPrompt(language: AppLanguage = .current) -> String {
+        """
         Du liest Weinetiketten. Du bekommst den per Texterkennung ausgelesenen Text von \
         Vorder- und Rückseite einer Flasche – oft mit Erkennungsfehlern, Zeilenumbrüchen \
         an falschen Stellen und in Französisch, Italienisch, Spanisch, Deutsch oder Englisch.
@@ -129,7 +130,7 @@ enum PromptBuilder {
         - grape: Rebsorten kommagetrennt (z. B. "Grenache noir, Mourvèdre, Carignan"). \
         Nicht raten – nur, was auf dem Etikett steht oder aus der Appellation zwingend folgt.
         - region: Region oder Appellation (z. B. "Collioure", "Mosel", "Barolo").
-        - country: Herkunftsland auf Deutsch (z. B. "Frankreich", "Deutschland", "Italien"). \
+        - country: Herkunftsland auf \(language.promptName) (z. B. \(language.promptCountryExamples)). \
         Steht es nicht auf dem Etikett, leite es aus der Appellation ab, sofern diese eindeutig \
         ist – „Collioure“ ist Frankreich, „Mosel“ ist Deutschland. Sonst leer lassen.
         - type: red, white, sparkling, rose, mulled oder unknown. Hinweise: "rouge/red/rosso/tinto" = red, \
@@ -140,13 +141,13 @@ enum PromptBuilder {
         - alcoholPercent: Volumenprozent als Zahl, 0 wenn unbekannt.
         - notes: In ein bis zwei Sätzen, was für das Pairing wichtig ist: Terroir \
         (z. B. Schiefer), Vinifikation, Ausbau, Stil. Leer, wenn nichts dazu steht. \
-        **Zwingend auf Deutsch**, auch wenn das Etikett französisch, italienisch, spanisch \
+        **Zwingend auf \(language.promptName)**, auch wenn das Etikett französisch, italienisch, spanisch \
         oder englisch ist – übersetze den Inhalt, kopiere ihn nicht. Eigennamen \
         (Weingut, Lage, Rebsorte, Appellation) bleiben dabei unverändert.
         - foodPairings: Nur Speiseempfehlungen, die tatsächlich auf dem Etikett stehen \
         (z. B. „Accompagne les viandes grillées“, „Ottimo con carni rosse“, „Passt zu Wild“). \
-        Übersetze sie ins Deutsche und gib kurze Begriffe zurück, einen pro Eintrag, \
-        z. B. ["Gegrilltes Fleisch", "Hartkäse"]. Steht nichts dazu auf dem Etikett, gib ein \
+        Übersetze sie ins \(language.promptTarget) und gib kurze Begriffe zurück, einen pro Eintrag, \
+        z. B. \(language.promptFoodExamples). Steht nichts dazu auf dem Etikett, gib ein \
         leeres Array zurück – leite nichts aus Rebsorte oder Region ab.
         - foodPairingSource: Kopiere den Abschnitt, auf dem foodPairings beruht, wörtlich \
         aus dem erkannten Text – unübersetzt und unverändert. Gibt es keine Empfehlung auf \
@@ -161,24 +162,28 @@ enum PromptBuilder {
 
         Erfinde nichts. Unbekannte Felder bleiben leer bzw. 0.
         """
+    }
 
     // MARK: Übersetzung
 
-    static let translationSystemPrompt = """
-        Du übersetzt kurze Texte von Weinetiketten ins Deutsche.
+    static func translationSystemPrompt(language: AppLanguage = .current) -> String {
+        """
+        Du übersetzt kurze Texte von Weinetiketten ins \(language.promptTarget).
 
         Regeln:
         - Gib nur die Übersetzung zurück, keine Erklärung, keine Anführungszeichen.
         - Eigennamen bleiben unverändert: Weingut, Lage, Rebsorte, Appellation, Ortsnamen.
-        - Fachbegriffe deutsch, wo es einen gebräuchlichen gibt (schistes = Schiefer, \
-        élevage en fût = Ausbau im Fass).
+        - Fachbegriffe in der Zielsprache, wo es einen gebräuchlichen gibt (schistes = \
+        \(language.isSerbian ? "škriljac" : "Schiefer"), élevage en fût = \
+        \(language.isSerbian ? "odležavanje u buretu" : "Ausbau im Fass")).
         - Länge und Aufbau beibehalten, nichts ergänzen und nichts weglassen.
-        - Ist der Text bereits deutsch, gib ihn unverändert zurück.
+        - Ist der Text bereits in der Zielsprache, gib ihn unverändert zurück.
         """
+    }
 
-    static func translationUserPrompt(text: String) -> String {
+    static func translationUserPrompt(text: String, language: AppLanguage = .current) -> String {
         """
-        Übersetze ins Deutsche:
+        Übersetze ins \(language.promptTarget):
         ---
         \(text)
         ---

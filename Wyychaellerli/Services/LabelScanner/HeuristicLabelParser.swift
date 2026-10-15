@@ -132,23 +132,23 @@ enum HeuristicLabelParser {
 
     /// Suchbegriffe (kleingeschrieben) je Land. Rückenetiketten tragen fast immer
     /// eine Herkunftsangabe wie „Product of France“ oder „Prodotto in Italia“.
-    private static let countries: [(needles: [String], name: String)] = [
-        (["france", "frankreich", "français", "francia"], "Frankreich"),
-        (["italia", "italy", "italien", "italie"], "Italien"),
-        (["españa", "espana", "spain", "spanien", "espagne"], "Spanien"),
-        (["deutschland", "germany", "allemagne", "german"], "Deutschland"),
-        (["schweiz", "suisse", "switzerland", "svizzera"], "Schweiz"),
-        (["österreich", "osterreich", "austria"], "Österreich"),
-        (["portugal"], "Portugal"),
-        (["chile"], "Chile"),
-        (["argentina", "argentinien"], "Argentinien"),
-        (["south africa", "südafrika", "sudafrika"], "Südafrika"),
-        (["australia", "australien"], "Australien"),
-        (["new zealand", "neuseeland"], "Neuseeland"),
-        (["u.s.a", "usa", "california", "kalifornien"], "USA"),
-        (["griechenland", "greece", "hellas"], "Griechenland"),
-        (["ungarn", "hungary", "magyar"], "Ungarn")
-    ]
+    private static var countries: [(needles: [String], name: String)] { [
+        (["france", "frankreich", "français", "francia"], tr("Frankreich")),
+        (["italia", "italy", "italien", "italie"], tr("Italien")),
+        (["españa", "espana", "spain", "spanien", "espagne"], tr("Spanien")),
+        (["deutschland", "germany", "allemagne", "german"], tr("Deutschland")),
+        (["schweiz", "suisse", "switzerland", "svizzera"], tr("Schweiz")),
+        (["österreich", "osterreich", "austria"], tr("Österreich")),
+        (["portugal"], tr("Portugal")),
+        (["chile"], tr("Chile")),
+        (["argentina", "argentinien"], tr("Argentinien")),
+        (["south africa", "südafrika", "sudafrika"], tr("Südafrika")),
+        (["australia", "australien"], tr("Australien")),
+        (["new zealand", "neuseeland"], tr("Neuseeland")),
+        (["u.s.a", "usa", "california", "kalifornien"], tr("USA")),
+        (["griechenland", "greece", "hellas"], tr("Griechenland")),
+        (["ungarn", "hungary", "magyar"], tr("Ungarn"))
+    ] }
 
     private static func detectCountry(in text: String) -> String {
         for entry in countries where entry.needles.contains(where: text.contains) {
