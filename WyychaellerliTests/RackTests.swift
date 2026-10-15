@@ -75,6 +75,40 @@ struct RackTests {
         #expect(wine.placedCount == 1)
     }
 
+    @Test("Umräumen: freies Fach verschiebt, belegtes tauscht, Bestand bleibt")
+    func moveSlot() {
+        let context = TestStack.makeContext()
+        let rack = Rack.findOrCreate(in: context, cellar: Cellar.active(in: context))
+        rack.rows = 2
+        rack.columns = 3
+        let red = TestStack.makeWine(in: context, name: "Rot", quantity: 1)
+        let white = TestStack.makeWine(in: context, name: "Weiss", type: .white, quantity: 1)
+        let a1 = Position(row: 0, column: 0)
+        let a2 = Position(row: 0, column: 1)
+        let b3 = Position(row: 1, column: 2)
+        Slot.place(red, at: a1, in: rack, context: context)
+        Slot.place(white, at: a2, in: rack, context: context)
+
+        // Frei: die Flasche wandert, das alte Fach ist leer.
+        #expect(rack.moveSlot(from: a1, to: b3, context: context) == .moved)
+        #expect(rack.occupancy()[b3]?.wine == red)
+        #expect(rack.occupancy()[a1] == nil)
+
+        // Belegt: beide tauschen, keine fällt heraus.
+        #expect(rack.moveSlot(from: b3, to: a2, context: context) == .swapped)
+        #expect(rack.occupancy()[a2]?.wine == red)
+        #expect(rack.occupancy()[b3]?.wine == white)
+        #expect(rack.usedCount == 2)
+
+        // Nichts zu tun: dasselbe Fach, leerer Start, Ziel ausserhalb des Rasters.
+        #expect(rack.moveSlot(from: a2, to: a2, context: context) == .unchanged)
+        #expect(rack.moveSlot(from: a1, to: b3, context: context) == .unchanged)
+        #expect(rack.moveSlot(from: a2, to: Position(row: 5, column: 0), context: context) == .unchanged)
+
+        #expect(red.quantity == 1)
+        #expect(white.quantity == 1)
+    }
+
     @Test("Bis zu vier Regale, dann ist Schluss")
     func maximumRacks() {
         let context = TestStack.makeContext()

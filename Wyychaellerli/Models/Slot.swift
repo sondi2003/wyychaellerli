@@ -60,6 +60,43 @@ final class Slot: NSManagedObject, Identifiable {
     }
 }
 
+// MARK: - Umräumen
+
+extension Rack {
+
+    enum MoveResult: Equatable {
+        /// Die Flasche liegt jetzt im freien Zielfach.
+        case moved
+        /// Das Zielfach war belegt, beide Flaschen haben die Plätze getauscht.
+        case swapped
+        /// Nichts geändert: dasselbe Fach, ausserhalb des Rasters oder kein Fach am Start.
+        case unchanged
+    }
+
+    /// Verschiebt die Flasche aus `source` nach `target`, innerhalb dieses Regals.
+    ///
+    /// Ein belegtes Ziel **tauscht** die beiden Flaschen, statt eine zu verdrängen: Beim
+    /// Umräumen soll nie eine Flasche aus dem Regal fallen. Der Bestand am Wein ändert sich
+    /// nie, es wandern nur Positionen.
+    @discardableResult
+    func moveSlot(from source: Position, to target: Position, context: NSManagedObjectContext) -> MoveResult {
+        guard source != target,
+              target.row >= 0, target.row < rowCount,
+              target.column >= 0, target.column < columnCount,
+              let moving = occupancy()[source] else { return .unchanged }
+
+        let other = occupancy()[target]
+        moving.row = Int64(target.row)
+        moving.column = Int64(target.column)
+        if let other {
+            other.row = Int64(source.row)
+            other.column = Int64(source.column)
+        }
+        context.saveChanges()
+        return other == nil ? .moved : .swapped
+    }
+}
+
 // MARK: - Verortung am Wein
 
 extension Wine {

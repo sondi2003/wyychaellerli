@@ -2,7 +2,7 @@ import CoreData
 import SwiftUI
 import TipKit
 
-/// Das Regal: ansehen, einräumen, Fach räumen.
+/// Das Regal: ansehen, einräumen, umräumen (Ziehen), nachsehen, was wo liegt.
 ///
 /// Der Einstieg beim Einräumen ist bewusst das **Fach**, nicht der Wein. So läuft es
 /// auch in echt: Man steht vor dem Regal, hat eine Flasche in der Hand und sucht ein
@@ -23,7 +23,7 @@ struct RackView: View {
     @State private var isEditingRack = false
     /// Freies Fach, für das gerade ein Wein gewählt wird.
     @State private var fillingPosition: Position?
-    /// Belegtes Fach, das gerade angetippt wurde.
+    /// Belegtes Fach, dessen Wein gerade angezeigt wird.
     @State private var selectedSlot: Slot?
     /// Wein aus der Liste „Noch nicht im Regal“, dessen Flaschen gerade verortet werden.
     @State private var placingWine: Wine?
@@ -105,19 +105,9 @@ struct RackView: View {
             .sheet(item: $placingWine) { wine in
                 WineRackSheet(wine: wine, mode: .place)
             }
-            .confirmationDialog(
-                selectedSlot?.wine?.name ?? "",
-                isPresented: Binding(
-                    get: { selectedSlot != nil },
-                    set: { if !$0 { selectedSlot = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: selectedSlot
-            ) { slot in
-                Button("Fach räumen") { clear(slot) }
-                Button("Abbrechen", role: .cancel) { }
-            } message: { slot in
-                Text("Fach \(slot.displayLabel). „Fach räumen“ nimmt die Flasche nur aus dem Regal, der Bestand bleibt gleich.")
+            .sheet(item: $selectedSlot) { slot in
+                SlotInfoSheet(slot: slot) { clear(slot) }
+                    .presentationDetents([.height(250)])
             }
         }
     }
@@ -173,7 +163,9 @@ struct RackView: View {
                         tile: tileSize(for: rack),
                         // Benannt, weil ein namenloser Schluss-Block sonst auf
                         // `onDragOver` fällt – dann feuert schon das Wischen darüber.
-                        onTap: { position in tapped(position, in: rack) }
+                        onTap: { position in tapped(position, in: rack) },
+                        onMove: { source, target in move(from: source, to: target, in: rack) },
+                        dragScope: rack.uuid
                     )
                     .padding(.horizontal, 4)
                     .padding(.vertical, 8)
@@ -298,6 +290,11 @@ struct RackView: View {
         }
     }
 
+    /// Räumt um: freies Ziel = verschieben, belegtes Ziel = die beiden tauschen.
+    private func move(from source: Position, to target: Position, in rack: Rack) {
+        rack.moveSlot(from: source, to: target, context: context)
+    }
+
     private func createRack() {
         Rack.findOrCreate(in: context, cellar: Cellar.active(in: context))
     }
@@ -307,6 +304,66 @@ struct RackView: View {
         context.delete(slot)
         context.saveChanges()
         selectedSlot = nil
+    }
+}
+
+// MARK: - Kurzinfo zu einem belegten Fach
+
+/// Zeigt, welcher Wein im angetippten Fach liegt. Das Räumen ist bewusst nur ein
+/// kleiner Knopf unten – Antippen soll nachschlagen, nicht gleich etwas auslösen.
+private struct SlotInfoSheet: View {
+
+    @ObservedObject var slot: Slot
+    let onClear: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 16) {
+            if let wine = slot.wine {
+                HStack(spacing: 14) {
+                    LabelThumbnail(wine: wine, size: 52)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Fach \(slot.displayLabel)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        Text(wine.name)
+                            .font(.headline)
+                            .lineLimit(2)
+                        if !wine.producer.isEmpty {
+                            Text(wine.producer)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                        Text(wine.subtitle)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                    .layoutPriority(1)
+                    Spacer(minLength: 0)
+                }
+                Text("\(wine.placedCount) von \(wine.quantity) Flaschen liegen im Regal.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            Spacer(minLength: 0)
+            HStack {
+                Button("Fach räumen", role: .destructive) {
+                    onClear()
+                    dismiss()
+                }
+                .font(.footnote)
+                Spacer()
+                Button("Fertig") { dismiss() }
+                    .buttonStyle(.borderedProminent)
+            }
+            Text("„Fach räumen“ nimmt die Flasche nur aus dem Regal, der Bestand bleibt gleich. Zum Umräumen die Flasche im Regal auf ein anderes Fach ziehen.")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+        .padding()
     }
 }
 

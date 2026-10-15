@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Das Regal als Raster.
 ///
@@ -22,6 +23,11 @@ struct RackGridView: View {
     var onTap: ((Position) -> Void)?
     /// Wird beim Wischen über ein Fach gemeldet. Nur gesetzt, wenn Wischen erlaubt ist.
     var onDragOver: ((Position) -> Void)?
+    /// Umräumen per Ziehen: von Fach, nach Fach. Nur gesetzt, wo Umräumen erlaubt ist.
+    var onMove: ((Position, Position) -> Void)?
+    /// Kennung des Regals. Ein Zug gilt nur im Regal, in dem er begonnen hat – sonst
+    /// würde ein Fach „B3“ aus einem anderen Fenster oder Regal das hiesige „B3“ greifen.
+    var dragScope: UUID?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var pulse = false
@@ -65,6 +71,23 @@ struct RackGridView: View {
         let isSelected = selected.contains(position)
         let shape = RoundedRectangle(cornerRadius: 7, style: .continuous)
 
+        cellButton(at: position, slot: slot, isHighlighted: isHighlighted, isSelected: isSelected, shape: shape)
+            .modifier(MoveModifier(
+                position: position,
+                bottleColor: slot?.wine?.type.color,
+                tile: tile,
+                scope: dragScope,
+                onMove: onMove
+            ))
+    }
+
+    private func cellButton(
+        at position: Position,
+        slot: Slot?,
+        isHighlighted: Bool,
+        isSelected: Bool,
+        shape: RoundedRectangle
+    ) -> some View {
         Button {
             onTap?(position)
         } label: {
@@ -112,6 +135,62 @@ struct RackGridView: View {
         if selected.contains(position) { return "Fach \(position.label), ausgewählt" }
         guard let wine = slot?.wine else { return "Fach \(position.label), frei" }
         return "Fach \(position.label), \(wine.name)"
+    }
+}
+
+/// Was beim Ziehen eines Fachs mitgeht: wo die Flasche herkommt.
+///
+/// Als JSON, damit keine eigene Typkennung in `Info.plist` deklariert werden muss. Die
+/// Regalkennung steht dabei, damit ein fremder Zug nicht versehentlich greift.
+struct SlotDragItem: Codable, Transferable {
+    let row: Int
+    let column: Int
+    let scope: UUID?
+
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .json)
+    }
+
+    var position: Position { Position(row: row, column: column) }
+}
+
+/// Macht ein belegtes Fach ziehbar und jedes Fach zum Ziel – aber nur, wo `onMove` gesetzt ist.
+private struct MoveModifier: ViewModifier {
+    let position: Position
+    /// `nil` bei freiem Fach: Dort gibt es nichts zu ziehen, es ist nur Ziel.
+    let bottleColor: Color?
+    let tile: CGFloat
+    let scope: UUID?
+    let onMove: ((Position, Position) -> Void)?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let onMove {
+            if let bottleColor {
+                content
+                    .draggable(SlotDragItem(row: position.row, column: position.column, scope: scope)) {
+                        BottleIcon(color: bottleColor)
+                            .frame(width: tile * 0.34, height: tile * 0.72)
+                            .padding(8)
+                    }
+                    .dropDestination(for: SlotDragItem.self) { items, _ in
+                        drop(items, onMove: onMove)
+                    }
+            } else {
+                content
+                    .dropDestination(for: SlotDragItem.self) { items, _ in
+                        drop(items, onMove: onMove)
+                    }
+            }
+        } else {
+            content
+        }
+    }
+
+    private func drop(_ items: [SlotDragItem], onMove: (Position, Position) -> Void) -> Bool {
+        guard let item = items.first, item.scope == scope else { return false }
+        onMove(item.position, position)
+        return true
     }
 }
 
