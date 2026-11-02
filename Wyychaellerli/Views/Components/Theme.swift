@@ -267,7 +267,9 @@ struct PillChip: View {
 
 /// Kapsel-Knöpfe der Marke: gefüllt (Weinrot), Hauptaktion (Grün) oder umrandet.
 struct BrandButtonStyle: ButtonStyle {
-    enum Kind { case filled, action, outline }
+    /// `destructive` ist rot umrandet, nicht gefüllt: neben einem gefüllten Hauptknopf
+    /// soll der heikle Schritt nicht gleich laut sein.
+    enum Kind { case filled, action, outline, destructive }
 
     var kind: Kind = .filled
     /// Volle Breite und grössere Schrift für den einen Hauptknopf einer Seite.
@@ -287,6 +289,8 @@ struct BrandButtonStyle: ButtonStyle {
             .overlay {
                 if kind == .outline {
                     Capsule().strokeBorder(Color.primary.opacity(0.25), lineWidth: 1)
+                } else if kind == .destructive {
+                    Capsule().strokeBorder(Color.red.opacity(0.6), lineWidth: 1.5)
                 }
             }
             .contentShape(Capsule())
@@ -300,6 +304,7 @@ struct BrandButtonStyle: ButtonStyle {
         case .filled:  return Brand.onAccent
         case .action:  return .white
         case .outline: return .primary
+        case .destructive: return .red
         }
     }
 
@@ -307,7 +312,7 @@ struct BrandButtonStyle: ButtonStyle {
         switch kind {
         case .filled:  return Brand.accent
         case .action:  return Brand.action
-        case .outline: return .clear
+        case .outline, .destructive: return .clear
         }
     }
 }

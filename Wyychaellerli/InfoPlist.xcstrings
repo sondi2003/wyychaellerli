@@ -1,55 +1,69 @@
 {
-  "sourceLanguage": "de",
-  "strings": {
-    "CFBundleName": {
-      "comment": "Bundle name",
-      "extractionState": "extracted_with_value",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "new",
-            "value": "Wyychaellerli"
+  "sourceLanguage" : "de",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Wyychällerli"
           }
         }
       }
     },
-    "NSCameraUsageDescription": {
-      "comment": "Privacy - Camera Usage Description",
-      "extractionState": "extracted_with_value",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "new",
-            "value": "Die Kamera wird genutzt, um Weinetiketten zu fotografieren und die Angaben automatisch auszulesen."
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Wyychaellerli"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Die Kamera wird genutzt, um Weinetiketten zu fotografieren und die Angaben automatisch auszulesen."
           }
         },
-        "sr-Latn": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Kamera se koristi za fotografisanje etiketa vina i automatsko očitavanje podataka."
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kamera se koristi za fotografisanje etiketa vina i automatsko očitavanje podataka."
           }
         }
       }
     },
-    "NSFaceIDUsageDescription": {
-      "comment": "Privacy - Face ID Usage Description",
-      "extractionState": "extracted_with_value",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "new",
-            "value": "Face ID entsperrt den Party-Modus, damit Gäste ihn nicht selbst verlassen können."
+    "NSFaceIDUsageDescription" : {
+      "comment" : "Privacy - Face ID Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Face ID entsperrt den Party-Modus, damit Gäste ihn nicht selbst verlassen können."
           }
         },
-        "sr-Latn": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Face ID otključava režim žurke kako gosti ne bi mogli sami da ga napuste."
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Face ID otključava režim žurke kako gosti ne bi mogli sami da ga napuste."
           }
         }
       }
     },
-    "Wyychällerli-Wein": {}
+    "Wyychällerli-Wein" : {
+
+    }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

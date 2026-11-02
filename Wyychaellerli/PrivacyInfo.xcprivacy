@@ -8,12 +8,39 @@
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 
-	<!-- Die App selbst sammelt nichts. Was an einen KI-Anbieter geht (Gericht plus
-	     Inventar bzw. der erkannte Etikett-Text), geht über den Schlüssel des Nutzers
-	     an dessen eigenes Konto. Ob das in den Datenschutzangaben von App Store Connect
-	     zu deklarieren ist, entscheidet der Entwickler dort – nicht diese Datei. -->
+	<!-- Gesammelt wird nur, was ein Nutzer ausdrücklich für den gemeinsamen Katalog
+	     vorschlägt (Stammdaten des Weins und das Foto der Vorderseite). CloudKit hängt
+	     an jeden Vorschlag die Kennung des Erstellers – pseudonym, aber eine Kennung,
+	     deshalb „verknüpft“. Was an einen KI-Anbieter geht, läuft über den Schlüssel des
+	     Nutzers an dessen eigenes Konto und ist hier nicht erfasst; das entscheidet der
+	     Entwickler in App Store Connect. -->
 	<key>NSPrivacyCollectedDataTypes</key>
-	<array/>
+	<array>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeOtherUserContent</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePhotosorVideos</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+	</array>
 
 	<!-- Apple verlangt seit 2024 einen Grund für bestimmte Schnittstellen.
 	     Genutzt wird nur UserDefaults, und zwar ausschliesslich für eigene

@@ -6,6 +6,7 @@ struct WineFormView: View {
 
     @Environment(\.managedObjectContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(CatalogCenter.self) private var catalog
     @State private var viewModel: WineFormViewModel
     @State private var isShowingScanner: Bool
     @FocusState private var focusedField: Field?
@@ -70,6 +71,16 @@ struct WineFormView: View {
                         } icon: {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
+                        }
+                    }
+                    if viewModel.catalogMatch != nil {
+                        Label {
+                            Text("Im gemeinsamen Katalog gefunden – fehlende Angaben ergänzt.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        } icon: {
+                            Image(systemName: "books.vertical.fill")
+                                .foregroundStyle(Brand.accent)
                         }
                     }
                 }
@@ -236,7 +247,10 @@ struct WineFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Sichern") {
-                        viewModel.save(in: context)
+                        if let created = viewModel.save(in: context) {
+                            // Läuft weiter, auch wenn das Formular schon zu ist.
+                            Task { await catalog.submitIfNew(created) }
+                        }
                         dismiss()
                     }
                     .fontWeight(.semibold)
@@ -249,6 +263,7 @@ struct WineFormView: View {
                     // Direkt nach dem Scan prüfen – das ist der Moment, in dem man es
                     // wissen will, nicht erst beim Sichern.
                     viewModel.checkForDuplicates(in: context)
+                    Task { await consultCatalog() }
                 }
             }
             .onChange(of: viewModel.name) { _, _ in viewModel.checkForDuplicates(in: context) }
@@ -257,10 +272,24 @@ struct WineFormView: View {
             .onAppear {
                 if startsWithScan {
                     viewModel.checkForDuplicates(in: context)
+                    Task { await consultCatalog() }
                 } else if case .add = viewModel.mode, !isShowingScanner {
                     focusedField = .name
                 }
             }
+        }
+    }
+
+    /// Fragt nach dem Scan den gemeinsamen Katalog und füllt Lücken. Ohne Netz oder ohne
+    /// Treffer passiert einfach nichts.
+    private func consultCatalog() async {
+        guard case .add = viewModel.mode else { return }
+        if let entry = await catalog.lookup(
+            name: viewModel.name,
+            producer: viewModel.producer,
+            vintage: viewModel.vintage
+        ) {
+            viewModel.fillGaps(from: entry)
         }
     }
 
@@ -352,10 +381,12 @@ struct WineFormView: View {
     WineFormView(mode: .add)
         .environment(\.managedObjectContext, PreviewData.context)
         .environment(AISettings(defaults: PreviewData.defaults))
+        .environment(CatalogCenter())
 }
 
 #Preview("Bearbeiten") {
     WineFormView(mode: .edit(PreviewData.sampleWines[0]))
         .environment(\.managedObjectContext, PreviewData.context)
         .environment(AISettings(defaults: PreviewData.defaults))
+        .environment(CatalogCenter())
 }

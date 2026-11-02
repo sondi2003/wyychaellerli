@@ -27,6 +27,7 @@ struct WineDetailView: View {
                 WineRackCard(wine: wine)
                 RatingCard(wine: wine) { isRating = true }
                 factsCard
+                CatalogStatusCard(wine: wine)
                 if !wine.foodPairings.isEmpty {
                     pairingCard
                 }
@@ -386,4 +387,5 @@ struct WineDetailView: View {
         WineDetailView(wine: PreviewData.sampleWines[0])
     }
     .environment(\.managedObjectContext, PreviewData.context)
+    .environment(CatalogCenter())
 }

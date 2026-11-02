@@ -22,6 +22,9 @@ struct WyychaellerliApp: App {
     /// Modus auch einen Neustart übersteht.
     @State private var party = PartySession()
 
+    /// Der gemeinsame Katalog in der öffentlichen CloudKit-Datenbank.
+    @State private var catalog = CatalogCenter()
+
     /// Der KI-Service ist zustandslos und kann geteilt werden.
     private let aiService = AIService()
 
@@ -43,6 +46,7 @@ struct WyychaellerliApp: App {
                 .environment(rater)
                 .environment(localAI)
                 .environment(party)
+                .environment(catalog)
                 .environment(\.aiService, aiService)
                 .environment(\.managedObjectContext, persistence.viewContext)
                 .preferredColorScheme(appearance.colorScheme)
@@ -58,6 +62,7 @@ struct WyychaellerliApp: App {
                     AlcoholNoteMigration.run(in: persistence.viewContext)
                     await rater.refresh()
                     rater.adoptExistingRatings(in: persistence.viewContext)
+                    await catalog.refresh()
                 }
         }
     }

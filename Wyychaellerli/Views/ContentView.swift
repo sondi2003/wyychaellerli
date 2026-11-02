@@ -43,6 +43,10 @@ struct ContentView: View {
     /// Rückfall ohne Kamera: Formular mit Scan-Blatt wie aus dem Plus-Menü.
     @State private var isScanning = false
     @State private var isKeyboardVisible = false
+    /// Gemessene Höhe der Leiste ohne Home-Indikator.
+    @State private var tabBarHeight: CGFloat = 56
+    /// Höhe der Leiste plus 16 pt für den erhabenen Scan-Knopf; bei offener Tastatur null.
+    private var tabBarClearance: CGFloat { isKeyboardVisible ? 0 : tabBarHeight + 16 }
     /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
     @State private var incomingShare: WineShare?
 
@@ -50,16 +54,26 @@ struct ContentView: View {
         ZStack {
             // Eigene Leiste statt TabView-Leiste (siehe `BrandTabBar`). Alle Reiter bleiben
             // geladen, damit Navigation und Scrollstand beim Wechseln erhalten bleiben.
-            ZStack {
-                tab(.cellar) { CellarView() }
-                tab(.advisor) { AdvisorView(selectedTab: $selectedTab) }
-                tab(.rack) { RackView(isTab: true) }
-                tab(.settings) { SettingsView() }
-            }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
+            ZStack(alignment: .bottom) {
+                ZStack {
+                    tab(.cellar) { CellarView() }
+                    tab(.advisor) { AdvisorView(selectedTab: $selectedTab) }
+                    tab(.rack) { RackView(isTab: true) }
+                    tab(.settings) { SettingsView() }
+                }
+                // Die Leiste liegt über den Reitern; jede Liste bekommt ihre Höhe als
+                // Rand am Ende des Inhalts. `.safeAreaInset` und `.safeAreaPadding` an
+                // diesem Stapel kamen bei den Listen in den Navigationsstapeln nicht an:
+                // Auf dem iPhone SE (ohne Home-Indikator) blieb das Ende jeder Liste unter
+                // der Leiste. Die 16 pt sind der erhabene Scan-Knopf.
+                .contentMargins(.bottom, tabBarClearance, for: .scrollContent)
+                .contentMargins(.bottom, isKeyboardVisible ? 0 : tabBarHeight, for: .scrollIndicators)
+                .environment(\.tabBarClearance, tabBarClearance)
+
                 // Über der Tastatur stünde die Leiste nur im Weg.
                 if !isKeyboardVisible {
                     BrandTabBar(selection: $selectedTab) { startScan() }
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
                 }
             }
             // Mittelknopf: erst nur die Kamera, ohne Formular und Scan-Blatt darunter –
@@ -172,4 +186,5 @@ private struct CapturedPhoto: Identifiable {
     ContentView()
         .environment(\.managedObjectContext, PreviewData.context)
         .environment(AISettings(defaults: PreviewData.defaults))
+        .environment(CatalogCenter())
 }

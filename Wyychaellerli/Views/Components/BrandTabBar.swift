@@ -19,8 +19,18 @@ struct BrandTabBar: View {
         }
         .padding(.horizontal, 6)
         .padding(.top, 6)
-        .padding(.bottom, 2)
-        .background(Brand.burgundy)
+        // Ohne Home-Indikator (iPhone SE) gibt es unten keinen Sicherheitsabstand –
+        // die Beschriftung stiesse sonst an den Bildschirmrand.
+        .padding(.bottom, hasHomeIndicator ? 2 : 8)
+        // Das Weinrot reicht bis unter den Home-Indikator.
+        .background(Brand.burgundy.ignoresSafeArea(edges: .bottom))
+    }
+
+    private var hasHomeIndicator: Bool {
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first
+        return (window?.safeAreaInsets.bottom ?? 0) > 0
     }
 
     private func item(_ tab: AppTab, title: LocalizedStringKey, symbol: String) -> some View {
@@ -64,6 +74,22 @@ struct BrandTabBar: View {
         .padding(.bottom, -14)
         .frame(maxWidth: .infinity)
         .accessibilityLabel("Etikett scannen")
+    }
+}
+
+/// Wie viel Platz die Tableiste unten belegt, samt erhabenem Scan-Knopf.
+///
+/// Die Leiste liegt über den Reitern. Eine Ansicht mit eigener Knopfleiste unten
+/// (`.safeAreaInset(edge: .bottom)`) muss sie um diesen Wert anheben, sonst liegt die
+/// Knopfleiste hinter der Tableiste.
+private struct TabBarClearanceKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 0
+}
+
+extension EnvironmentValues {
+    var tabBarClearance: CGFloat {
+        get { self[TabBarClearanceKey.self] }
+        set { self[TabBarClearanceKey.self] = newValue }
     }
 }
 

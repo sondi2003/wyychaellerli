@@ -61,6 +61,8 @@ struct SettingsView: View {
 
                 CellarSharingSection()
 
+                CatalogSettingsSection()
+
                 Section {
                     localRow(.onDevice, hint: tr("Ab iPhone 15 Pro, Apple Intelligence eingeschaltet"))
                     localRow(.privateCloud, hint: tr("Ab iOS 27, ohne Key"))
@@ -304,4 +306,5 @@ struct ProviderSettingsView: View {
 #Preview {
     SettingsView()
         .environment(AISettings(defaults: PreviewData.defaults))
+        .environment(CatalogCenter())
 }

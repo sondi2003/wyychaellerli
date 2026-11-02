@@ -2,6 +2,7 @@ import CloudKit
 import OSLog
 import SwiftUI
 import UIKit
+import UserNotifications
 
 /// Nimmt Freigabe-Einladungen entgegen.
 ///
@@ -42,8 +43,26 @@ final class SceneDelegate: NSObject, UIWindowSceneDelegate {
     }
 }
 
-/// Verbindet den Szenen-Delegate mit der SwiftUI-App.
-final class AppDelegate: NSObject, UIApplicationDelegate {
+/// Verbindet den Szenen-Delegate mit der SwiftUI-App und zeigt Mitteilungen des
+/// Katalogs auch dann, wenn die App gerade offen ist.
+final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+        return true
+    }
+
+    /// Ohne das schluckt iOS eine Mitteilung, solange die App im Vordergrund ist – der
+    /// Entscheid über einen Vorschlag käme dann nie an, wenn man gerade in der App ist.
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .list, .sound]
+    }
 
     func application(
         _ application: UIApplication,

@@ -169,6 +169,25 @@ final class WineFormViewModel {
         lastScanSource = scan.source
     }
 
+    /// Der Katalogeintrag, aus dem nach dem Scan Lücken gefüllt wurden.
+    var catalogMatch: CatalogWine?
+
+    /// Ergänzt aus dem gemeinsamen Katalog, was der Scan nicht gefunden hat. Überschreibt
+    /// nie etwas: Das Etikett in der Hand gilt mehr als der Katalog.
+    func fillGaps(from entry: CatalogWine) {
+        catalogMatch = entry
+        if producer.isEmpty { producer = entry.producer }
+        if vintage == 0, Self.vintageRange.contains(entry.vintage) { vintage = entry.vintage }
+        if grape.isEmpty { grape = entry.grape }
+        if region.isEmpty { region = entry.region }
+        if country.isEmpty { country = entry.country }
+        if alcoholPercent == 0 { alcoholPercent = entry.alcoholPercent }
+        if typeNeedsReview, let wineType = entry.wineType {
+            type = wineType
+            typeNeedsReview = false
+        }
+    }
+
     /// Kommaliste in einzelne Begriffe zerlegen.
     private var pairingList: [String] {
         foodPairings
@@ -203,11 +222,14 @@ final class WineFormViewModel {
     }
 
     /// Schreibt das Formular in den Context (neu anlegen oder aktualisieren).
-    func save(in context: NSManagedObjectContext) {
+    /// Gibt den neu angelegten Wein zurück, beim Bearbeiten `nil`.
+    @discardableResult
+    func save(in context: NSManagedObjectContext) -> Wine? {
         let trimmed = { (value: String) in value.trimmingCharacters(in: .whitespacesAndNewlines) }
+        var created: Wine?
         switch mode {
         case .add:
-            Wine.create(
+            created = Wine.create(
                 in: context,
                 cellar: Cellar.active(in: context),
                 name: trimmedName,
@@ -246,5 +268,6 @@ final class WineFormViewModel {
             wine.drinkWindowFromLabel = drinkWindowFromLabel
         }
         context.saveChanges()
+        return created
     }
 }
