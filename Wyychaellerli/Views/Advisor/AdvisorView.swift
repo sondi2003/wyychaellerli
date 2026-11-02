@@ -8,6 +8,7 @@ struct AdvisorView: View {
 
     @Environment(AISettings.self) private var settings
     @Environment(\.aiService) private var aiService
+    @Environment(LocalAIStatus.self) private var localAI
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)])
     private var fetchedWines: FetchedResults<Wine>
     @State private var viewModel = PairingViewModel()
@@ -16,6 +17,13 @@ struct AdvisorView: View {
     @State private var consumer = BottleConsumer()
 
     private var wines: [Wine] { Array(fetchedWines) }
+
+    /// Wer als Erstes gefragt wird: lokal, sonst die externe KI – oder `nil`, wenn keiner da ist.
+    private var activeSourceName: String? {
+        let local = localAI.primary.map(PairingSource.local)
+        let external = settings.activeProvider.map { PairingSource.external($0, model: settings.model(for: $0)) }
+        return (settings.prefersExternal ? (external ?? local) : (local ?? external))?.displayName
+    }
 
     /// Nur was wirklich im Keller liegt, geht an die KI.
     private var availableWines: [Wine] {
@@ -26,6 +34,14 @@ struct AdvisorView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
+                    // Solange noch nichts gefragt ist, begrüsst die dunkle Kopfkarte.
+                    if showsIntro {
+                        BrandHero(
+                            title: "Sag mir, was du kochst.",
+                            subtitle: "Ich schlage dir bis zu drei passende Weine aus deinem eigenen Keller vor – mit Begründung und Serviertipp.",
+                            symbol: "fork.knife.circle.fill"
+                        )
+                    }
                     dishInputCard
                     requestButton
 
@@ -41,8 +57,6 @@ struct AdvisorView: View {
                         errorCard(error)
                     } else if let response = viewModel.response {
                         resultSection(response)
-                    } else if !viewModel.hasLabelMatches {
-                        introCard
                     }
                 }
                 .padding()
@@ -51,7 +65,7 @@ struct AdvisorView: View {
             .navigationTitle("Wein-Berater")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    ProviderStatusBadge(settings: settings) { selectedTab = .settings }
+                    ProviderStatusBadge(settings: settings, local: localAI) { selectedTab = .settings }
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -85,8 +99,17 @@ struct AdvisorView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding(12)
-            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color(.tertiarySystemFill).opacity(0.5), in: Capsule())
+            .overlay(
+                Capsule().strokeBorder(
+                    LinearGradient(colors: [Brand.rose, Brand.accent], startPoint: .leading, endPoint: .trailing),
+                    lineWidth: 1.5
+                )
+            )
+
+            guestsRow
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -95,14 +118,38 @@ struct AdvisorView: View {
                             viewModel.dish = suggestion
                             dishFieldFocused = false
                         }
-                        .font(.subheadline)
-                        .buttonStyle(.bordered)
-                        .buttonBorderShape(.capsule)
+                        .buttonStyle(.brandOutline)
                     }
                 }
             }
         }
         .cardStyle()
+    }
+
+    /// Personenzahl: optional, aber sie entscheidet, ob eine Flasche reicht.
+    private var guestsRow: some View {
+        HStack {
+            Label("Personen", systemImage: "person.2")
+                .font(.subheadline)
+            Spacer()
+            if let guests = viewModel.guests {
+                Stepper(value: Binding(get: { guests }, set: { viewModel.guests = $0 }), in: 1...40) {
+                    Text("\(guests)")
+                        .font(.body.monospacedDigit().weight(.semibold))
+                }
+                .fixedSize()
+                Button {
+                    viewModel.guests = nil
+                } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Entfernen")
+            } else {
+                Button("Angeben") { viewModel.guests = 2 }
+                    .font(.subheadline)
+            }
+        }
     }
 
     // MARK: Aktion
@@ -113,11 +160,8 @@ struct AdvisorView: View {
                 Task { await request() }
             } label: {
                 Label("Empfehlung holen", systemImage: "sparkles")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.brand(.filled, large: true))
             .disabled(!viewModel.canRequest(hasInventory: !availableWines.isEmpty))
 
             hintLine
@@ -127,23 +171,23 @@ struct AdvisorView: View {
     /// Eine Zeile unter dem Button: entweder was fehlt, oder was gleich passiert.
     @ViewBuilder
     private var hintLine: some View {
-        if let provider = settings.activeProvider, let model = settings.activeModel {
+        if let sourceName = activeSourceName {
             if availableWines.isEmpty {
                 Text("Im Keller liegt gerade keine Flasche mit Bestand.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
-                Text(verbatim: "\(provider.shortName) · \(model) · " + tr("\(availableWines.count) Weine mit Bestand"))
+                Text(verbatim: "\(sourceName) · " + tr("\(availableWines.count) Weine mit Bestand"))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         } else {
             VStack(spacing: 4) {
-                Text("Ohne API-Key wird nur geprüft, ob ein Etikett das Gericht ausdrücklich nennt.")
+                Text("Ohne KI wird nur geprüft, ob ein Etikett das Gericht ausdrücklich nennt. Apple Intelligence lässt sich in den Systemeinstellungen einschalten – oder du hinterlegst einen API-Key.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                Button("API-Key hinterlegen") { selectedTab = .settings }
+                Button("Einstellungen öffnen") { selectedTab = .settings }
                     .font(.footnote.weight(.semibold))
             }
         }
@@ -155,6 +199,7 @@ struct AdvisorView: View {
             wines: availableWines,
             settings: settings,
             service: aiService,
+            local: localAI,
             forceAI: forceAI
         )
     }
@@ -165,7 +210,7 @@ struct AdvisorView: View {
         VStack(spacing: 12) {
             ProgressView()
                 .controlSize(.large)
-            Text("\(settings.activeProvider?.shortName ?? "Die KI") schaut in deinen Keller …")
+            Text("\(activeSourceName ?? tr("Die KI")) schaut in deinen Keller …")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
@@ -173,21 +218,9 @@ struct AdvisorView: View {
         .cardStyle()
     }
 
-    private var introCard: some View {
-        VStack(spacing: 10) {
-            Image(systemName: "wineglass")
-                .font(.system(size: 40))
-                .foregroundStyle(Color.accentColor)
-            Text("Sag mir, was du kochst.")
-                .font(.headline)
-            Text("Ich schlage dir bis zu drei passende Weine aus deinem eigenen Keller vor – mit Begründung und Serviertipp.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .cardStyle()
+    /// Weder Ergebnis noch Fehler noch Laden – die Seite steht noch am Anfang.
+    private var showsIntro: Bool {
+        !viewModel.isLoading && viewModel.error == nil && viewModel.response == nil && !viewModel.hasLabelMatches
     }
 
     private func errorCard(_ error: AIServiceError) -> some View {
@@ -205,7 +238,7 @@ struct AdvisorView: View {
                     } label: {
                         Label("Einstellungen", systemImage: "gearshape")
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.brandOutline)
                 }
                 Spacer()
                 Button {
@@ -213,7 +246,7 @@ struct AdvisorView: View {
                 } label: {
                     Label("Erneut versuchen", systemImage: "arrow.clockwise")
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.brandFilled)
                 .disabled(!viewModel.canRequest(hasInventory: !availableWines.isEmpty))
             }
         }
@@ -228,13 +261,14 @@ struct AdvisorView: View {
                 Text("Empfehlung für „\(viewModel.resultDish)“")
                     .font(.headline)
                 Spacer()
-                if let provider = viewModel.resultProvider {
-                    Text(provider.shortName)
+                if let source = viewModel.resultSource {
+                    Label(source.displayName, systemImage: source.symbolName)
+                        .labelStyle(.titleAndIcon)
                         .font(.caption.weight(.semibold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(Color(.tertiarySystemFill), in: Capsule())
-                        .help(viewModel.resultModel)
+                        .help(source.detail)
                 }
             }
 
@@ -311,16 +345,14 @@ struct AdvisorView: View {
                 }
             }
 
-            if viewModel.response == nil, !viewModel.isLoading, settings.activeProvider != nil {
+            if viewModel.response == nil, !viewModel.isLoading, PairingEngine.hasAnySource(settings: settings, local: localAI) {
                 Button {
                     Task { await request(forceAI: true) }
                 } label: {
                     Label("Zusätzlich die KI fragen", systemImage: "sparkles")
-                        .font(.subheadline.weight(.semibold))
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.brandOutline)
             }
         }
     }
@@ -429,31 +461,34 @@ private struct LabelMatchCard: View {
 
 // MARK: - Statusanzeige in der Toolbar
 
-/// Zeigt, welcher Anbieter gerade aktiv ist – oder dass keiner eingerichtet ist.
-/// Tippen führt in die Einstellungen.
+/// Zeigt, wer gerade antwortet – Apple lokal, die externe KI oder keiner. Tippen führt in die Einstellungen.
 struct ProviderStatusBadge: View {
     let settings: AISettings
+    let local: LocalAIStatus
     let onTap: () -> Void
+
+    private var source: PairingSource? {
+        let localSource = local.primary.map(PairingSource.local)
+        let external = settings.activeProvider.map { PairingSource.external($0, model: settings.model(for: $0)) }
+        return settings.prefersExternal ? (external ?? localSource) : (localSource ?? external)
+    }
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 5) {
-                if let provider = settings.activeProvider {
-                    Image(systemName: provider.symbolName)
-                    Text(provider.shortName)
+                if let source {
+                    Image(systemName: source.symbolName)
+                    Text(source.displayName == local.primary?.displayName ? (local.primary?.shortName ?? source.displayName) : source.displayName)
                 } else {
                     Image(systemName: "exclamationmark.triangle.fill")
-                    Text("Kein Anbieter")
+                    Text("Keine KI")
                 }
             }
             .font(.subheadline.weight(.semibold))
             .padding(.horizontal, 4)
         }
-        .tint(settings.activeProvider == nil ? .orange : .accentColor)
-        .accessibilityLabel(
-            settings.activeProvider.map { "Aktiver Anbieter: \($0.displayName), Modell \(settings.model(for: $0))" }
-                ?? "Kein Anbieter eingerichtet"
-        )
+        .tint(source == nil ? .orange : .accentColor)
+        .accessibilityLabel(source.map { tr("Aktive Quelle: \($0.displayName)") } ?? tr("Keine KI eingerichtet"))
     }
 }
 

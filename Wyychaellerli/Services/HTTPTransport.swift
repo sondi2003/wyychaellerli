@@ -34,6 +34,9 @@ enum AIServiceError: LocalizedError, Sendable {
     case unusableResponse
     /// Netzwerkfehler (offline, Timeout, …).
     case network(String)
+    /// Das lokale Modell (auf dem Gerät oder Private Cloud) konnte nicht antworten und es gibt
+    /// keine externe KI als Rückfall.
+    case localFailed(String)
 
     var errorDescription: String? {
         switch self {
@@ -67,6 +70,9 @@ enum AIServiceError: LocalizedError, Sendable {
             return tr("Die KI hat zweimal keine brauchbare Empfehlung geliefert (Platzhalter oder unbekannte Weine). Bitte erneut versuchen oder das Gericht genauer beschreiben.")
         case .network(let detail):
             return tr("Netzwerkfehler: \(detail)")
+        case .localFailed:
+            // Die technische Meldung steht im Log (Kategorie „PairingEngine“), nicht auf dem Bildschirm.
+            return tr("Apple Intelligence konnte gerade nicht antworten. Versuch es nochmals, oder hinterlege in den Einstellungen einen API-Key als Rückfall.")
         }
     }
 
@@ -80,6 +86,7 @@ enum AIServiceError: LocalizedError, Sendable {
         case .providerUnavailable:                 return tr("Anbieter nicht erreichbar")
         case .unknownModel:                        return tr("Modell unbekannt")
         case .network:                             return tr("Keine Verbindung")
+        case .localFailed:                         return tr("Lokale KI nicht verfügbar")
         case .refused:                             return tr("Anfrage abgelehnt")
         case .truncated, .unusableResponse:        return tr("Unbrauchbare Antwort")
         default:                                   return tr("Fehler")
@@ -89,7 +96,7 @@ enum AIServiceError: LocalizedError, Sendable {
     /// Bei diesen Fehlern hilft ein Blick in die Einstellungen.
     var suggestsSettings: Bool {
         switch self {
-        case .noProviderConfigured, .missingAPIKey, .invalidAPIKey, .quotaExceeded, .unknownModel:
+        case .noProviderConfigured, .missingAPIKey, .invalidAPIKey, .quotaExceeded, .unknownModel, .localFailed:
             return true
         default:
             return false

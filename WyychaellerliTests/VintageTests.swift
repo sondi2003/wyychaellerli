@@ -108,7 +108,7 @@ struct VintageTests {
     @Test("Ein nicht erkannter Jahrgang überschreibt nichts")
     @MainActor
     func scanKeepsEmptyVintage() {
-        var model = WineFormViewModel(mode: .add)
+        let model = WineFormViewModel(mode: .add)
         model.vintage = 0
 
         var extraction = WineLabelExtraction()

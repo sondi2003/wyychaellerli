@@ -12,6 +12,9 @@ struct WyychaellerliApp: App {
     /// Einstellungen (Provider, Modelle, Keys) – einmal pro App-Lebenszyklus.
     @State private var settings = AISettings()
 
+    /// Welche lokalen KI-Modelle (auf dem Gerät, Private Cloud) gerade nutzbar sind.
+    @State private var localAI = LocalAIStatus()
+
     /// Wer an diesem Gerät bewertet (Kennung aus iCloud, Name aus den Einstellungen).
     @State private var rater = CurrentRater()
 
@@ -30,6 +33,7 @@ struct WyychaellerliApp: App {
 
     init() {
         QuickTips.configure()
+        Brand.applyAppearance()
     }
 
     var body: some Scene {
@@ -37,11 +41,16 @@ struct WyychaellerliApp: App {
             ContentView()
                 .environment(settings)
                 .environment(rater)
+                .environment(localAI)
                 .environment(party)
                 .environment(\.aiService, aiService)
                 .environment(\.managedObjectContext, persistence.viewContext)
                 .preferredColorScheme(appearance.colorScheme)
+                .tint(Brand.accent)
                 .environment(\.locale, language.locale)
+                .task(id: language) {
+                    await localAI.refresh()
+                }
                 .task {
                     // Einmalige Übernahme aus der früheren SwiftData-Ablage.
                     LegacyImporter.importIfNeeded(into: persistence.viewContext)

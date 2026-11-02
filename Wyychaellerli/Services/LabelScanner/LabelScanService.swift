@@ -30,7 +30,8 @@ struct LabelScanService: Sendable {
     func scan(
         front: ScanImage?, frontExtras: [ScanImage] = [],
         back: ScanImage?, backExtras: [ScanImage] = [],
-        cloud: CloudCredentials?
+        cloud: CloudCredentials?,
+        prefersExternal: Bool = false
     ) async throws -> LabelScanResult {
         var sections: [(title: String, lines: [RecognizedLine])] = []
         var labelImageData: Data?
@@ -61,7 +62,12 @@ struct LabelScanService: Sendable {
         guard !text.isEmpty else { throw LabelScanError.noTextFound }
         Self.logger.info("OCR: \(text.count) Zeichen erkannt")
 
-        var (extraction, source) = await structure(text: text, cloud: cloud)
+        var (extraction, source) = await structure(
+            text: text,
+            cloud: cloud,
+            labelImages: [labelImageData, backLabelImageData].compactMap { $0 },
+            prefersExternal: prefersExternal
+        )
         // Speiseempfehlungen nur übernehmen, wenn sie im Etikett-Text belegt sind.
         extraction = Self.verifyingFoodPairings(extraction, against: text)
         // Die Modelle übernehmen den Rückseitentext gern in der Originalsprache.
@@ -133,45 +139,88 @@ struct LabelScanService: Sendable {
     }
 
     /// Wählt die beste verfügbare Zuordnung und fällt bei Fehlern eine Stufe zurück.
-    private func structure(text: String, cloud: CloudCredentials?) async -> (WineLabelExtraction, LabelExtractionSource) {
+    ///
+    /// Reihenfolge: **zuerst lokal**, dann die externe KI, zuletzt die Regeln. Lokal heisst
+    /// Apple Intelligence auf dem Gerät und – ab iOS 27 – Apples Private Cloud; beide ohne
+    /// Key. Die externe KI kommt nur dran, wenn jemand einen Key hinterlegt hat, und bei
+    /// `prefersExternal` vor den lokalen Modellen.
+    private func structure(
+        text: String,
+        cloud: CloudCredentials?,
+        labelImages: [Data],
+        prefersExternal: Bool
+    ) async -> (WineLabelExtraction, LabelExtractionSource) {
         let heuristic = HeuristicLabelParser.parse(recognizedText: text)
+        // Zum Auffüllen einer KI-Antwort taugt der Jahrgang der Regeln nur, wenn er
+        // ausdrücklich dasteht – sonst setzt „Depuis 1952“ einen erfundenen Jahrgang ein.
+        var filler = heuristic
+        filler.vintage = HeuristicLabelParser.confidentVintage(recognizedText: text)
 
-        // 1. Apple Intelligence auf dem Gerät
+        if prefersExternal, let result = await structureExternally(text: text, cloud: cloud, filler: filler) {
+            return result
+        }
+        if let result = await structureLocally(text: text, labelImages: labelImages, filler: filler) {
+            return result
+        }
+        if !prefersExternal, let result = await structureExternally(text: text, cloud: cloud, filler: filler) {
+            return result
+        }
+        // Regeln ohne KI
+        return (heuristic, .heuristic)
+    }
+
+    private func structureLocally(
+        text: String,
+        labelImages: [Data],
+        filler: WineLabelExtraction
+    ) async -> (WineLabelExtraction, LabelExtractionSource)? {
         #if canImport(FoundationModels)
-        // Das Modell auf dem Gerät antwortet nur auf Deutsch; für Serbisch geht es gleich zur Cloud.
-        if #available(iOS 26.0, *), AppLanguage.current.isGerman, OnDeviceLabelParser.isAvailable {
+        guard #available(iOS 26.0, *) else { return nil }
+        let language = AppLanguage.current
+        for source in await LocalAI.usableSources(for: language) {
+            // Das kleine Modell auf dem Gerät hat wenig Platz: Bei sehr langem Text
+            // gleich zur Private Cloud, statt mit einem Fehler Zeit zu verlieren.
+            guard text.count <= source.comfortableInputCharacters else { continue }
             do {
-                let extraction = try await OnDeviceLabelParser.parse(recognizedText: text)
+                let extraction = try await LocalLabelParser.parse(
+                    recognizedText: text,
+                    source: source,
+                    language: language,
+                    labelImages: labelImages
+                )
                 if extraction.hasContent {
-                    return (merge(extraction, with: heuristic), .onDevice)
+                    return (Self.merge(extraction, with: filler), .local(source))
                 }
-                Self.logger.warning("Apple Intelligence lieferte keine Felder")
+                Self.logger.warning("\(source.displayName) lieferte keine Felder")
             } catch {
-                Self.logger.error("Apple Intelligence fehlgeschlagen: \(String(describing: error))")
+                Self.logger.error("\(source.displayName) fehlgeschlagen: \(String(describing: error))")
             }
         }
         #endif
+        return nil
+    }
 
-        // 2. Aktiver Cloud-Anbieter (nur Text, kein Foto)
-        if let cloud {
-            do {
-                let extraction = try await aiService.extractLabel(
-                    recognizedText: text,
-                    provider: cloud.provider,
-                    apiKey: cloud.apiKey,
-                    model: cloud.model
-                )
-                if extraction.hasContent {
-                    return (merge(extraction, with: heuristic), .cloud(cloud.provider))
-                }
-                Self.logger.warning("\(cloud.provider.shortName) lieferte keine Felder")
-            } catch {
-                Self.logger.error("\(cloud.provider.shortName) fehlgeschlagen: \(error.localizedDescription)")
+    private func structureExternally(
+        text: String,
+        cloud: CloudCredentials?,
+        filler: WineLabelExtraction
+    ) async -> (WineLabelExtraction, LabelExtractionSource)? {
+        guard let cloud else { return nil }
+        do {
+            let extraction = try await aiService.extractLabel(
+                recognizedText: text,
+                provider: cloud.provider,
+                apiKey: cloud.apiKey,
+                model: cloud.model
+            )
+            if extraction.hasContent {
+                return (Self.merge(extraction, with: filler), .cloud(cloud.provider))
             }
+            Self.logger.warning("\(cloud.provider.shortName) lieferte keine Felder")
+        } catch {
+            Self.logger.error("\(cloud.provider.shortName) fehlgeschlagen: \(error.localizedDescription)")
         }
-
-        // 3. Regeln ohne KI
-        return (heuristic, .heuristic)
+        return nil
     }
 
     /// Verwirft Speiseempfehlungen, für die es im erkannten Text keinen Beleg gibt.
@@ -208,7 +257,7 @@ struct LabelScanService: Sendable {
     }
 
     /// Füllt Lücken der KI-Zuordnung mit den regelbasierten Treffern (z. B. Jahrgang, Alkohol).
-    private func merge(_ primary: WineLabelExtraction, with fallback: WineLabelExtraction) -> WineLabelExtraction {
+    static func merge(_ primary: WineLabelExtraction, with fallback: WineLabelExtraction) -> WineLabelExtraction {
         var merged = primary
         if merged.vintage == 0 { merged.vintage = fallback.vintage }
         if merged.alcoholPercent == 0 { merged.alcoholPercent = fallback.alcoholPercent }

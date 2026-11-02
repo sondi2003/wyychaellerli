@@ -39,13 +39,13 @@ struct WineLabelExtraction: Codable, Sendable, Equatable {
 
 /// Womit die Zuordnung der Felder gemacht wurde – für die Anzeige in der UI.
 enum LabelExtractionSource: Sendable, Equatable {
-    case onDevice
+    case local(LocalAISource)
     case cloud(AIProvider)
     case heuristic
 
     var displayName: String {
         switch self {
-        case .onDevice:            return tr("Apple Intelligence (auf dem Gerät)")
+        case .local(let source):   return source.displayName
         case .cloud(let provider): return provider.shortName
         case .heuristic:           return tr("einfache Erkennung ohne KI")
         }

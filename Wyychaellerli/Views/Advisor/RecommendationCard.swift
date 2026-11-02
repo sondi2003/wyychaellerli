@@ -15,16 +15,12 @@ struct WineActionButtons: View {
             NavigationLink(value: wine) {
                 Label("Details", systemImage: "info.circle")
             }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.capsule)
-            .controlSize(.small)
+            .buttonStyle(.brandOutline)
 
             Button(action: onOpenBottle) {
                 Label("Trinken", systemImage: "wineglass")
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.small)
+            .buttonStyle(.brandAction)
             .disabled(wine.isOutOfStock)
             .accessibilityLabel("Eine Flasche \(wine.name) trinken")
         }

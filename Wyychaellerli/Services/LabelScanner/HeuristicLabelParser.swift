@@ -5,11 +5,36 @@ import Foundation
 /// und Appellationen zuverlässig; Name und Produzent sind eine Schätzung.
 enum HeuristicLabelParser {
 
-    static func parse(recognizedText text: String) -> WineLabelExtraction {
-        let lines = text
+    /// Zeilen ohne Abschnittstitel („[Vorderseite]“) und Leerzeilen.
+    private static func cleanedLines(from text: String) -> [String] {
+        text
             .components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty && !$0.hasPrefix("[") }   // Abschnittstitel ausblenden
+            .filter { !$0.isEmpty && !$0.hasPrefix("[") }
+    }
+
+    /// Nur ein Jahrgang, der **ausdrücklich** als solcher dasteht: hinter „Jahrgang“,
+    /// „Millésime“ & Co. oder allein in einer Zeile. Alles andere – „Depuis 1952“,
+    /// „Mis en bouteille 2021“, eine Jahreszahl mitten im Fliesstext – ist kein Beleg.
+    ///
+    /// Das ist der Massstab, wenn eine KI den Jahrgang bewusst leer gelassen hat und die
+    /// Regeln ihn nachträglich einsetzen wollen: Die KI hat dann meist Grund gehabt.
+    static func confidentVintage(recognizedText text: String) -> Int {
+        let lines = cleanedLines(from: text)
+        let yearPattern = #"\b(19[5-9]\d|20[0-4]\d)\b"#
+        for line in lines {
+            let lowered = line.lowercased()
+            guard vintageKeywords.contains(where: lowered.contains) else { continue }
+            if let year = firstMatch(yearPattern, in: line).flatMap(Int.init) { return year }
+        }
+        for line in lines {
+            if let year = firstMatch(#"^\s*(19[5-9]\d|20[0-4]\d)\s*$"#, in: line, group: 1).flatMap(Int.init) { return year }
+        }
+        return 0
+    }
+
+    static func parse(recognizedText text: String) -> WineLabelExtraction {
+        let lines = cleanedLines(from: text)
         let joined = lines.joined(separator: " ")
         let lowered = joined.lowercased()
 
@@ -57,9 +82,23 @@ enum HeuristicLabelParser {
         for line in lines {
             guard let year = firstMatch(yearPattern, in: line).flatMap(Int.init) else { continue }
             if looksLikePostalCode(String(year), in: line) { continue }
+            if isNotAVintageContext(line) { continue }
             return year
         }
         return 0
+    }
+
+    /// Zeilen, in denen eine Jahreszahl etwas anderes meint: Gründungsjahr oder Abfüllung.
+    private static let notVintageMarkers = [
+        "depuis", "since", "seit ", "fondé", "fonde ", "founded", "gegründet", "gegr.", "desde", "est.",
+        "mis en bouteille", "embouteill", "bottled", "abgefüllt", "abgefuellt", "imbottigliat", "embotellad"
+    ]
+
+    private static func isNotAVintageContext(_ line: String) -> Bool {
+        let lowered = line.lowercased()
+        // Steht „Jahrgang“ & Co. in der Zeile, gewinnt das – das wurde oben schon geprüft.
+        if vintageKeywords.contains(where: lowered.contains) { return false }
+        return notVintageMarkers.contains(where: lowered.contains)
     }
 
     private static let vintageKeywords = ["jahrgang", "millésime", "millesime", "vintage", "annata", "cosecha", "vendemmia"]

@@ -33,15 +33,7 @@ struct SplashView: View {
 
     private var background: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.62, green: 0.16, blue: 0.29),
-                    Color(red: 0.42, green: 0.09, blue: 0.19),
-                    Color(red: 0.20, green: 0.04, blue: 0.10)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            Brand.gradient
 
             // Sanftes Licht, das langsam atmet
             RadialGradient(

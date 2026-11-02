@@ -1,6 +1,59 @@
 import SwiftUI
 import UIKit
 
+// MARK: - Markenfarben
+
+/// Das Erscheinungsbild der App: tiefes Weinrot, Rosé als Rahmen- und Akzentton,
+/// Grün nur für die Hauptaktion. Angelehnt an Vivino, aber nicht deckungsgleich.
+/// Jede feste Farbe steht hier und hat eine Dunkelvariante (siehe `Color.adaptive`).
+enum Brand {
+    /// Akzent der ganzen App (Knöpfe, gewählte Reiter, Chips). Wird an der Wurzel als `tint` gesetzt,
+    /// weil der Katalogeintrag `AccentColor` im Simulator nicht griff und die App blau blieb.
+    static let accent = Color.adaptive(light: (0.60, 0.09, 0.20), dark: (0.94, 0.47, 0.52))
+    /// Starke Flächen.
+    static let burgundy = Color.adaptive(light: (0.45, 0.07, 0.14), dark: (0.30, 0.05, 0.10))
+    /// Dunkelster Ton des Verlaufs.
+    static let deep = Color(red: 0.17, green: 0.02, blue: 0.05)
+    /// Rosé für Rahmen, Hervorhebungen und gewählte Symbole.
+    static let rose = Color(red: 0.94, green: 0.47, blue: 0.52)
+    /// Text auf Akzentflächen: weiss auf Weinrot, im Dunkelmodus dunkel auf Rosé
+    /// (weiss auf Rosé wäre zu schwach).
+    static let onAccent = Color.adaptive(light: (1, 1, 1), dark: (0.17, 0.02, 0.05))
+    /// Zarter Grund hinter Etiketten, wie der helle Bühnenhintergrund der Vorlage.
+    static let blush = Color.adaptive(light: (0.98, 0.94, 0.95), dark: (0.19, 0.10, 0.12))
+    /// Hauptaktion (Trinken, Übernehmen).
+    static let action = Color.adaptive(light: (0.00, 0.50, 0.36), dark: (0.15, 0.68, 0.50))
+
+    /// Verlauf wie auf den Startseiten: oben fast schwarz-rot, unten Rosé.
+    static let gradient = LinearGradient(
+        colors: [deep, Color(red: 0.33, green: 0.04, blue: 0.10), Color(red: 0.62, green: 0.16, blue: 0.27), rose],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    /// Für Flächen mit weisser Schrift: bleibt durchgehend dunkel genug.
+    static let heroGradient = LinearGradient(
+        colors: [deep, Color(red: 0.36, green: 0.05, blue: 0.12), Color(red: 0.58, green: 0.13, blue: 0.24)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    /// Navigationsleisten einmal beim Start einrichten.
+    @MainActor
+    static func applyAppearance() {
+        // Die Tableiste bleibt dem System überlassen: Seit iOS 26 schwebt sie als Glas und
+        // ignoriert eigene Hintergründe; der gewählte Reiter nimmt die Akzentfarbe an.
+
+        // Titel in der Schrift der Marke: fett, ohne Serifen.
+        let nav = UINavigationBarAppearance()
+        nav.configureWithDefaultBackground()
+        nav.largeTitleTextAttributes = [.font: UIFont.systemFont(ofSize: 34, weight: .heavy)]
+        nav.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 17, weight: .bold)]
+        UINavigationBar.appearance().standardAppearance = nav
+        UINavigationBar.appearance().scrollEdgeAppearance = nav
+    }
+}
+
 // MARK: - Farben pro Weintyp
 
 extension WineType {
@@ -163,10 +216,139 @@ struct CardBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(16)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: Brand.deep.opacity(0.08), radius: 8, y: 2)
     }
 }
 
 extension View {
     func cardStyle() -> some View { modifier(CardBackground()) }
+}
+
+// MARK: - Bausteine im Markenstil
+
+/// Filter-Kapsel: gewählt schwarz gefüllt (im Dunkelmodus weiss), sonst nur umrandet.
+struct PillChip: View {
+    let title: String
+    var symbol: String? = nil
+    /// Farbe des Symbols im nicht gewählten Zustand, z. B. die Weinart.
+    var symbolColor: Color? = nil
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                if let symbol {
+                    Image(systemName: symbol)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(isSelected ? Color(.systemBackground) : (symbolColor ?? .primary))
+                }
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .foregroundStyle(isSelected ? Color(.systemBackground) : Color.primary)
+            .background {
+                if isSelected {
+                    Capsule().fill(Color.primary)
+                } else {
+                    Capsule().strokeBorder(Color.primary.opacity(0.2), lineWidth: 1)
+                }
+            }
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .animation(.snappy, value: isSelected)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+/// Kapsel-Knöpfe der Marke: gefüllt (Weinrot), Hauptaktion (Grün) oder umrandet.
+struct BrandButtonStyle: ButtonStyle {
+    enum Kind { case filled, action, outline }
+
+    var kind: Kind = .filled
+    /// Volle Breite und grössere Schrift für den einen Hauptknopf einer Seite.
+    var isLarge = false
+
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(isLarge ? .headline : .subheadline.weight(.semibold))
+            .lineLimit(1)
+            .padding(.horizontal, isLarge ? 20 : 14)
+            .padding(.vertical, isLarge ? 14 : 8)
+            .frame(maxWidth: isLarge ? .infinity : nil)
+            .foregroundStyle(foreground)
+            .background(background, in: Capsule())
+            .overlay {
+                if kind == .outline {
+                    Capsule().strokeBorder(Color.primary.opacity(0.25), lineWidth: 1)
+                }
+            }
+            .contentShape(Capsule())
+            .opacity(isEnabled ? (configuration.isPressed ? 0.75 : 1) : 0.4)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.snappy(duration: 0.15), value: configuration.isPressed)
+    }
+
+    private var foreground: Color {
+        switch kind {
+        case .filled:  return Brand.onAccent
+        case .action:  return .white
+        case .outline: return .primary
+        }
+    }
+
+    private var background: Color {
+        switch kind {
+        case .filled:  return Brand.accent
+        case .action:  return Brand.action
+        case .outline: return .clear
+        }
+    }
+}
+
+extension ButtonStyle where Self == BrandButtonStyle {
+    static var brandFilled: BrandButtonStyle { BrandButtonStyle(kind: .filled) }
+    static var brandAction: BrandButtonStyle { BrandButtonStyle(kind: .action) }
+    static var brandOutline: BrandButtonStyle { BrandButtonStyle(kind: .outline) }
+    static func brand(_ kind: BrandButtonStyle.Kind, large: Bool = false) -> BrandButtonStyle {
+        BrandButtonStyle(kind: kind, isLarge: large)
+    }
+}
+
+/// Dunkle Kopfkarte mit Verlauf und Rosé-Rand – der Auftritt der Vorlage im Kleinen.
+struct BrandHero: View {
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
+    var symbol: String = "wineglass"
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .font(.title2.weight(.heavy))
+                    .foregroundStyle(.white)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            Image(systemName: symbol)
+                .font(.system(size: 44, weight: .regular))
+                .foregroundStyle(.white.opacity(0.9), Brand.rose)
+                .accessibilityHidden(true)
+        }
+        .padding(20)
+        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .strokeBorder(Brand.rose.opacity(0.7), lineWidth: 1.5)
+        )
+    }
 }

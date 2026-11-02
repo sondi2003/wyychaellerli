@@ -1,10 +1,12 @@
 import CoreData
 import SwiftUI
+import UIKit
 
-/// Die drei Tabs der App.
+/// Die Reiter der App. Der Scan in der Mitte ist kein Reiter, sondern öffnet ein Blatt.
 enum AppTab: Hashable {
     case cellar
     case advisor
+    case rack
     case settings
 }
 
@@ -32,26 +34,36 @@ struct ContentView: View {
     @State private var isShowingSplash = true
     @AppStorage(WalkthroughView.seenKey) private var hasSeenWalkthrough = false
     @State private var isShowingWalkthrough = false
+    /// Der Scan-Knopf in der Mitte der Leiste.
+    @State private var isScanning = false
+    @State private var isKeyboardVisible = false
     /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
     @State private var incomingShare: WineShare?
 
     var body: some View {
         ZStack {
-            TabView(selection: $selectedTab) {
-                CellarView()
-                    .id(language)
-                    .tabItem { Label("Wyychällerli", systemImage: "cabinet") }
-                    .tag(AppTab.cellar)
-
-                AdvisorView(selectedTab: $selectedTab)
-                    .id(language)
-                    .tabItem { Label("Wein-Berater", systemImage: "sparkles") }
-                    .tag(AppTab.advisor)
-
-                SettingsView()
-                    .id(language)
-                    .tabItem { Label("Einstellungen", systemImage: "gearshape") }
-                    .tag(AppTab.settings)
+            // Eigene Leiste statt TabView-Leiste (siehe `BrandTabBar`). Alle Reiter bleiben
+            // geladen, damit Navigation und Scrollstand beim Wechseln erhalten bleiben.
+            ZStack {
+                tab(.cellar) { CellarView() }
+                tab(.advisor) { AdvisorView(selectedTab: $selectedTab) }
+                tab(.rack) { RackView(isTab: true) }
+                tab(.settings) { SettingsView() }
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                // Über der Tastatur stünde die Leiste nur im Weg.
+                if !isKeyboardVisible {
+                    BrandTabBar(selection: $selectedTab) { isScanning = true }
+                }
+            }
+            .sheet(isPresented: $isScanning) {
+                WineFormView(mode: .add, startWithScanner: true)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+                isKeyboardVisible = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                isKeyboardVisible = false
             }
 
             if isShowingSplash {
@@ -93,6 +105,17 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $isShowingWalkthrough) {
             WalkthroughView()
         }
+    }
+
+    /// Ein Reiter, nur sichtbar und bedienbar, wenn er gewählt ist.
+    /// Ein Sprachwechsel baut ihn neu auf, damit auch berechnete Texte nachziehen.
+    private func tab(_ tab: AppTab, @ViewBuilder content: () -> some View) -> some View {
+        let isSelected = selectedTab == tab
+        return content()
+            .id(language)
+            .opacity(isSelected ? 1 : 0)
+            .allowsHitTesting(isSelected)
+            .accessibilityHidden(!isSelected)
     }
 }
 

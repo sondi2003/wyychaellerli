@@ -364,7 +364,11 @@ final class PersistenceController: @unchecked Sendable {
     /// Tests eigene Stacks anlegen –, meldet Core Data „Failed to find a unique match
     /// for an NSEntityDescription“ und rät beim Zuordnen. Ein gemeinsames Modell
     /// schliesst das aus.
-    static let model = makeModel()
+    ///
+    /// `nonisolated(unsafe)`, weil `NSManagedObjectModel` nicht `Sendable` ist. Ungefährlich:
+    /// Das Modell wird einmal gebaut und danach nur noch gelesen – Core Data verbietet
+    /// Änderungen, sobald ein Koordinator es benutzt.
+    nonisolated(unsafe) static let model = makeModel()
 
     private static func makeModel() -> NSManagedObjectModel {
         let model = NSManagedObjectModel()

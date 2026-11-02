@@ -91,7 +91,8 @@ final class LabelScanViewModel {
             let scanResult = try await service.scan(
                 front: frontScan, frontExtras: frontExtraScans,
                 back: backScan, backExtras: backExtraScans,
-                cloud: cloud
+                cloud: cloud,
+                prefersExternal: settings.prefersExternal
             )
             result = scanResult
             recognizedText = scanResult.recognizedText

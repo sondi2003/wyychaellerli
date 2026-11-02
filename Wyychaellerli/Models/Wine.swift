@@ -28,6 +28,18 @@ enum WineType: String, Codable, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Der Name für Anfragen an die KI und die Vorauswahl der Flaschen: immer deutsch,
+    /// egal welche Sprache die App zeigt. So bleibt die Anfrage in einer Sprache.
+    var promptName: String {
+        switch self {
+        case .red:       return "Rotwein"
+        case .white:     return "Weisswein"
+        case .sparkling: return "Schaumwein"
+        case .rose:      return "Rosé"
+        case .mulled:    return "Glühwein"
+        }
+    }
+
     /// SF Symbol für Listen und Picker.
     var symbolName: String {
         switch self {
@@ -255,6 +267,21 @@ final class Wine: NSManagedObject, Identifiable {
         return "\(value) von 5 (\(count) \(count == 1 ? "Bewertung" : "Bewertungen"))"
     }
 
+    /// Die angekreuzten Gründe aller Bewertungen, gezählt: „Zu herb (2×), Gerne wieder (1×)“.
+    /// Leer ohne Gründe. Geht an den Sommelier – er lernt daraus, was dem Haushalt schmeckt,
+    /// und nicht nur, wie viele Sterne es gab. Bewusst mit dem deutschen Rohwert, nicht mit
+    /// der Anzeigesprache: Die Anfrage an die KI bleibt in einer Sprache.
+    var ratingReasonsText: String {
+        var counts: [String: Int] = [:]
+        for rating in ratingList {
+            for tag in rating.tags { counts[tag, default: 0] += 1 }
+        }
+        return counts
+            .sorted { ($0.value, $1.key) > ($1.value, $0.key) }
+            .map { "\($0.key) (\($0.value)×)" }
+            .joined(separator: ", ")
+    }
+
     // MARK: Trinkreife
 
     /// Spanne der empfohlenen Trinkjahre, sofern bekannt.
@@ -480,11 +507,13 @@ final class Wine: NSManagedObject, Identifiable {
             vintage: Int(vintage),
             grape: grape,
             region: [region, country].filter { !$0.isEmpty }.joined(separator: ", "),
-            type: type.displayName,
-            notes: String(notes.prefix(300)),
+            type: type.promptName,
+            alcohol: hasAlcohol ? "\(alcoholPercent.formatted(.number.precision(.fractionLength(0...1)).locale(Locale(identifier: "de")))) % vol" : "",
+            notes: String(notes.prefix(500)),
             labelPairings: foodPairings,
             drinkWindow: drinkWindowText,
             rating: ratingText,
+            ratingReasons: ratingReasonsText,
             quantity: Int(quantity)
         )
     }
@@ -501,6 +530,9 @@ struct WineInventoryItem: Codable, Hashable, Sendable {
     let region: String
     /// Anzeigename des Typs ("Rotwein" usw.), damit der Prompt ohne Mapping lesbar bleibt.
     let type: String
+    /// Alkoholgehalt, z. B. "13,5 % vol"; leer, wenn nicht bekannt. Entscheidet mit über die
+    /// Passung zu scharfem, fettem oder leichtem Essen.
+    let alcohol: String
     /// Terroir, Vinifikation, eigene Notizen – hilft der KI beim Pairing.
     let notes: String
     /// Speiseempfehlungen laut Etikett.
@@ -511,5 +543,8 @@ struct WineInventoryItem: Codable, Hashable, Sendable {
     /// Gemeinsames Urteil der Haushaltsmitglieder, z. B. "4,0 von 5 (2 Bewertungen)".
     /// Leer, solange niemand bewertet hat.
     let rating: String
+    /// Was dem Haushalt an dieser Flasche gefallen oder gestört hat, gezählt.
+    /// Leer, solange niemand Gründe angekreuzt hat.
+    let ratingReasons: String
     let quantity: Int
 }

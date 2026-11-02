@@ -8,6 +8,7 @@ struct SettingsView: View {
 
     @Environment(AISettings.self) private var settings
     @Environment(CurrentRater.self) private var rater
+    @Environment(LocalAIStatus.self) private var localAI
     @AppStorage(AppearanceSetting.storageKey) private var appearance: AppearanceSetting = .system
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
     @State private var isShowingWalkthrough = false
@@ -61,6 +62,22 @@ struct SettingsView: View {
                 CellarSharingSection()
 
                 Section {
+                    localRow(.onDevice, hint: tr("Ab iPhone 15 Pro, Apple Intelligence eingeschaltet"))
+                    localRow(.privateCloud, hint: tr("Ab iOS 27, ohne Key"))
+                    if settings.activeProvider != nil {
+                        Toggle("Externe KI zuerst fragen", isOn: $settings.prefersExternal)
+                    }
+                } header: {
+                    Text("Lokale KI")
+                } footer: {
+                    if localAI.sources.isEmpty {
+                        Text("Keines der lokalen Modelle ist gerade nutzbar – das Gerät unterstützt Apple Intelligence nicht, es ist ausgeschaltet, oder das Modell versteht die gewählte Sprache nicht. Ein API-Key unten ersetzt es.")
+                    } else {
+                        Text("Der Wein-Berater und das Auslesen der Etiketten versuchen zuerst Apple. Die externe KI unten ist freiwillig und kommt nur zum Zug, wenn das nicht klappt.")
+                    }
+                }
+
+                Section {
                     ForEach(AIProvider.allCases) { provider in
                         NavigationLink {
                             ProviderSettingsView(provider: provider)
@@ -84,7 +101,7 @@ struct SettingsView: View {
                     if settings.hasMultipleProviders {
                         Text("Du hast mehrere Keys hinterlegt. Der bevorzugte wird für Empfehlungen verwendet. API-Keys liegen ausschliesslich in der Keychain dieses Geräts.")
                     } else if settings.activeProvider == nil {
-                        Text("Der Wein-Berater braucht einen API-Key. Trage ihn bei einem Anbieter ein – er wird dann automatisch verwendet. Keys liegen ausschliesslich in der Keychain dieses Geräts.")
+                        Text("Freiwillig: Mit einem API-Key kann zusätzlich eine externe KI antworten. Keys liegen ausschliesslich in der Keychain dieses Geräts.")
                     } else {
                         Text("Der Anbieter mit hinterlegtem Key wird automatisch verwendet. API-Keys liegen ausschliesslich in der Keychain dieses Geräts und gehen nur an den jeweiligen Anbieter.")
                     }
@@ -118,6 +135,26 @@ struct SettingsView: View {
     }
 
     /// Kompakte Zeile pro Anbieter: Name, Zustand und ein Tipp führt zu den Details.
+    /// Eine Zeile je lokalem Modell: Häkchen, wenn es jetzt nutzbar ist.
+    private func localRow(_ source: LocalAISource, hint: String) -> some View {
+        let isUsable = localAI.sources.contains(source)
+        return HStack(spacing: 12) {
+            Image(systemName: source.symbolName)
+                .frame(width: 28)
+                .foregroundStyle(isUsable ? Color.accentColor : Color.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: source.displayName)
+                Text(verbatim: hint)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Image(systemName: isUsable ? "checkmark.circle.fill" : "minus.circle")
+                .foregroundStyle(isUsable ? Color.green : Color.secondary)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
     private func providerRow(_ provider: AIProvider) -> some View {
         HStack(spacing: 12) {
             Image(systemName: provider.symbolName)

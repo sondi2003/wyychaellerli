@@ -12,6 +12,7 @@ struct LabelScanView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(AISettings.self) private var settings
+    @Environment(LocalAIStatus.self) private var localAI
     @Environment(\.aiService) private var aiService
     @State private var viewModel = LabelScanViewModel()
     /// Was gerade mit der Kamera erfasst wird: Hauptfoto oder weitere Ansicht einer Seite.
@@ -103,11 +104,14 @@ struct LabelScanView: View {
 
     /// Sagt vorab, womit die Zuordnung voraussichtlich gemacht wird.
     private var structuringHint: String {
-        #if canImport(FoundationModels)
-        if #available(iOS 26.0, *), AppLanguage.current.isGerman, OnDeviceLabelParser.isAvailable {
-            return tr("Texterkennung und Zuordnung laufen komplett auf dem Gerät (Apple Intelligence).")
+        if !(settings.prefersExternal && settings.activeProvider != nil), let source = localAI.primary {
+            switch source {
+            case .onDevice:
+                return tr("Texterkennung und Zuordnung laufen komplett auf dem Gerät (Apple Intelligence).")
+            case .privateCloud:
+                return tr("Texterkennung auf dem Gerät, Zuordnung über Apples Private Cloud – ohne Key, ohne Speicherung. Das Etikettfoto geht dafür mit.")
+            }
         }
-        #endif
         if let provider = settings.activeProvider {
             return tr("Texterkennung auf dem Gerät, Zuordnung der Felder über \(provider.shortName). Es wird nur der erkannte Text gesendet, nicht das Foto.")
         }

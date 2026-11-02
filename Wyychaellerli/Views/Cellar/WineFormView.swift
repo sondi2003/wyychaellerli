@@ -112,7 +112,7 @@ struct WineFormView: View {
                     Text("Das Land macht die Karte auf der Detailseite eindeutig.")
                 }
 
-                Section("Typ") {
+                Section {
                     Picker("Typ", selection: $viewModel.type) {
                         ForEach(WineType.allCases) { type in
                             Label(type.displayName, systemImage: type.symbolName)
@@ -121,6 +121,14 @@ struct WineFormView: View {
                     }
                     .pickerStyle(.inline)
                     .labelsHidden()
+                    .onChange(of: viewModel.type) { _, _ in viewModel.typeNeedsReview = false }
+                } header: {
+                    Text("Typ")
+                } footer: {
+                    if viewModel.typeNeedsReview {
+                        Label("Die Weinart wurde nicht erkannt – bitte wählen.", systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                    }
                 }
 
                 Section {

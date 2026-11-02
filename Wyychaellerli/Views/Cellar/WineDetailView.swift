@@ -89,34 +89,31 @@ struct WineDetailView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 12) {
-            if labelPages.isEmpty {
-                WineTypeIcon(type: wine.type, size: 84)
-            } else {
-                // Der Tipp nur, wenn es eine Rückseite gibt – sonst gäbe es nichts zu wischen.
-                // (Die Variante mit optionalem Tipp gibt es erst ab iOS 26.)
-                if labelPages.count > 1 {
-                    LabelPager(pages: labelPages, wineName: wine.name)
-                        .padding(.bottom, 8)
-                        .popoverTip(backLabelTip, arrowEdge: .top)
-                } else {
-                    LabelPager(pages: labelPages, wineName: wine.name)
-                        .padding(.bottom, 8)
+        VStack(alignment: .leading, spacing: 16) {
+            labelStage
+
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    if !wine.producer.isEmpty {
+                        Text(wine.producer)
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(wine.nameWithVintage)
+                        .font(.title2.weight(.bold))
+                    originRow
+                    if !wine.grape.isEmpty {
+                        Text(wine.grape)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .layoutPriority(1)
+
+                ratingBadge
             }
-            if !wine.producer.isEmpty {
-                Text(wine.producer)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
-                    .tracking(1)
-            }
-            Text(wine.name)
-                .font(.title2.weight(.bold))
-                .multilineTextAlignment(.center)
-            Text(wine.subtitle)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+
             HStack(spacing: 8) {
                 Text(wine.type.displayName)
                     .font(.caption.weight(.semibold))
@@ -124,22 +121,66 @@ struct WineDetailView: View {
                     .padding(.vertical, 4)
                     .background(wine.type.color.opacity(0.15), in: Capsule())
                     .foregroundStyle(wine.type.color)
-                // Herkunftsland als zweite Kapsel: Flagge plus Name, damit die Flagge
-                // nicht geraten werden muss.
-                if let flag = CountryFlag.emoji(for: wine.country) {
-                    Text("\(flag) \(wine.country.trimmingCharacters(in: .whitespaces))")
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(Color(.tertiarySystemFill), in: Capsule())
-                        .foregroundStyle(.secondary)
-                        .accessibilityLabel("Herkunft \(wine.country)")
-                }
+                maturityRow
             }
-            maturityRow
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Etikett auf zartem Grund, wie die Flasche auf der Bühne der Vorlage.
+    @ViewBuilder
+    private var labelStage: some View {
+        Group {
+            if labelPages.isEmpty {
+                WineTypeIcon(type: wine.type, size: 84)
+                    .padding(.vertical, 24)
+            } else if labelPages.count > 1 {
+                // Der Tipp nur, wenn es eine Rückseite gibt – sonst gäbe es nichts zu wischen.
+                // (Die Variante mit optionalem Tipp gibt es erst ab iOS 26.)
+                LabelPager(pages: labelPages, wineName: wine.name)
+                    .popoverTip(backLabelTip, arrowEdge: .top)
+            } else {
+                LabelPager(pages: labelPages, wineName: wine.name)
+            }
+        }
+        .padding(16)
         .frame(maxWidth: .infinity)
-        .padding(.top, 8)
+        .background(Brand.blush, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+
+    /// Flagge und „Region, Land“ in einer Zeile. Ohne bekannte Flagge steht nur der Text.
+    @ViewBuilder
+    private var originRow: some View {
+        let place = [wine.region, wine.country]
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: ", ")
+        if !place.isEmpty {
+            HStack(spacing: 6) {
+                if let flag = CountryFlag.emoji(for: wine.country) {
+                    Text(verbatim: flag)
+                }
+                Text(verbatim: place)
+                    .foregroundStyle(.secondary)
+            }
+            .font(.subheadline)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Herkunft \(place)")
+        }
+    }
+
+    /// Gemeinsamer Mittelwert gross, darunter die Sterne – nur wenn bewertet wurde.
+    @ViewBuilder
+    private var ratingBadge: some View {
+        if let average = wine.averageRating {
+            VStack(spacing: 4) {
+                Text(average.formatted(.number.precision(.fractionLength(1))))
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                StarRatingView(value: .constant(average), isEditable: false, size: 13)
+            }
+            .fixedSize()
+            .accessibilityElement(children: .combine)
+        }
     }
 
     /// Trinkreife samt Spanne. Nennt ausdrücklich, ob die Angabe vom Etikett stammt
@@ -147,7 +188,7 @@ struct WineDetailView: View {
     @ViewBuilder
     private var maturityRow: some View {
         if !wine.drinkWindowText.isEmpty {
-            VStack(spacing: 2) {
+            VStack(alignment: .leading, spacing: 2) {
                 Label(wine.maturity.title, systemImage: wine.maturity.symbolName)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(maturityColor)
@@ -157,7 +198,6 @@ struct WineDetailView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-            .padding(.top, 2)
         }
     }
 

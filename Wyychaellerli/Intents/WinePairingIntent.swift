@@ -78,7 +78,9 @@ struct WinePairingIntent: AppIntent {
         }
 
         let settings = AISettings()
-        guard settings.activeProvider != nil else {
+        let local = LocalAIStatus()
+        await local.refresh()
+        guard PairingEngine.hasAnySource(settings: settings, local: local) else {
             return Ausgabe(
                 gesprochen: tr("In deinem Weinkeller ist noch kein Schlüssel für den Wein-Berater hinterlegt. Trag ihn in den Einstellungen der App ein."),
                 titel: tr("Kein Anbieter eingerichtet"),
@@ -96,9 +98,11 @@ struct WinePairingIntent: AppIntent {
         }
 
         do {
-            let response = try await AIService().recommend(
+            let (response, _) = try await PairingEngine.recommend(
                 PairingRequest(dish: gericht, inventory: wines.map(\.inventoryItem), maxRecommendations: 2),
-                using: settings,
+                settings: settings,
+                service: AIService(),
+                local: local,
                 speed: .fast
             )
             return antwort(for: response, gericht: gericht, wines: wines)

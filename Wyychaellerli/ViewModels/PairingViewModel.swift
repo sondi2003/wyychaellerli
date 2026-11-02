@@ -21,6 +21,8 @@ final class PairingViewModel {
     }
 
     var dish = ""
+    /// Wie viele Personen mittrinken; `nil`, solange nichts angegeben ist.
+    var guests: Int?
     var isLoading = false
     var response: PairingResponse?
 
@@ -45,8 +47,7 @@ final class PairingViewModel {
     var error: AIServiceError?
 
     /// Für welchen Anbieter und welches Gericht das aktuelle Ergebnis gilt.
-    private(set) var resultProvider: AIProvider?
-    private(set) var resultModel = ""
+    private(set) var resultSource: PairingSource?
     private(set) var resultDish = ""
 
     var trimmedDish: String { dish.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -64,6 +65,7 @@ final class PairingViewModel {
         wines: [Wine],
         settings: AISettings,
         service: AIService,
+        local: LocalAIStatus,
         forceAI: Bool = false
     ) async {
         let dish = trimmedDish
@@ -87,7 +89,7 @@ final class PairingViewModel {
             labelCheckOutcome = wines.contains { !$0.foodPairings.isEmpty } ? .noMatch : .nothingStored
         }
 
-        guard settings.activeProvider != nil else {
+        guard PairingEngine.hasAnySource(settings: settings, local: local) else {
             error = .noProviderConfigured
             return
         }
@@ -96,16 +98,15 @@ final class PairingViewModel {
         response = nil
         defer { isLoading = false }
 
-        let provider = settings.activeProvider
-        let model = settings.activeModel ?? ""
         do {
-            let result = try await service.recommend(
-                PairingRequest(dish: dish, inventory: wines.map(\.inventoryItem)),
-                using: settings
+            let (result, source) = try await PairingEngine.recommend(
+                PairingRequest(dish: dish, inventory: wines.map(\.inventoryItem), guests: guests),
+                settings: settings,
+                service: service,
+                local: local
             )
             response = result
-            resultProvider = provider
-            resultModel = model
+            resultSource = source
             resultDish = dish
         } catch let serviceError as AIServiceError {
             error = serviceError
@@ -120,8 +121,7 @@ final class PairingViewModel {
         labelMatches = []
         labelMatchDish = ""
         labelCheckOutcome = nil
-        resultProvider = nil
-        resultModel = ""
+        resultSource = nil
         resultDish = ""
     }
 }

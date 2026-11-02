@@ -75,7 +75,13 @@ struct CellarView: View {
             } message: {
                 Text("Der Party-Modus lässt sich nur mit Face ID, Touch ID oder Gerätecode wieder verlassen. Richte in den iPhone-Einstellungen unter „Face ID & Code“ eine Sperre ein.")
             }
-            .searchable(text: $viewModel.searchText, prompt: "Name, Rebsorte, Region, Jahrgang")
+            // Fest unter dem Titel: Ohne Systemleiste setzt iOS 26 die Suche sonst nach unten,
+            // wo sie unter der eigenen Leiste (`BrandTabBar`) verschwindet.
+            .searchable(
+                text: $viewModel.searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Name, Rebsorte, Region, Jahrgang"
+            )
             .sheet(item: $viewModel.addMode) { mode in
                 WineFormView(mode: .add, startWithScanner: mode == .scan)
             }
@@ -187,12 +193,20 @@ struct CellarView: View {
                             } label: {
                                 Label("Bearbeiten", systemImage: "pencil")
                             }
-                            .tint(.blue)
+                            .tint(Brand.burgundy)
                         }
                     }
                 } header: {
-                    Label(group.type.displayName, systemImage: group.type.symbolName)
-                        .foregroundStyle(group.type.color)
+                    // Fette Überschrift in Textfarbe, nur das Symbol trägt die Weinart.
+                    Label {
+                        Text(group.type.displayName)
+                            .foregroundStyle(.primary)
+                    } icon: {
+                        Image(systemName: group.type.symbolName)
+                            .foregroundStyle(group.type.color)
+                    }
+                    .font(.title3.weight(.bold))
+                    .textCase(nil)
                 }
             }
         }
@@ -217,14 +231,14 @@ struct CellarView: View {
     private var typeFilterChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                FilterChip(title: tr("Alle"), color: .accentColor, isSelected: viewModel.typeFilter == nil) {
+                PillChip(title: tr("Alle"), isSelected: viewModel.typeFilter == nil) {
                     viewModel.typeFilter = nil
                 }
                 ForEach(WineType.allCases) { type in
-                    FilterChip(
+                    PillChip(
                         title: type.displayName,
                         symbol: type.symbolName,
-                        color: type.color,
+                        symbolColor: type.color,
                         isSelected: viewModel.typeFilter == type
                     ) {
                         viewModel.typeFilter = (viewModel.typeFilter == type) ? nil : type
@@ -252,14 +266,14 @@ struct CellarView: View {
                 } label: {
                     Label("Etikett scannen", systemImage: "text.viewfinder")
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.brandFilled)
 
                 Button {
                     viewModel.addMode = .manual
                 } label: {
                     Label("Manuell eingeben", systemImage: "plus")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.brandOutline)
             }
         }
     }
@@ -332,37 +346,6 @@ struct CellarView: View {
             }
             .accessibilityLabel("Wein hinzufügen")
         }
-    }
-}
-
-// MARK: - Filter-Chip
-
-private struct FilterChip: View {
-    let title: String
-    var symbol: String? = nil
-    let color: Color
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 5) {
-                if let symbol {
-                    Image(systemName: symbol)
-                        .font(.caption.weight(.semibold))
-                }
-                Text(title)
-                    .font(.subheadline.weight(.medium))
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 7)
-            .background(
-                Capsule().fill(isSelected ? color : Color(.tertiarySystemFill))
-            )
-            .foregroundStyle(isSelected ? Color.white : Color.primary)
-        }
-        .buttonStyle(.plain)
-        .animation(.snappy, value: isSelected)
     }
 }
 

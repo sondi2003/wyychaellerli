@@ -11,6 +11,8 @@ struct RackView: View {
 
     @Environment(\.managedObjectContext) private var context
     @Environment(\.dismiss) private var dismiss
+    /// Als eigener Reiter in der Leiste statt als Blatt aus dem Kellermenü.
+    var isTab = false
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: true)],
@@ -66,8 +68,11 @@ struct RackView: View {
             .navigationTitle(rack?.name ?? tr("Regal"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Fertig") { dismiss() }
+                // Als Reiter gibt es nichts zu schliessen.
+                if !isTab {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Fertig") { dismiss() }
+                    }
                 }
                 // Der Umschalter sitzt im Titel, damit der Bildschirm fürs Raster frei bleibt.
                 if cellarRacks.count > 1 || canAddRack, !cellarRacks.isEmpty {

@@ -17,6 +17,7 @@ final class AISettings {
 
     private enum Keys {
         static let preferredProvider = "ai.preferredProvider"
+        static let prefersExternal = "ai.prefersExternal"
         static func model(for provider: AIProvider) -> String { "ai.model.\(provider.rawValue)" }
         static func fastModel(for provider: AIProvider) -> String { "ai.fastModel.\(provider.rawValue)" }
     }
@@ -26,6 +27,13 @@ final class AISettings {
     /// Nur relevant, wenn mehr als ein Anbieter einen Key hat.
     var preferredProvider: AIProvider {
         didSet { defaults.set(preferredProvider.rawValue, forKey: Keys.preferredProvider) }
+    }
+
+    /// Wenn gesetzt, kommt die externe KI vor den lokalen Modellen dran. Standard ist das
+    /// Gegenteil: Zuerst Apple (auf dem Gerät, dann Private Cloud), die externe KI nur als
+    /// Rückfall – und nur, wenn überhaupt ein Key hinterlegt ist.
+    var prefersExternal: Bool {
+        didSet { defaults.set(prefersExternal, forKey: Keys.prefersExternal) }
     }
 
     /// Spiegel der Keychain, damit SwiftUI Änderungen mitbekommt.
@@ -44,6 +52,7 @@ final class AISettings {
         let stored = defaults.string(forKey: Keys.preferredProvider)
             .flatMap(AIProvider.init(rawValue:))
         self.preferredProvider = stored ?? .anthropic
+        self.prefersExternal = defaults.bool(forKey: Keys.prefersExternal)
 
         for provider in AIProvider.allCases {
             apiKeys[provider] = KeychainStore.string(for: provider.rawValue) ?? ""

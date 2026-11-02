@@ -28,6 +28,8 @@ final class WineFormViewModel {
     var region: String
     var country: String
     var type: WineType
+    /// `true`, wenn ein Scan die Weinart nicht erkannt hat und die Vorgabe nur geraten ist.
+    var typeNeedsReview = false
     var quantity: Int
     var notes: String
     /// Volumenprozent; 0 heisst „keine Angabe“.
@@ -134,7 +136,13 @@ final class WineFormViewModel {
         if !extraction.grape.isEmpty { grape = extraction.grape }
         if !extraction.region.isEmpty { region = extraction.region }
         if !extraction.country.isEmpty { country = extraction.country }
-        if let wineType = extraction.wineType { type = wineType }
+        if let wineType = extraction.wineType {
+            type = wineType
+            typeNeedsReview = false
+        } else if case .add = mode {
+            // Die Vorgabe „Rotwein“ darf nicht still als Erkennung durchgehen.
+            typeNeedsReview = true
+        }
         if let imageData = scan.labelImageData { labelImageData = imageData }
         if let backImageData = scan.backLabelImageData { backLabelImageData = backImageData }
         if extraction.drinkFrom > 0, extraction.drinkTo >= extraction.drinkFrom {
@@ -150,11 +158,13 @@ final class WineFormViewModel {
         // Notizen geschrieben und für die Anzeige per Mustersuche wieder herausgeklaubt.
         if extraction.alcoholPercent > 0 { alcoholPercent = extraction.alcoholPercent }
 
-        var extraNotes: [String] = []
-        if !extraction.notes.isEmpty { extraNotes.append(extraction.notes) }
-        if !extraNotes.isEmpty {
+        // Ein zweiter Scan darf dieselbe Notiz nicht nochmals anhängen.
+        let scannedNote = extraction.notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !scannedNote.isEmpty {
             let existing = notes.trimmingCharacters(in: .whitespacesAndNewlines)
-            notes = ([existing] + extraNotes).filter { !$0.isEmpty }.joined(separator: "\n")
+            if !existing.localizedCaseInsensitiveContains(scannedNote) {
+                notes = [existing, scannedNote].filter { !$0.isEmpty }.joined(separator: "\n")
+            }
         }
         lastScanSource = scan.source
     }

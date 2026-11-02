@@ -31,7 +31,7 @@ struct WalkthroughView: View {
                 Spacer()
                 Button("Überspringen") { finish() }
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.75))
                     .opacity(isLastPage ? 0 : 1)
                     .accessibilityHidden(isLastPage)
             }
@@ -50,7 +50,7 @@ struct WalkthroughView: View {
             HStack(spacing: 7) {
                 ForEach(pages.indices, id: \.self) { index in
                     Capsule()
-                        .fill(index == page ? Color.accentColor : Color.secondary.opacity(0.3))
+                        .fill(index == page ? Color.white : Color.white.opacity(0.35))
                         .frame(width: index == page ? 20 : 7, height: 7)
                         .animation(.snappy, value: page)
                 }
@@ -65,39 +65,48 @@ struct WalkthroughView: View {
                     withAnimation { page += 1 }
                 }
             } label: {
+                // Weisse Kapsel auf dem Verlauf, wie „Loslegen“ auf der Vorlage.
                 Text(isLastPage ? "Los geht's" : "Weiter")
                     .font(.headline)
+                    .foregroundStyle(Brand.deep)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
+                    .padding(.vertical, 14)
+                    .background(.white, in: Capsule())
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .buttonStyle(.plain)
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Brand.gradient.ignoresSafeArea())
         .accessibilityLabel("Einführung, Seite \(page + 1) von \(pages.count)")
     }
 
     private func pageView(_ item: WalkthroughPage) -> some View {
         ScrollView {
-            VStack(spacing: 28) {
+            // Wie die Vorlage: fette weisse Überschrift oben, darunter das Bild im Rosé-Rahmen.
+            VStack(spacing: 24) {
+                Text(item.title)
+                    .font(.title.weight(.heavy))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+
                 item.illustration
                     .frame(height: 220)
                     .frame(maxWidth: .infinity)
                     .background(
                         Color(.secondarySystemGroupedBackground),
-                        in: RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        in: RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
+                            .strokeBorder(Brand.rose, lineWidth: 4)
                     )
                     .accessibilityHidden(true)
 
                 VStack(spacing: 12) {
-                    Text(item.title)
-                        .font(.title2.weight(.bold))
-                        .multilineTextAlignment(.center)
                     Text(item.text)
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.85))
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -122,6 +131,8 @@ struct WalkthroughPage {
     let text: String
     let illustration: AnyView
 
+    /// Auf dem Main Actor, weil einzelne Bilder Ansichten mit Zustand bauen.
+    @MainActor
     static var all: [WalkthroughPage] { [
         WalkthroughPage(
             title: tr("Willkommen im Wyychällerli"),

@@ -13,10 +13,14 @@ struct PairingRequest: Sendable {
     /// Wie viele Vorschläge maximal (Standard: Top 3).
     let maxRecommendations: Int
 
-    init(dish: String, inventory: [WineInventoryItem], maxRecommendations: Int = 3) {
+    /// Wie viele Personen mittrinken, falls angegeben. Bestimmt, ob eine Flasche reicht.
+    let guests: Int?
+
+    init(dish: String, inventory: [WineInventoryItem], maxRecommendations: Int = 3, guests: Int? = nil) {
         self.dish = dish.trimmingCharacters(in: .whitespacesAndNewlines)
         self.inventory = inventory
         self.maxRecommendations = maxRecommendations
+        self.guests = guests.flatMap { $0 > 0 ? $0 : nil }
     }
 }
 

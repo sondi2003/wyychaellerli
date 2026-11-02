@@ -38,6 +38,11 @@ enum PromptBuilder {
         einen Abzug. **Schliesse eine schwach bewertete Flasche nie aus** – wenn sie zum \
         Gericht am besten passt, empfiehl sie trotzdem und sag in einem Halbsatz, dass sie \
         beim letzten Mal nicht überzeugt hat. Ohne `rating` einfach nicht erwähnen.
+        5c. Steht bei einer Flasche `alcohol`, nutze es: Hoher Alkohol verträgt sich schlecht mit \
+        scharfem Essen und wirkt bei leichten Gerichten schwer; niedriger passt zu Leichtem. \
+        Steht `ratingReasons`, sind das die angekreuzten Gründe des Haushalts („Zu herb (2×)“): \
+        Meide bei sonst gleicher Eignung, was wiederholt als störend galt, und bevorzuge Stile, \
+        die gelobt wurden. Erwähne es nur, wenn es die Wahl erklärt.
         5a. Steht bei einer Flasche ein `drinkWindow`, berücksichtige es: Eine Flasche, deren \
         Spanne dieses Jahr endet oder schon überschritten ist, bekommt bei sonst gleicher \
         Eignung den Vorzug – sag in einem Halbsatz, dass sie dran ist. Eine deutlich zu junge \
@@ -46,6 +51,10 @@ enum PromptBuilder {
         Stil, Region) – ein bis zwei Sätze, als Kauftipp für das nächste Mal.
         7. `generalNote`: In ein bis drei Sätzen die Gesamtlogik. Fehlt der klassische Partner \
         im Keller, sag das offen.
+        7b. Ist die Personenzahl angegeben, prüfe den Bestand (`quantity`): Rechne grob eine Flasche \
+        für drei Personen bei einem Gericht, mehr bei einem langen Abend. Reicht der Bestand einer \
+        Flasche nicht, sag das in einem Halbsatz und nenne, wenn möglich, eine zweite Flasche, \
+        die dazu passt.
         8. Fülle alle Felder mit echtem Inhalt – keine Platzhalter, keine leeren Texte.
         9. Antworte auf \(language.promptName), in einem freundlichen, aber fachlich präzisen Ton.
 
@@ -69,11 +78,36 @@ enum PromptBuilder {
         """
     }
 
+    /// Kurzfassung der Regeln für das kleine Modell auf dem Gerät. Das hat rund 4000 Token
+    /// für Anweisung, Inventar und Antwort zusammen – die ausführliche Fassung allein
+    /// frässe schon ein Drittel davon.
+    static func compactSystemPrompt(maxRecommendations: Int, language: AppLanguage = .current) -> String {
+        """
+        Du bist Sommelier eines privaten Weinkellers. Wähle zum Gericht die passendsten Weine \
+        ausschliesslich aus dem Inventar.
+
+        - `wineName` und `vintage` exakt wie im Inventar. Nur Weine mit quantity > 0. Nichts erfinden.
+        - Höchstens \(maxRecommendations) Empfehlungen, beste zuerst (rank 1 = beste). Nur Weine, die \
+        mindestens „acceptable“ sind. Passt keiner, lass `recommendations` leer und setze `noGoodMatch`.
+        - `fit` ehrlich: excellent, good, acceptable oder poor.
+        - Begründe knapp (höchstens 3 Sätze) mit Aromen, Säure, Tannin, Körper, Süsse des Gerichts. \
+        Nutze Rebsorte, Region, Notizen, `alcohol`, `labelPairings`.
+        - Bevorzuge bei gleicher Eignung, was laut `drinkWindow` jetzt dran ist, und was gut \
+        bewertet ist (`rating`); meide, was in `ratingReasons` wiederholt als störend galt. \
+        Eine schwach bewertete Flasche nie ausschliessen, wenn sie am besten passt.
+        - `servingTip`: 1 Satz. `shoppingTip`: was klassisch zum Gericht passt, höchstens 2 Sätze. \
+        `generalNote`: höchstens 2 Sätze.
+        - Alle Felder mit echtem Inhalt, keine Platzhalter. Antworte auf \(language.promptName).
+        """
+    }
+
     /// Das Gericht plus Inventar als eingebettetes JSON.
     /// - Parameter repairHint: Beim zweiten Versuch nach einer unbrauchbaren Antwort gesetzt.
     static func userPrompt(for request: PairingRequest, repairHint: String? = nil) -> String {
+        let guestsLine = request.guests.map { "Personen: \($0)\n" } ?? ""
         var prompt = """
         Geplantes Gericht: \(request.dish)
+        \(guestsLine)
 
         Aktuelles Inventar (JSON):
         \(inventoryJSON(request.inventory))
@@ -98,7 +132,8 @@ enum PromptBuilder {
     /// bei gleichem Inventar identisch bleibt (hilfreich fürs Debugging und Caching).
     static func inventoryJSON(_ inventory: [WineInventoryItem]) -> String {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        // Kompakt: Einrückungen kosten bei einem grossen Keller viele Token und bringen nichts.
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         let sorted = inventory.sorted {
             ($0.type, $0.name, $0.vintage) < ($1.type, $1.name, $1.vintage)
         }
