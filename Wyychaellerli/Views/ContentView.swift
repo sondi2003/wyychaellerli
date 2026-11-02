@@ -34,7 +34,13 @@ struct ContentView: View {
     @State private var isShowingSplash = true
     @AppStorage(WalkthroughView.seenKey) private var hasSeenWalkthrough = false
     @State private var isShowingWalkthrough = false
-    /// Der Scan-Knopf in der Mitte der Leiste.
+    /// Der Scan-Knopf in der Mitte der Leiste: Kamera, dann Scan-Blatt, dann Formular.
+    @State private var isCapturingFront = false
+    @State private var capturedFront: UIImage?
+    @State private var frontForScan: CapturedPhoto?
+    @State private var pendingScan: LabelScanResult?
+    @State private var finishedScan: LabelScanResult?
+    /// Rückfall ohne Kamera: Formular mit Scan-Blatt wie aus dem Plus-Menü.
     @State private var isScanning = false
     @State private var isKeyboardVisible = false
     /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
@@ -53,9 +59,38 @@ struct ContentView: View {
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 // Über der Tastatur stünde die Leiste nur im Weg.
                 if !isKeyboardVisible {
-                    BrandTabBar(selection: $selectedTab) { isScanning = true }
+                    BrandTabBar(selection: $selectedTab) { startScan() }
                 }
             }
+            // Mittelknopf: erst nur die Kamera, ohne Formular und Scan-Blatt darunter –
+            // sonst stapeln sich drei Ebenen sichtbar übereinander. Danach das Scan-Blatt mit
+            // der Vorderseite (für Rückseite und „Etikett lesen“), danach das Formular.
+            .fullScreenCover(isPresented: $isCapturingFront, onDismiss: {
+                if let image = capturedFront {
+                    capturedFront = nil
+                    frontForScan = CapturedPhoto(image: image)
+                }
+            }) {
+                CameraCaptureView { image in
+                    capturedFront = image
+                    isCapturingFront = false
+                }
+                .ignoresSafeArea()
+            }
+            .sheet(item: $frontForScan, onDismiss: {
+                if let result = pendingScan {
+                    pendingScan = nil
+                    finishedScan = result
+                }
+            }) { photo in
+                LabelScanView(initialFront: photo.image) { result in
+                    pendingScan = result
+                }
+            }
+            .sheet(item: $finishedScan) { result in
+                WineFormView(mode: .add, scanResult: result)
+            }
+            // Ohne Kamera (z. B. iPad ohne Rückkamera) der bisherige Weg übers Formular.
             .sheet(isPresented: $isScanning) {
                 WineFormView(mode: .add, startWithScanner: true)
             }
@@ -107,6 +142,14 @@ struct ContentView: View {
         }
     }
 
+    private func startScan() {
+        if CameraCaptureView.isSupported {
+            isCapturingFront = true
+        } else {
+            isScanning = true
+        }
+    }
+
     /// Ein Reiter, nur sichtbar und bedienbar, wenn er gewählt ist.
     /// Ein Sprachwechsel baut ihn neu auf, damit auch berechnete Texte nachziehen.
     private func tab(_ tab: AppTab, @ViewBuilder content: () -> some View) -> some View {
@@ -117,6 +160,12 @@ struct ContentView: View {
             .allowsHitTesting(isSelected)
             .accessibilityHidden(!isSelected)
     }
+}
+
+/// Ein Foto als Wert für `.sheet(item:)`.
+private struct CapturedPhoto: Identifiable {
+    let id = UUID()
+    let image: UIImage
 }
 
 #Preview {

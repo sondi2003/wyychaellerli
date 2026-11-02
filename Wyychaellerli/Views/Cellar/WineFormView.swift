@@ -27,10 +27,17 @@ struct WineFormView: View {
         )
     }
 
+    /// Mit fertigem Scan geöffnet (Mittelknopf der Leiste) – dann gleich auf Doppel prüfen.
+    private let startsWithScan: Bool
+
     /// - Parameter startWithScanner: öffnet sofort den Etikett-Scanner (Plus-Menü „Etikett scannen“).
-    init(mode: WineFormViewModel.Mode, startWithScanner: Bool = false) {
-        _viewModel = State(initialValue: WineFormViewModel(mode: mode))
+    /// - Parameter scanResult: ein Scan, der schon vor dem Formular stattfand.
+    init(mode: WineFormViewModel.Mode, startWithScanner: Bool = false, scanResult: LabelScanResult? = nil) {
+        let model = WineFormViewModel(mode: mode)
+        if let scanResult { model.apply(scanResult) }
+        _viewModel = State(initialValue: model)
         _isShowingScanner = State(initialValue: startWithScanner)
+        startsWithScan = scanResult != nil
     }
 
     var body: some View {
@@ -248,7 +255,9 @@ struct WineFormView: View {
             .onChange(of: viewModel.producer) { _, _ in viewModel.checkForDuplicates(in: context) }
             .onChange(of: viewModel.vintage) { _, _ in viewModel.checkForDuplicates(in: context) }
             .onAppear {
-                if case .add = viewModel.mode, !isShowingScanner {
+                if startsWithScan {
+                    viewModel.checkForDuplicates(in: context)
+                } else if case .add = viewModel.mode, !isShowingScanner {
                     focusedField = .name
                 }
             }

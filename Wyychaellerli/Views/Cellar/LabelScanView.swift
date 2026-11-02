@@ -19,6 +19,15 @@ struct LabelScanView: View {
     @State private var scanningTarget: LabelScanViewModel.Target?
     @State private var isShowingRecognizedText = false
 
+    /// - Parameter initialFront: schon aufgenommenes Foto der Vorderseite – der Mittelknopf
+    ///   der Leiste öffnet zuerst die Kamera und reicht das Bild hier herein.
+    init(initialFront: UIImage? = nil, onResult: @escaping (LabelScanResult) -> Void) {
+        self.onResult = onResult
+        let model = LabelScanViewModel()
+        model.applyPhoto(initialFront, to: .main(.front))
+        _viewModel = State(initialValue: model)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
