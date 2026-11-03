@@ -7696,6 +7696,46 @@
           }
         }
       }
+    },
+    "Party abbrechen?" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otkazati žurku?"
+          }
+        }
+      }
+    },
+    "Party abbrechen" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otkaži žurku"
+          }
+        }
+      }
+    },
+    "Weiter einrichten" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastavi postavljanje"
+          }
+        }
+      }
+    },
+    "Die gewählten Flaschen und die erfassten Gäste gehen verloren." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izabrane flaše i uneti gosti se gube."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

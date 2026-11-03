@@ -15,6 +15,7 @@ struct PartyView: View {
     let onFinish: () -> Void
 
     @State private var isConfirmingAbort = false
+    @State private var isConfirmingCancel = false
     /// Ob das Gerät gerade auf diese App festgenagelt ist.
     @State private var guidedAccess = GuidedAccessMonitor()
 
@@ -40,11 +41,8 @@ struct PartyView: View {
             model.resolveCandidates(in: context)
         }
         .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
-        .confirmationDialog(
-            "Abstimmung verwerfen?",
-            isPresented: $isConfirmingAbort,
-            titleVisibility: .visible
-        ) {
+        // Rückfragen als Dialog in der Mitte, nicht als Sprechblase am Knopf (iOS 26).
+        .alert("Abstimmung verwerfen?", isPresented: $isConfirmingAbort) {
             Button("Verwerfen", role: .destructive) {
                 model.discard()
                 onFinish()
@@ -52,6 +50,12 @@ struct PartyView: View {
             Button("Weitermachen", role: .cancel) { }
         } message: {
             Text("Die bisherigen Stimmen gehen verloren.")
+        }
+        .alert("Party abbrechen?", isPresented: $isConfirmingCancel) {
+            Button("Party abbrechen", role: .destructive) { cancelSetup() }
+            Button("Weiter einrichten", role: .cancel) { }
+        } message: {
+            Text("Die gewählten Flaschen und die erfassten Gäste gehen verloren.")
         }
     }
 
@@ -73,20 +77,50 @@ struct PartyView: View {
             Text(phaseTitle)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
-            Button {
-                Task { await unlock() }
-            } label: {
-                Image(systemName: "lock.fill")
-                    .font(.subheadline)
-                    .padding(8)
-                    .background(Color(.tertiarySystemFill), in: Circle())
+            if canCancelFreely {
+                // Solange das Gerät noch beim Gastgeber ist und keine Stimme gefallen ist,
+                // geht es ohne Gerätesperre hinaus: Es steht nichts auf dem Spiel, und wer
+                // nur die Party doch nicht starten will, soll nicht nach Face ID gefragt
+                // werden.
+                Button("Abbrechen") {
+                    if hasSetup {
+                        isConfirmingCancel = true
+                    } else {
+                        cancelSetup()
+                    }
+                }
+                .font(.subheadline.weight(.semibold))
+            } else {
+                Button {
+                    Task { await unlock() }
+                } label: {
+                    Image(systemName: "lock.fill")
+                        .font(.subheadline)
+                        .padding(8)
+                        .background(Color(.tertiarySystemFill), in: Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Party beenden")
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Party beenden")
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
         .background(Color(.secondarySystemGroupedBackground))
+    }
+
+    /// Flaschen wählen und Gäste erfassen geschehen beim Gastgeber, vor der ersten Stimme.
+    private var canCancelFreely: Bool {
+        (model.state.phase == .candidates || model.state.phase == .guests) && model.state.totalVotes == 0
+    }
+
+    /// Ist schon etwas eingerichtet, das beim Abbrechen verloren ginge?
+    private var hasSetup: Bool {
+        !model.state.candidateIDs.isEmpty || !model.state.guests.isEmpty || !model.state.title.isEmpty
+    }
+
+    private func cancelSetup() {
+        model.discard()
+        onFinish()
     }
 
     private var phaseTitle: String {
