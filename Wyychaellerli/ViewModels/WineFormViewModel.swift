@@ -185,6 +185,23 @@ final class WineFormViewModel {
     /// Der Katalogeintrag, aus dem nach dem Scan Lücken gefüllt wurden.
     var catalogMatch: CatalogWine?
 
+    /// Das Etikettfoto des Katalogeintrags – nur ein **Angebot**, nie automatisch übernommen.
+    var catalogImageData: Data?
+    /// Das eigene Foto, solange das Katalogfoto an seiner Stelle steht (für „Mein Foto“).
+    private var ownImageData: Data?
+
+    /// Wechselt zwischen dem eigenen Foto und dem aus dem Katalog.
+    func toggleCatalogImage() {
+        guard let catalogImageData else { return }
+        if labelImageData == catalogImageData {
+            labelImageData = ownImageData
+            ownImageData = nil
+        } else {
+            ownImageData = labelImageData
+            labelImageData = catalogImageData
+        }
+    }
+
     /// Ergänzt aus dem gemeinsamen Katalog, was der Scan nicht gefunden hat. Überschreibt
     /// nie etwas: Das Etikett in der Hand gilt mehr als der Katalog.
     func fillGaps(from entry: CatalogWine) {

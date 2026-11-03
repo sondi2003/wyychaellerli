@@ -7856,6 +7856,61 @@
           }
         }
       }
+    },
+    "Foto aus dem Katalog" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografija iz kataloga"
+          }
+        }
+      }
+    },
+    "Wird als Vorderseite verwendet." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi se kao prednja strana."
+          }
+        }
+      }
+    },
+    "Vielleicht besser als dein Foto." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Možda bolja od tvoje fotografije."
+          }
+        }
+      }
+    },
+    "Verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi"
+          }
+        }
+      }
+    },
+    "Mein Foto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moja fotografija"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

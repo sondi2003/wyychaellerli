@@ -73,6 +73,30 @@ struct WineFormView: View {
                                 .foregroundStyle(.green)
                         }
                     }
+                    if let data = viewModel.catalogImageData, let image = UIImage(data: data) {
+                        let isUsed = viewModel.labelImageData == data
+                        HStack(spacing: 12) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 56, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Foto aus dem Katalog")
+                                    .font(.subheadline.weight(.medium))
+                                Text(isUsed ? "Wird als Vorderseite verwendet." : "Vielleicht besser als dein Foto.")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .layoutPriority(1)
+                            Spacer()
+                            Button(isUsed ? "Mein Foto" : "Verwenden") {
+                                viewModel.toggleCatalogImage()
+                            }
+                            .buttonStyle(.brandOutline)
+                            .fixedSize()
+                        }
+                    }
                     if viewModel.catalogMatch != nil {
                         Label {
                             Text("Im gemeinsamen Katalog gefunden – fehlende Angaben ergänzt.")
@@ -306,6 +330,8 @@ struct WineFormView: View {
             barcode: viewModel.validBarcode
         ) {
             viewModel.fillGaps(from: entry)
+            // Das Katalogfoto wird nur angeboten; ohne Netz oder Bild bleibt es beim eigenen.
+            viewModel.catalogImageData = await catalog.catalogImage(entry.id)
         }
     }
 
