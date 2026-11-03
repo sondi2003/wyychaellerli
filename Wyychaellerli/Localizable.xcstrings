@@ -7736,6 +7736,126 @@
           }
         }
       }
+    },
+    "Strichcode" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar kod"
+          }
+        }
+      }
+    },
+    "Ziffern unter dem Strichcode" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cifre ispod bar koda"
+          }
+        }
+      }
+    },
+    "Kein gültiger Strichcode: 13 oder 8 Ziffern, und die letzte muss stimmen. So wird er nicht gespeichert." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nevažeći bar kod: 13 ili 8 cifara, a poslednja mora da se slaže. Ovako se ne čuva."
+          }
+        }
+      }
+    },
+    "Wird beim Scannen von der Rückseite gelesen und hilft, den Wein im gemeinsamen Katalog wiederzufinden." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čita se pri skeniranju sa zadnje strane i pomaže da se vino pronađe u zajedničkom katalogu."
+          }
+        }
+      }
+    },
+    "Mehrere durch Komma trennen, zum Beispiel für verschiedene Flaschengrössen. Der Jahrgang entscheidet weiter, welcher Eintrag gemeint ist." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Više njih odvoji zarezom, na primer za različite veličine flaša. Berba i dalje odlučuje koji se unos misli."
+          }
+        }
+      }
+    },
+    "Ziffern, durch Komma getrennt" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cifre, odvojene zarezom"
+          }
+        }
+      }
+    },
+    "Ein Code besteht die Prüfziffer nicht und wird nicht gespeichert." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedan kod ne prolazi kontrolnu cifru i neće biti sačuvan."
+          }
+        }
+      }
+    },
+    "Bringt nur einen neuen Strichcode für den bestehenden Eintrag mit. Aufnehmen fügt ihn hinzu und ändert sonst nichts." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donosi samo novi bar kod za postojeći unos. Prihvatanje ga dodaje i ništa drugo ne menja."
+          }
+        }
+      }
+    },
+    "Admin-Rechte prüfen" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proveri administratorska prava"
+          }
+        }
+      }
+    },
+    "Admin-Rechte" : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administratorska prava"
+          }
+        }
+      }
+    },
+    "Die Rolle „Admin“ wirkt in dieser Umgebung: Du darfst in den Katalog schreiben und Vorschläge entscheiden." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uloga „Admin“ važi u ovom okruženju: smeš da upisuješ u katalog i odlučuješ o predlozima."
+          }
+        }
+      }
+    },
+    "Dafür fehlt die Berechtigung. Die Rolle „Admin“ ist dieser Apple-ID in dieser Umgebung nicht zugewiesen – in der CloudKit-Konsole beim eigenen Benutzer eintragen." : {
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za to nedostaje dozvola. Uloga „Admin“ nije dodeljena ovom Apple ID-ju u ovom okruženju – upiši je u CloudKit konzoli kod sopstvenog korisnika."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

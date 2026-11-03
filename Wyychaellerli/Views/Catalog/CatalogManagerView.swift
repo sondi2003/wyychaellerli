@@ -183,7 +183,7 @@ struct CatalogManagerView: View {
             entries = try await catalog.allCatalogWines()
             errorMessage = nil
         } catch {
-            errorMessage = CatalogStore.friendlyMessage(for: error)
+            errorMessage = CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
     }
 }
@@ -383,7 +383,7 @@ struct CatalogWineEditor: View {
             onSaved(saved, original.id)
             dismiss()
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? CatalogStore.friendlyMessage(for: error)
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
     }
 
@@ -394,7 +394,7 @@ struct CatalogWineEditor: View {
             do {
                 try await catalog.deleteCatalogWine(original.id)
             } catch {
-                errorMessage = CatalogStore.friendlyMessage(for: error)
+                errorMessage = CatalogStore.friendlyMessage(for: error, asAdmin: true)
                 return
             }
         }

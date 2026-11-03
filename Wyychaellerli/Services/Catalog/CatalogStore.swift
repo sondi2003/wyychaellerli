@@ -38,9 +38,17 @@ final class CatalogStore: Sendable {
 
     // MARK: Abgleich
 
-    /// Sucht den passenden Katalogeintrag: zuerst über den exakten Schlüssel, dann über
-    /// das aussagekräftigste Suchwort plus die Ähnlichkeitsregel der Doppelerkennung.
-    func lookup(_ candidate: DuplicateFinder.Candidate) async throws -> CatalogWine? {
+    /// Sucht den passenden Katalogeintrag: zuerst über den Strichcode (mit dem Jahrgang als
+    /// Entscheider), dann über den exakten Schlüssel, zuletzt über das aussagekräftigste
+    /// Suchwort plus die Ähnlichkeitsregel der Doppelerkennung.
+    func lookup(_ candidate: DuplicateFinder.Candidate, barcode: String = "") async throws -> CatalogWine? {
+        // Der Strichcode ist eine Zugabe: Scheitert die Abfrage (das Feld gibt es in dieser
+        // Umgebung vielleicht noch nicht), geht es mit dem Namen weiter.
+        if !barcode.isEmpty, let hit = try? await lookupBarcode(barcode, vintage: candidate.vintage) {
+            return hit
+        }
+        guard !candidate.name.isEmpty else { return nil }
+
         let key = CatalogKey.make(producer: candidate.producer, name: candidate.name, vintage: candidate.vintage)
         if let exact = try await fetchWine(key) { return exact }
 
@@ -51,6 +59,14 @@ final class CatalogStore: Sendable {
         let (results, _) = try await database.records(matching: query, resultsLimit: 50)
         let entries = results.compactMap { try? $0.1.get() }.map(Self.catalogWine)
         return CatalogMatcher.bestMatch(for: candidate, in: entries)
+    }
+
+    /// Katalogeinträge, die diesen Strichcode tragen – in der Regel einer je Jahrgang.
+    private func lookupBarcode(_ barcode: String, vintage: Int) async throws -> CatalogWine? {
+        let query = CKQuery(recordType: RecordType.wine, predicate: NSPredicate(format: "gtins CONTAINS %@", barcode))
+        let (results, _) = try await database.records(matching: query, resultsLimit: 30)
+        let entries = results.compactMap { try? $0.1.get() }.map(Self.catalogWine)
+        return CatalogMatcher.match(barcode: barcode, vintage: vintage, in: entries)
     }
 
     /// Ein Eintrag über seinen Schlüssel, oder `nil`, wenn es ihn nicht gibt.
@@ -78,6 +94,9 @@ final class CatalogStore: Sendable {
         record["alcoholPercent"] = draft.alcoholPercent
         record["catalogKey"] = draft.catalogKey
         record["wineUUID"] = draft.wineUUID
+        // Nur setzen, wenn es etwas gibt: Ein Feld, das es in Production noch nicht gibt,
+        // liesse sonst jeden Vorschlag scheitern – auch die ohne Strichcode.
+        if !draft.barcode.isEmpty { record["barcode"] = draft.barcode }
         record["status"] = SubmissionStatus.pending.rawValue
         record["appVersion"] = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
         let imageFile = try draft.labelImageData.map(Self.temporaryFile)
@@ -106,7 +125,7 @@ final class CatalogStore: Sendable {
     private func submissions(matching predicate: NSPredicate, withImages: Bool) async throws -> [CatalogSubmission] {
         let query = CKQuery(recordType: RecordType.submission, predicate: predicate)
         var keys = ["name", "producer", "vintage", "grape", "region", "country", "typeRaw",
-                    "alcoholPercent", "catalogKey", "wineUUID", "status"]
+                    "alcoholPercent", "catalogKey", "wineUUID", "status", "barcode"]
         if withImages { keys.append("labelImage") }
         var collected: [CatalogSubmission] = []
         var (results, cursor) = try await database.records(matching: query, desiredKeys: keys, resultsLimit: 200)
@@ -126,7 +145,7 @@ final class CatalogStore: Sendable {
     func allWines() async throws -> [CatalogWine] {
         let query = CKQuery(recordType: RecordType.wine, predicate: NSPredicate(value: true))
         let keys = ["name", "producer", "vintage", "grape", "region", "country", "typeRaw",
-                    "alcoholPercent", "source", "sourceID", "adminEdited"]
+                    "alcoholPercent", "source", "sourceID", "adminEdited", "gtins"]
         var collected: [CatalogWine] = []
         var (results, cursor) = try await database.records(matching: query, desiredKeys: keys, resultsLimit: 400)
         collected += results.compactMap { try? $0.1.get() }.map(Self.catalogWine)
@@ -200,6 +219,8 @@ final class CatalogStore: Sendable {
         record["source"] = entry.source.isEmpty ? "admin" : entry.source
         record["sourceID"] = entry.sourceID
         record["adminEdited"] = Int64(1)
+        // Hier gilt genau die Liste des Admins – er darf einen falschen Code auch entfernen.
+        record["gtins"] = entry.gtins.isEmpty ? nil : entry.gtins
 
         switch image {
         case .keep: break
@@ -211,14 +232,14 @@ final class CatalogStore: Sendable {
         defer { if let imageFile { try? FileManager.default.removeItem(at: imageFile) } }
 
         let deleting = moves ? [CKRecord.ID(recordName: previousID)] : []
-        _ = try await database.modifyRecords(saving: [record], deleting: deleting, savePolicy: .changedKeys)
+        try await modify(saving: [record], deleting: deleting, savePolicy: .changedKeys)
         Self.logger.info("Katalog bearbeitet: \(previousID, privacy: .public) → \(entry.id, privacy: .public)")
         entry.adminEdited = true
         return entry
     }
 
     func deleteWine(_ id: String) async throws {
-        _ = try await database.modifyRecords(saving: [], deleting: [CKRecord.ID(recordName: id)])
+        try await modify(saving: [], deleting: [CKRecord.ID(recordName: id)])
         Self.logger.info("Aus dem Katalog gelöscht: \(id, privacy: .public)")
     }
 
@@ -265,27 +286,74 @@ final class CatalogStore: Sendable {
         record["source"] = entry.source
         record["sourceID"] = entry.sourceID
         record["adminEdited"] = Int64(1)
+        // Beim Aufnehmen kommen Strichcodes **dazu**, bestehende bleiben.
+        let merged = Self.unique((record["gtins"] as? [String] ?? []) + entry.gtins)
+        if !merged.isEmpty { record["gtins"] = merged }
         let imageFile = try labelImageData.map(Self.temporaryFile)
         if let imageFile, record["image"] == nil { record["image"] = CKAsset(fileURL: imageFile) }
         defer { if let imageFile { try? FileManager.default.removeItem(at: imageFile) } }
 
         let decided = try await setStatus(.accepted, on: submissionIDs)
-        _ = try await database.modifyRecords(saving: [record] + decided, deleting: [], savePolicy: .changedKeys)
+        try await modify(saving: [record] + decided, deleting: [], savePolicy: .changedKeys)
         Self.logger.info("Aufgenommen: \(entry.id, privacy: .public), \(submissionIDs.count) Vorschlag/Vorschläge")
     }
 
     /// Lehnt Vorschläge ab. Sie bleiben liegen, damit der Nutzer den Entscheid sieht.
     func reject(_ submissionIDs: [String]) async throws {
         let decided = try await setStatus(.rejected, on: submissionIDs)
-        _ = try await database.modifyRecords(saving: decided, deleting: [], savePolicy: .changedKeys)
+        try await modify(saving: decided, deleting: [], savePolicy: .changedKeys)
     }
 
     private func setStatus(_ status: SubmissionStatus, on ids: [String]) async throws -> [CKRecord] {
         let fetched = try await database.records(for: ids.map { CKRecord.ID(recordName: $0) }, desiredKeys: ["status"])
-        return fetched.values.compactMap { try? $0.get() }.map { record in
+        // Ein Vorschlag, den man nicht holen kann, darf nicht still wegfallen: Sonst wäre
+        // der Eintrag im Katalog, der Vorschlag aber noch offen (oder umgekehrt).
+        return try fetched.values.map { result in
+            let record = try result.get()
             record["status"] = status.rawValue
             return record
         }
+    }
+
+    /// Schreibt Datensätze und **wirft den ersten Fehler**.
+    ///
+    /// `modifyRecords` wirft nur, wenn der ganze Auftrag scheitert. Fehlende Rechte, ein
+    /// Feld, das es in Production noch nicht gibt, ein veralteter Datensatz – all das steht
+    /// je Datensatz im Ergebnis. Wer es nicht liest, sieht „Erfolg“, obwohl nichts
+    /// gespeichert wurde: Der Vorschlag verschwand aus der Liste, kam aber nie in den
+    /// Katalog, und später stand er wieder da (Richard, 3.11.2026, TestFlight).
+    ///
+    /// Der Auftrag läuft atomar: Scheitert einer, melden **alle** `batchRequestFailed`.
+    /// Gemeldet wird deshalb der eigentliche Grund, nicht dieser Folgefehler.
+    private func modify(
+        saving: [CKRecord],
+        deleting: [CKRecord.ID],
+        savePolicy: CKModifyRecordsOperation.RecordSavePolicy = .ifServerRecordUnchanged
+    ) async throws {
+        let result = try await database.modifyRecords(saving: saving, deleting: deleting, savePolicy: savePolicy)
+        var failures: [Error] = []
+        for (_, saved) in result.saveResults {
+            if case .failure(let error) = saved { failures.append(error) }
+        }
+        for (_, deleted) in result.deleteResults {
+            if case .failure(let error) = deleted { failures.append(error) }
+        }
+        guard !failures.isEmpty else { return }
+        let reason = failures.first { ($0 as? CKError)?.code != .batchRequestFailed } ?? failures[0]
+        Self.logger.error("Speichern abgelehnt: \(reason.localizedDescription, privacy: .public)")
+        throw reason
+    }
+
+    /// Darf diese Apple-ID in den Katalog schreiben, wirkt die Rolle „Admin“ also in dieser
+    /// Umgebung? Schreibt einen leeren Prüfdatensatz und löscht ihn sofort wieder.
+    ///
+    /// Das ist die einzige verlässliche Probe: Dass der Admin-Bereich **sichtbar** ist, sagt
+    /// nichts – er hängt am Datensatz `admins`, den jeder lesen darf. Die Rechte hängen an
+    /// der Rolle in der Konsole.
+    func checkAdminRights() async throws {
+        let id = CKRecord.ID(recordName: "_rechtepruefung")
+        try await modify(saving: [CKRecord(recordType: RecordType.wine, recordID: id)], deleting: [])
+        try await modify(saving: [], deleting: [id])
     }
 
     // MARK: Mitteilungen
@@ -356,8 +424,15 @@ final class CatalogStore: Sendable {
             alcoholPercent: record["alcoholPercent"] as? Double ?? 0,
             source: record["source"] as? String ?? "",
             sourceID: record["sourceID"] as? String ?? "",
-            adminEdited: (record["adminEdited"] as? Int64 ?? 0) == 1
+            adminEdited: (record["adminEdited"] as? Int64 ?? 0) == 1,
+            gtins: record["gtins"] as? [String] ?? []
         )
+    }
+
+    /// Doppelte entfernen, Reihenfolge behalten.
+    static func unique(_ values: [String]) -> [String] {
+        var seen = Set<String>()
+        return values.filter { seen.insert($0).inserted }
     }
 
     private static func submission(_ record: CKRecord) -> CatalogSubmission {
@@ -376,7 +451,8 @@ final class CatalogStore: Sendable {
             wineUUID: record["wineUUID"] as? String ?? "",
             status: SubmissionStatus(rawValue: record["status"] as? String ?? "") ?? .pending,
             createdAt: record.creationDate,
-            labelImageData: asset?.fileURL.flatMap { try? Data(contentsOf: $0) }
+            labelImageData: asset?.fileURL.flatMap { try? Data(contentsOf: $0) },
+            barcode: record["barcode"] as? String ?? ""
         )
     }
 
@@ -395,7 +471,7 @@ final class CatalogStore: Sendable {
 extension CatalogStore {
 
     /// Übersetzt CloudKit-Fehler in einen Satz, mit dem ein Mensch etwas anfangen kann.
-    static func friendlyMessage(for error: Error) -> String {
+    static func friendlyMessage(for error: Error, asAdmin: Bool = false) -> String {
         guard let ckError = error as? CKError else { return error.localizedDescription }
         switch ckError.code {
         case .notAuthenticated:
@@ -403,7 +479,9 @@ extension CatalogStore {
         case .networkUnavailable, .networkFailure, .serviceUnavailable, .requestRateLimited, .zoneBusy:
             return tr("Der Katalog ist gerade nicht erreichbar. Versuche es später nochmals.")
         case .permissionFailure:
-            return tr("Dafür fehlt die Berechtigung.")
+            return asAdmin
+                ? tr("Dafür fehlt die Berechtigung. Die Rolle „Admin“ ist dieser Apple-ID in dieser Umgebung nicht zugewiesen – in der CloudKit-Konsole beim eigenen Benutzer eintragen.")
+                : tr("Dafür fehlt die Berechtigung.")
         default:
             return ckError.localizedDescription
         }

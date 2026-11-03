@@ -85,7 +85,7 @@ struct AdminReviewView: View {
             groups = SubmissionGroup.grouping(pending)
             errorMessage = nil
         } catch {
-            errorMessage = CatalogStore.friendlyMessage(for: error)
+            errorMessage = CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
     }
 }
@@ -96,6 +96,15 @@ struct SubmissionGroup: Identifiable {
     let items: [CatalogSubmission]
 
     var first: CatalogSubmission { items[0] }
+
+    /// Der Eintrag, wie er aus den Vorschlägen hervorgeht – mit den Strichcodes **aller**
+    /// Einreicher, ohne Doppel.
+    var asCatalogWine: CatalogWine {
+        var entry = first.asCatalogWine
+        entry.gtins = CatalogStore.unique(items.map(\.barcode).filter { !$0.isEmpty })
+        return entry
+    }
+
     var labelImageData: Data? { items.lazy.compactMap(\.labelImageData).first }
     var title: String {
         first.vintage > 0 ? "\(first.name) \(String(first.vintage))" : first.name
@@ -142,7 +151,7 @@ struct AdminSubmissionEditor: View {
     init(group: SubmissionGroup, onDecided: @escaping (SubmissionGroup) -> Void) {
         self.group = group
         self.onDecided = onDecided
-        _entry = State(initialValue: group.first.asCatalogWine)
+        _entry = State(initialValue: group.asCatalogWine)
     }
 
     var body: some View {
@@ -162,9 +171,14 @@ struct AdminSubmissionEditor: View {
                     if group.items.count > 1 {
                         Label(tr("\(group.items.count) Personen haben diesen Wein vorgeschlagen."), systemImage: "person.2")
                     }
-                    if existing != nil {
-                        Label("Steht schon im Katalog – Aufnehmen überschreibt den Eintrag mit diesen Angaben.", systemImage: "exclamationmark.triangle")
-                            .foregroundStyle(.orange)
+                    if let existing {
+                        if Self.differsOnlyByBarcode(entry, from: existing) {
+                            // Eine Ergänzung: Die Angaben sind die des bestehenden Eintrags.
+                            Label("Bringt nur einen neuen Strichcode für den bestehenden Eintrag mit. Aufnehmen fügt ihn hinzu und ändert sonst nichts.", systemImage: "barcode")
+                        } else {
+                            Label("Steht schon im Katalog – Aufnehmen überschreibt den Eintrag mit diesen Angaben.", systemImage: "exclamationmark.triangle")
+                                .foregroundStyle(.orange)
+                        }
                     }
                 }
             }
@@ -201,6 +215,17 @@ struct AdminSubmissionEditor: View {
         }
     }
 
+    /// Gleiche Angaben wie der bestehende Eintrag, nur ein Strichcode kommt dazu? Dann ist
+    /// es eine Ergänzung (siehe `SubmissionDraft.init(adding:to:wineUUID:)`), kein Überschreiben.
+    static func differsOnlyByBarcode(_ entry: CatalogWine, from existing: CatalogWine) -> Bool {
+        var other = existing
+        other.gtins = entry.gtins
+        other.source = entry.source
+        other.sourceID = entry.sourceID
+        other.adminEdited = entry.adminEdited
+        return other == entry && !entry.gtins.allSatisfy(existing.gtins.contains)
+    }
+
     /// Ablehnen links, Aufnehmen rechts – wie Abbrechen und Bestätigen in iOS üblich.
     private var decisionBar: some View {
         HStack(spacing: 12) {
@@ -234,13 +259,13 @@ struct AdminSubmissionEditor: View {
         // Der Schlüssel folgt den korrigierten Angaben, damit ein späterer Scan desselben
         // Weins genau diesen Eintrag findet.
         final.id = CatalogKey.make(producer: final.producer, name: final.name, vintage: final.vintage)
-        final.source = final == group.first.asCatalogWine ? "nutzer" : "admin"
+        final.source = final == group.asCatalogWine ? "nutzer" : "admin"
         do {
             try await catalog.accept(group.items, as: final)
             onDecided(group)
             dismiss()
         } catch {
-            errorMessage = CatalogStore.friendlyMessage(for: error)
+            errorMessage = CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
     }
 
@@ -252,7 +277,7 @@ struct AdminSubmissionEditor: View {
             onDecided(group)
             dismiss()
         } catch {
-            errorMessage = CatalogStore.friendlyMessage(for: error)
+            errorMessage = CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
     }
 }

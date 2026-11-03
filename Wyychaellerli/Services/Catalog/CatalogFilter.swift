@@ -33,7 +33,7 @@ struct CatalogFilter: Equatable {
                 let haystack = Self.fold([
                     entry.name, entry.producer, entry.grape, entry.region, entry.country,
                     entry.vintage > 0 ? String(entry.vintage) : ""
-                ].joined(separator: " "))
+                ].joined(separator: " ") + " " + entry.gtins.joined(separator: " "))
                 return words.allSatisfy(haystack.contains)
             }
             .sorted {

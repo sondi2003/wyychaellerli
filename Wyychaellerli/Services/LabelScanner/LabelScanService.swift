@@ -36,6 +36,9 @@ struct LabelScanService: Sendable {
         var sections: [(title: String, lines: [RecognizedLine])] = []
         var labelImageData: Data?
         var backLabelImageData: Data?
+        // Der Strichcode steht meist hinten, deshalb die Rückseite zuerst.
+        let barcodeImages: [ScanImage] = [back].compactMap { $0 } + backExtras + [front].compactMap { $0 } + frontExtras
+        let barcode = await BarcodeReader.read(in: barcodeImages)
 
         if let front {
             var lines = try await LabelTextRecognizer.recognizeLines(in: front)
@@ -85,7 +88,8 @@ struct LabelScanService: Sendable {
             recognizedText: text,
             source: source,
             labelImageData: labelImageData,
-            backLabelImageData: backLabelImageData
+            backLabelImageData: backLabelImageData,
+            barcode: barcode
         )
     }
 

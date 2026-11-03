@@ -34,6 +34,8 @@ final class WineFormViewModel {
     var notes: String
     /// Volumenprozent; 0 heisst „keine Angabe“.
     var alcoholPercent: Double
+    /// Strichcode, wie getippt oder gescannt. Gespeichert wird nur ein gültiger.
+    var barcode: String
     /// Kommagetrennt im Formular, als Liste am Wein.
     var foodPairings: String
     /// Zugeschnittenes Etikett-Foto der Vorderseite (JPEG), wird mit dem Wein gespeichert.
@@ -77,6 +79,7 @@ final class WineFormViewModel {
             quantity = 1
             notes = ""
             alcoholPercent = 0
+            barcode = ""
             foodPairings = ""
             labelImageData = nil
             backLabelImageData = nil
@@ -94,6 +97,7 @@ final class WineFormViewModel {
             quantity = Int(wine.quantity)
             notes = wine.notes
             alcoholPercent = wine.alcoholPercent
+            barcode = wine.barcode
             foodPairings = wine.foodPairings.joined(separator: ", ")
             labelImageData = wine.labelImageData
             backLabelImageData = wine.backLabelImageData
@@ -123,6 +127,13 @@ final class WineFormViewModel {
 
     var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
 
+    /// Der gültige Strichcode oder leer.
+    var validBarcode: String { Barcode.normalized(barcode) }
+
+    /// Etwas eingetippt, das die Prüfziffer nicht besteht – das Formular sagt es, statt es
+    /// still zu verwerfen.
+    var barcodeIsInvalid: Bool { !barcode.isEmpty && validBarcode.isEmpty }
+
     var canSave: Bool {
         !trimmedName.isEmpty && quantity >= 0
     }
@@ -143,6 +154,8 @@ final class WineFormViewModel {
             // Die Vorgabe „Rotwein“ darf nicht still als Erkennung durchgehen.
             typeNeedsReview = true
         }
+        // Der Code kommt aus der Kamera, nicht aus dem Modell. Ein neuer Scan ersetzt den alten.
+        if !scan.barcode.isEmpty { barcode = scan.barcode }
         if let imageData = scan.labelImageData { labelImageData = imageData }
         if let backImageData = scan.backLabelImageData { backLabelImageData = backImageData }
         if extraction.drinkFrom > 0, extraction.drinkTo >= extraction.drinkFrom {
@@ -203,7 +216,8 @@ final class WineFormViewModel {
         let candidate = DuplicateFinder.Candidate(
             name: trimmedName,
             producer: producer.trimmingCharacters(in: .whitespacesAndNewlines),
-            vintage: vintage
+            vintage: vintage,
+            barcode: validBarcode
         )
         duplicates = DuplicateFinder.findDuplicates(of: candidate, in: context)
     }
@@ -218,6 +232,7 @@ final class WineFormViewModel {
         // Fehlende Etikettfotos aus dem frischen Scan ergänzen – nie vorhandene ersetzen.
         if wine.labelImageData == nil, let labelImageData { wine.labelImageData = labelImageData }
         if wine.backLabelImageData == nil, let backLabelImageData { wine.backLabelImageData = backLabelImageData }
+        if wine.barcode.isEmpty { wine.barcode = validBarcode }
         context.saveChanges()
     }
 
@@ -242,6 +257,7 @@ final class WineFormViewModel {
                 quantity: quantity,
                 notes: trimmed(notes),
                 alcoholPercent: alcoholPercent,
+                barcode: barcode,
                 foodPairings: pairingList,
                 labelImageData: labelImageData,
                 backLabelImageData: backLabelImageData,
@@ -260,6 +276,7 @@ final class WineFormViewModel {
             wine.quantity = Int64(max(0, quantity))
             wine.notes = trimmed(notes)
             wine.alcoholPercent = max(0, alcoholPercent)
+            wine.barcode = validBarcode
             wine.foodPairings = pairingList
             wine.labelImageData = labelImageData
             wine.backLabelImageData = backLabelImageData

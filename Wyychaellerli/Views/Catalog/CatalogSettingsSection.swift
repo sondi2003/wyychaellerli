@@ -4,6 +4,8 @@ import SwiftUI
 struct CatalogSettingsSection: View {
 
     @Environment(CatalogCenter.self) private var catalog
+    @State private var isCheckingRights = false
+    @State private var rightsResult: String?
 
     var body: some View {
         @Bindable var catalog = catalog
@@ -65,11 +67,47 @@ struct CatalogSettingsSection: View {
                 } label: {
                     Label("Katalog verwalten", systemImage: "books.vertical")
                 }
+                // Dass dieser Bereich **sichtbar** ist, beweist nichts: Er hängt an einem
+                // Datensatz, den jeder lesen darf. Ob die Rolle „Admin“ wirkt, zeigt nur ein
+                // Schreibversuch.
+                Button {
+                    Task { await checkRights() }
+                } label: {
+                    HStack {
+                        Label("Admin-Rechte prüfen", systemImage: "key")
+                        if isCheckingRights {
+                            Spacer()
+                            ProgressView()
+                        }
+                    }
+                }
+                .disabled(isCheckingRights)
             }
         } header: {
             Text("Gemeinsamer Katalog")
         } footer: {
             Text("Der Katalog ergänzt beim Scannen fehlende Angaben. Eingeschaltet geht jeder neue Wein, der noch nicht drinsteht, zur Prüfung: nur Stammdaten und das Foto der Vorderseite, nie Notizen, Bewertungen oder Bestand. Über den Entscheid kommt eine Mitteilung.")
+        }
+        .alert("Admin-Rechte", isPresented: Binding(
+            get: { rightsResult != nil },
+            set: { if !$0 { rightsResult = nil } }
+        )) {
+            Button("Verstanden", role: .cancel) { }
+        } message: {
+            Text(verbatim: rightsResult ?? "")
+        }
+    }
+}
+
+extension CatalogSettingsSection {
+    fileprivate func checkRights() async {
+        isCheckingRights = true
+        defer { isCheckingRights = false }
+        do {
+            try await catalog.checkAdminRights()
+            rightsResult = tr("Die Rolle „Admin“ wirkt in dieser Umgebung: Du darfst in den Katalog schreiben und Vorschläge entscheiden.")
+        } catch {
+            rightsResult = CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
     }
 }

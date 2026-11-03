@@ -183,6 +183,21 @@ struct WineFormView: View {
                     Text("Wird beim Scannen vom Etikett übernommen. Auf 0 stellen heisst „keine Angabe“ – dann wird nichts angezeigt.")
                 }
 
+                Section {
+                    TextField("Ziffern unter dem Strichcode", text: $viewModel.barcode)
+                        .keyboardType(.numberPad)
+                        .monospacedDigit()
+                } header: {
+                    Text("Strichcode")
+                } footer: {
+                    if viewModel.barcodeIsInvalid {
+                        Label("Kein gültiger Strichcode: 13 oder 8 Ziffern, und die letzte muss stimmen. So wird er nicht gespeichert.", systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                    } else {
+                        Text("Wird beim Scannen von der Rückseite gelesen und hilft, den Wein im gemeinsamen Katalog wiederzufinden.")
+                    }
+                }
+
                 Section("Bestand") {
                     Stepper(value: $viewModel.quantity, in: 0...999) {
                         HStack {
@@ -287,7 +302,8 @@ struct WineFormView: View {
         if let entry = await catalog.lookup(
             name: viewModel.name,
             producer: viewModel.producer,
-            vintage: viewModel.vintage
+            vintage: viewModel.vintage,
+            barcode: viewModel.validBarcode
         ) {
             viewModel.fillGaps(from: entry)
         }

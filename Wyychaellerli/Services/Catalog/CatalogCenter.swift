@@ -69,15 +69,16 @@ final class CatalogCenter {
     // MARK: Abgleich
 
     /// Der passende Katalogeintrag oder `nil` – auch bei jedem Fehler.
-    func lookup(name: String, producer: String, vintage: Int) async -> CatalogWine? {
+    func lookup(name: String, producer: String, vintage: Int, barcode: String = "") async -> CatalogWine? {
         let candidate = DuplicateFinder.Candidate(
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             producer: producer.trimmingCharacters(in: .whitespacesAndNewlines),
             vintage: vintage
         )
-        guard !candidate.name.isEmpty else { return nil }
+        // Mit Strichcode genügt er auch ohne lesbaren Namen.
+        guard !candidate.name.isEmpty || !barcode.isEmpty else { return nil }
         do {
-            return try await store.lookup(candidate)
+            return try await store.lookup(candidate, barcode: barcode)
         } catch {
             Self.logger.info("Katalog-Abgleich fehlgeschlagen: \(error.localizedDescription, privacy: .public)")
             return nil
@@ -85,7 +86,7 @@ final class CatalogCenter {
     }
 
     func lookup(_ wine: Wine) async -> CatalogWine? {
-        await lookup(name: wine.name, producer: wine.producer, vintage: Int(wine.vintage))
+        await lookup(name: wine.name, producer: wine.producer, vintage: Int(wine.vintage), barcode: wine.barcode)
     }
 
     /// Ergebnis des Abgleichs über den ganzen Keller.
@@ -129,7 +130,8 @@ final class CatalogCenter {
             typeRaw: wine.type.rawValue,
             alcoholPercent: wine.alcoholPercent,
             wineUUID: wine.uuid?.uuidString ?? "",
-            labelImageData: wine.labelImageData
+            labelImageData: wine.labelImageData,
+            barcode: wine.barcode
         )
         try await store.submit(draft)
         await requestNotificationPermission()
@@ -138,15 +140,35 @@ final class CatalogCenter {
     }
 
     /// Nach dem Sichern eines neuen Weins: Ist das Vorschlagen eingeschaltet und der Wein
-    /// weder im Katalog noch schon vorgeschlagen, geht er still zur Prüfung.
+    /// noch nicht vorgeschlagen, geht er still zur Prüfung.
+    ///
+    /// Steht er schon im Katalog, aber ohne **diesen Strichcode**, geht nur der Strichcode
+    /// als Ergänzung zur Prüfung. Direkt eintragen darf ein Nutzer nichts: Schreiben kann
+    /// nur der Admin, das ist so gewollt (sonst könnte jeder den Katalog verfälschen).
     func submitIfNew(_ wine: Wine) async {
         guard contributesNewWines, submissionStatus(for: wine) == nil else { return }
-        guard await lookup(wine) == nil else { return }
+        let found = await lookup(wine)
         do {
-            try await submit(wine)
+            if let found {
+                guard !wine.barcode.isEmpty, !found.gtins.contains(wine.barcode) else { return }
+                try await submitBarcode(wine.barcode, to: found, from: wine)
+            } else {
+                try await submit(wine)
+            }
         } catch {
             Self.logger.info("Automatischer Vorschlag fehlgeschlagen: \(error.localizedDescription, privacy: .public)")
         }
+    }
+
+    private func submitBarcode(_ barcode: String, to entry: CatalogWine, from wine: Wine) async throws {
+        if wine.uuid == nil {
+            wine.uuid = UUID()
+            wine.managedObjectContext?.saveChanges()
+        }
+        try await store.submit(SubmissionDraft(adding: barcode, to: entry, wineUUID: wine.uuid?.uuidString ?? ""))
+        await requestNotificationPermission()
+        await installSubscriptions()
+        submissions = (try? await store.mySubmissions()) ?? submissions
     }
 
     // MARK: Admin
@@ -203,6 +225,11 @@ final class CatalogCenter {
 
     func deleteCatalogWine(_ id: String) async throws {
         try await store.deleteWine(id)
+    }
+
+    /// Wirkt die Rolle „Admin“ in dieser Umgebung? Wirft, wenn nicht.
+    func checkAdminRights() async throws {
+        try await store.checkAdminRights()
     }
 
     func myRecordName() async -> String? {

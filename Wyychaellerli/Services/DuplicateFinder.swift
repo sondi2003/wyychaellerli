@@ -23,6 +23,9 @@ enum DuplicateFinder {
         var name: String
         var producer: String
         var vintage: Int
+        /// Strichcode (nur Ziffern) oder leer. Derselbe Code bei gleichem Jahrgang heisst
+        /// dieselbe Flasche – auch wenn die Texterkennung den Namen anders gelesen hat.
+        var barcode: String = ""
     }
 
     // MARK: Schwellen
@@ -45,7 +48,7 @@ enum DuplicateFinder {
         in context: NSManagedObjectContext,
         excluding excluded: Wine? = nil
     ) -> [Match] {
-        guard !normalized(candidate.name).isEmpty else { return [] }
+        guard !normalized(candidate.name).isEmpty || !candidate.barcode.isEmpty else { return [] }
         let request = Wine.fetchRequest()
         // Absichtlich **kein** Filter auf isArchived oder quantity.
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
@@ -54,7 +57,7 @@ enum DuplicateFinder {
         return wines
             .filter { $0.objectID != excluded?.objectID }
             .compactMap { wine -> Match? in
-                let other = Candidate(name: wine.name, producer: wine.producer, vintage: Int(wine.vintage))
+                let other = Candidate(name: wine.name, producer: wine.producer, vintage: Int(wine.vintage), barcode: wine.barcode)
                 guard let score = similarity(candidate, other) else { return nil }
                 return Match(wine: wine, similarity: score)
             }
@@ -67,6 +70,9 @@ enum DuplicateFinder {
         // ähnlicher Name.
         let bothVintagesKnown = a.vintage > 0 && b.vintage > 0
         if bothVintagesKnown, a.vintage != b.vintage { return nil }
+
+        // Derselbe Strichcode und kein Widerspruch beim Jahrgang: dieselbe Flasche.
+        if !a.barcode.isEmpty, a.barcode == b.barcode { return 1 }
 
         let nameScore = ratio(normalized(a.name), normalized(b.name))
         let required = bothVintagesKnown ? nameThreshold : nameThresholdWithoutVintage

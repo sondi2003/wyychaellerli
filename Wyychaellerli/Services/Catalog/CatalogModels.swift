@@ -21,6 +21,9 @@ struct CatalogWine: Sendable, Equatable, Identifiable {
     var sourceID: String = ""
     /// Von Richard bearbeitet – ein späterer Import darf den Eintrag nicht überschreiben.
     var adminEdited: Bool = false
+    /// Bekannte Strichcodes (EAN-13/8) dieses Weins. Eine Liste, weil derselbe Wein oft
+    /// mehrere trägt (Flaschengrössen, Verpackungen). Suchmerkmal, kein Schlüssel.
+    var gtins: [String] = []
 
     var wineType: WineType? { WineType(rawValue: typeRaw) }
 
@@ -72,6 +75,8 @@ struct CatalogSubmission: Sendable, Identifiable {
     var createdAt: Date?
     /// Lokale Kopie des Etiketts, solange der Datensatz geladen ist.
     var labelImageData: Data?
+    /// Strichcode des vorgeschlagenen Weins oder leer.
+    var barcode: String = ""
 
     /// Als Katalogeintrag vorbereitet – Ausgangspunkt für die Prüfung im Admin-Bereich.
     var asCatalogWine: CatalogWine {
@@ -85,7 +90,8 @@ struct CatalogSubmission: Sendable, Identifiable {
             country: country,
             typeRaw: typeRaw,
             alcoholPercent: alcoholPercent,
-            source: "nutzer"
+            source: "nutzer",
+            gtins: barcode.isEmpty ? [] : [barcode]
         )
     }
 }
@@ -102,9 +108,44 @@ struct SubmissionDraft: Sendable {
     var alcoholPercent: Double
     var wineUUID: String
     var labelImageData: Data?
+    var barcode: String = ""
+    /// Schlüssel des Katalogeintrags, den dieser Vorschlag nur **ergänzt** (neuer
+    /// Strichcode zu einem Wein, den es schon gibt). Leer bei einem neuen Wein.
+    var targetKey: String = ""
 
     var catalogKey: String {
-        CatalogKey.make(producer: producer, name: name, vintage: vintage)
+        targetKey.isEmpty ? CatalogKey.make(producer: producer, name: name, vintage: vintage) : targetKey
+    }
+
+    /// Ein Vorschlag, der dem bestehenden Eintrag nur einen Strichcode hinzufügt. Trägt
+    /// dessen Angaben, damit das Aufnehmen nichts verändert – und kein Etikett, damit das
+    /// vorhandene bleibt.
+    init(adding barcode: String, to entry: CatalogWine, wineUUID: String) {
+        self.init(
+            name: entry.name, producer: entry.producer, vintage: entry.vintage, grape: entry.grape,
+            region: entry.region, country: entry.country, typeRaw: entry.typeRaw,
+            alcoholPercent: entry.alcoholPercent, wineUUID: wineUUID, labelImageData: nil,
+            barcode: barcode, targetKey: entry.id
+        )
+    }
+
+    init(
+        name: String, producer: String, vintage: Int, grape: String, region: String,
+        country: String, typeRaw: String, alcoholPercent: Double, wineUUID: String,
+        labelImageData: Data?, barcode: String = "", targetKey: String = ""
+    ) {
+        self.name = name
+        self.producer = producer
+        self.vintage = vintage
+        self.grape = grape
+        self.region = region
+        self.country = country
+        self.typeRaw = typeRaw
+        self.alcoholPercent = alcoholPercent
+        self.wineUUID = wineUUID
+        self.labelImageData = labelImageData
+        self.barcode = barcode
+        self.targetKey = targetKey
     }
 }
 
@@ -118,8 +159,13 @@ struct SubmissionDraft: Sendable {
 /// Suchwörter plus die Ähnlichkeitsregel aus `DuplicateFinder`.
 enum CatalogKey {
 
-    /// `ean_<ziffern>` bei bekanntem Strichcode, sonst `wine_<md5>` aus Produzent, Name
+    /// `ean_<ziffern>` bei übergebenem Strichcode, sonst `wine_<md5>` aus Produzent, Name
     /// und Jahrgang, je ohne Akzente, Satz- und Leerzeichen.
+    ///
+    /// **Die App übergibt nie einen Strichcode.** Derselbe Code kann über mehrere Jahrgänge
+    /// gleich bleiben, der Schlüssel muss aber je Jahrgang verschieden sein. Der Strichcode
+    /// ist ein Suchmerkmal (`CatalogWine.gtins`). Der Parameter ist für einen späteren
+    /// Import aus einer externen Quelle gedacht, die genau eine Flasche je Code liefert.
     static func make(gtin: String = "", producer: String, name: String, vintage: Int) -> String {
         let digits = gtin.filter(\.isNumber)
         if digits.count >= 8 { return "ean_\(digits)" }
@@ -177,5 +223,21 @@ enum CatalogMatcher {
             }
             .max { $0.1 < $1.1 }?
             .0
+    }
+
+    /// Der Eintrag zu einem Strichcode – **mit dem Jahrgang als Entscheider**.
+    ///
+    /// Derselbe Code gehört oft zu mehreren Jahrgängen. Ist der Jahrgang bekannt, zählt
+    /// nur der gleiche; ein Eintrag ohne Jahrgang springt ein, wenn es keinen gleichen
+    /// gibt. Ist er unbekannt, gilt nur ein **eindeutiger** Treffer – bei mehreren
+    /// Jahrgängen zu raten hiesse, einen Jahrgang zu erfinden.
+    static func match(barcode: String, vintage: Int, in entries: [CatalogWine]) -> CatalogWine? {
+        guard !barcode.isEmpty else { return nil }
+        let hits = entries.filter { $0.gtins.contains(barcode) }
+        guard !hits.isEmpty else { return nil }
+        if vintage > 0 {
+            return hits.first { $0.vintage == vintage } ?? hits.first { $0.vintage == 0 }
+        }
+        return hits.count == 1 ? hits[0] : nil
     }
 }

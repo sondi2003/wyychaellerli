@@ -87,6 +87,10 @@ final class Wine: NSManagedObject, Identifiable {
     @NSManaged var notes: String
     /// Volumenprozent. 0 heisst **unbekannt**, nicht alkoholfrei.
     @NSManaged var alcoholPercent: Double
+    /// Strichcode (EAN-13 oder EAN-8), nur Ziffern; leer heisst „nicht erfasst“. Ein
+    /// Suchmerkmal für den gemeinsamen Katalog, **kein** Schlüssel: Derselbe Code kann
+    /// über mehrere Jahrgänge gleich bleiben.
+    @NSManaged var barcode: String
     /// Zugeschnittenes Foto des Vorderseiten-Etiketts als JPEG.
     @NSManaged var labelImageData: Data?
     /// Zugeschnittenes Foto des Rückseiten-Etiketts als JPEG – dort stehen Terroir,
@@ -133,6 +137,7 @@ final class Wine: NSManagedObject, Identifiable {
         quantity: Int = 1,
         notes: String = "",
         alcoholPercent: Double = 0,
+        barcode: String = "",
         foodPairings: [String] = [],
         labelImageData: Data? = nil,
         backLabelImageData: Data? = nil,
@@ -160,6 +165,7 @@ final class Wine: NSManagedObject, Identifiable {
         wine.quantity = Int64(max(0, quantity))
         wine.notes = notes
         wine.alcoholPercent = max(0, alcoholPercent)
+        wine.barcode = Barcode.normalized(barcode)
         wine.foodPairings = foodPairings
         wine.labelImageData = labelImageData
         wine.backLabelImageData = backLabelImageData

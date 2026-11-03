@@ -62,6 +62,9 @@ struct LabelScanResult: Sendable, Identifiable, Equatable {
     let labelImageData: Data?
     /// Dasselbe für die Rückseite – dort steht der Text, den man später nachlesen will.
     let backLabelImageData: Data?
+    /// Strichcode aus den Fotos (nur Ziffern, Prüfziffer bestanden), sonst leer. Kommt aus
+    /// der Kamera, nie aus einer KI-Zuordnung – ein Modell würde Ziffern erfinden.
+    var barcode: String = ""
 }
 
 // MARK: - JSON-Schema für die Cloud-Zuordnung

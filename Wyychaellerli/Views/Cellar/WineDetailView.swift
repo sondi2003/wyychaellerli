@@ -312,6 +312,9 @@ struct WineDetailView: View {
         if !wine.drinkWindowText.isEmpty {
             result.append(Fact(label: tr("Trinkreife"), value: wine.drinkWindowText + " (" + (wine.drinkWindowFromLabel ? tr("Etikett") : tr("geschätzt")) + ")"))
         }
+        if !wine.barcode.isEmpty {
+            result.append(Fact(label: tr("Strichcode"), value: wine.barcode))
+        }
         if let date = wine.createdAt {
             result.append(Fact(label: tr("Erfasst"), value: date.appShortDate))
         }

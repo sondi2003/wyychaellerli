@@ -39,7 +39,7 @@ gezielt nach einzelnen Weinen.
 | alcoholPercent | Double | 0 = unbekannt |
 | sweetness, bottleSize | Double | für spätere Quellen, 0 = unbekannt |
 | barrique, bio, vegan | Int64 | 0/1 |
-| gtin | String | Strichcode, falls bekannt |
+| gtins | List<String> | Strichcodes (EAN-13/8) dieses Weins – **Queryable**. Suchmerkmal, kein Schlüssel: Derselbe Code kann über mehrere Jahrgänge gleich bleiben |
 | searchTokens | List<String> | normierte Wörter aus Produzent und Name – **Queryable** |
 | source | String | `nutzer` / `admin` / später z. B. `vinou` |
 | sourceID | String | Kennung bei der Quelle |
@@ -58,6 +58,7 @@ alcoholPercent) plus:
 | labelImage | Asset | zugeschnittenes Vorderseiten-Etikett |
 | catalogKey | String | derselbe Schlüssel wie oben – fasst gleiche Vorschläge zusammen; **Queryable** |
 | wineUUID | String | Kennung des Weins im Keller des Nutzers, nur für die Statusanzeige |
+| barcode | String | Strichcode des vorgeschlagenen Weins; nur gesetzt, wenn bekannt |
 | status | String | `pending` / `accepted` / `rejected` – **Queryable** |
 | appVersion | String | zur Fehlersuche |
 
@@ -78,7 +79,7 @@ Anzeige** – geschützt wird über die Rolle in der Konsole.
 | Creator | – | Read | – |
 | Admin (nur Richard) | Create, Read, Write | Create, Read, Write | Create, Read, Write |
 
-Zusätzlich **Queryable**: `CatalogWine.searchTokens`, `WineSubmission.status`,
+Zusätzlich **Queryable**: `CatalogWine.searchTokens`, `CatalogWine.gtins`, `WineSubmission.status`,
 `WineSubmission.catalogKey`, `WineSubmission.createdUserRecordName` (Systemfeld).
 
 ## Ablauf in der App
@@ -100,7 +101,12 @@ Zusätzlich **Queryable**: `CatalogWine.searchTokens`, `WineSubmission.status`,
 
 ## Abgleich
 
-1. Exakter Schlüssel (`wine_<hash>`, später `ean_<gtin>`).
+0. **Strichcode** (seit 3.11.2026), falls der Scan einen gelesen hat: `gtins CONTAINS`. Der
+   **Jahrgang entscheidet**: Ist er bekannt, zählt nur der gleiche (ein Eintrag ohne Jahrgang
+   springt ein); ist er unbekannt, gilt nur ein eindeutiger Treffer. Ein neuer Jahrgang
+   findet den alten Eintrag also nicht. Scheitert die Abfrage, geht es mit dem Namen weiter.
+1. Exakter Schlüssel (`wine_<hash>`; `ean_<gtin>` nur für einen späteren Import, die App
+   übergibt nie einen Strichcode).
 2. Sonst Kandidaten über das längste Wort von Produzent oder Name (`searchTokens CONTAINS`),
    dann auf dem Gerät mit der Regel aus `DuplicateFinder` (Jahrgang gleich, Name ≥ 0,85,
    Produzent ≥ 0,6).
@@ -162,3 +168,47 @@ Cicero aus dem Test ist nur in Development.
 5. **App Store Connect → App-Datenschutz**: neu „Sonstige Nutzerinhalte“ und
    „Fotos oder Videos“, mit dem Nutzer verknüpft, kein Tracking, Zweck App-Funktionalität.
    Nötig vor der Einreichung im App Store, für TestFlight intern nicht.
+
+## Strichcode (seit 3.11.2026)
+
+- **Lesen**: `BarcodeReader` (Vision, `VNDetectBarcodesRequest`, EAN-13 und EAN-8) liest den
+  Code aus denselben Fotos wie den Text, Rückseite zuerst. Gespeichert wird nur, was die
+  Prüfziffer besteht (`Barcode.normalized`); UPC-A wird zum EAN-13 mit führender Null.
+- **Felder**: `Wine.barcode` (Core Data, Standard leer), `CatalogWine.gtins` (Liste),
+  `WineSubmission.barcode`.
+- **Ergänzen geht nur über die Prüfung.** Fehlt einem bestehenden Katalogeintrag der
+  Strichcode, schickt die App eine **Ergänzung** (Vorschlag mit den Angaben des Eintrags,
+  `catalogKey` = dessen Schlüssel, ohne Etikett). Der Admin sieht „Bringt nur einen neuen
+  Strichcode mit“ und nimmt auf; die Codes werden **zusammengeführt**, nichts geht
+  verloren. Direkt eintragen darf ein Nutzer nichts – schreiben kann nur der Admin. Ohne
+  Prüfung ginge es erst mit einem Server (n8n mit Schlüssel).
+- **Konsole, Development** (Felder entstehen beim ersten Speichern von selbst, die Indizes
+  nicht): Schema → Indexes → `CatalogWine` → `gtins` **Queryable** hinzufügen. Ohne den
+  Index scheitert die Abfrage `gtins CONTAINS`; die App fällt dann leise auf den Namen
+  zurück.
+- **Konsole, Production**: **Deploy Schema Changes** überträgt die Felder `gtins` und
+  `barcode` samt Index (und `CD_barcode` am Wein, siehe AGENTS.md). Vor dem nächsten
+  TestFlight-Build. Ohne das scheitert in Production das Speichern von Vorschlägen mit
+  Strichcode; Vorschläge ohne Strichcode setzen das Feld gar nicht und gehen weiter durch.
+
+## Wenn in Production Vorschläge nicht ankommen
+
+Bild vom 3.11.2026 (TestFlight, zwei Nutzer): Der zweite Nutzer sieht „Wartet auf Prüfung“, beim
+Admin erscheint der Vorschlag nicht; die eigenen Vorschläge des Admins erscheinen, aber
+Aufnehmen speichert nichts, und der Vorschlag taucht später wieder auf.
+
+**Ursache: die Rolle „Admin“ wirkt in Production nicht.** Ohne sie kann der Admin nur seine
+**eigenen** Datensätze lesen und nirgends schreiben. Prüfen, in dieser Reihenfolge:
+
+1. App → Einstellungen → Gemeinsamer Katalog → **Admin-Rechte prüfen** (ab Build 17). Meldet
+   „fehlt die Berechtigung“, ist es das.
+2. Konsole → **Production** → Schema → Security Roles → `Admin`: Create, Read, Write auf
+   `CatalogWine`, `WineSubmission` und `CatalogAdmin`?
+3. Konsole → Production → Data → Public Database → Typ **Users** → den eigenen Datensatz
+   (Name = Kennung aus „Meine Vorschläge“) öffnen → Rolle `Admin` angehakt? **Speichern**
+   und danach den Datensatz erneut öffnen, ob der Haken geblieben ist.
+4. Konsole → Production → **Logs**: Fehler `PERMISSION_FAILURE` bei `modifyRecords` bestätigen es.
+5. App ganz beenden und neu starten.
+
+Die hängenden Vorschläge bleiben liegen und lassen sich danach normal aufnehmen: Beim
+Aufnehmen wurde nichts geschrieben, es gibt keine Doppeleinträge.

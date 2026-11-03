@@ -36,6 +36,14 @@ struct CatalogFormFields: View {
                     .multilineTextAlignment(.trailing)
             }
         }
+
+        Section {
+            GtinField(gtins: $entry.gtins)
+        } header: {
+            Text("Strichcode")
+        } footer: {
+            Text("Mehrere durch Komma trennen, zum Beispiel für verschiedene Flaschengrössen. Der Jahrgang entscheidet weiter, welcher Eintrag gemeint ist.")
+        }
     }
 
     private func field(_ title: LocalizedStringKey, text: Binding<String>) -> some View {
@@ -63,5 +71,37 @@ enum CatalogLabelPhoto {
             }
         }
         return image.resizedForRecognition(maxDimension: 1200).jpegData(compressionQuality: 0.8)
+    }
+}
+
+/// Eingabe der Strichcodes eines Katalogeintrags.
+///
+/// Der Text bleibt, wie getippt; ins Modell gehen nur Codes, die die Prüfziffer bestehen.
+/// Sonst verschwände eine halb getippte Ziffernfolge bei jedem Tastendruck.
+private struct GtinField: View {
+
+    @Binding var gtins: [String]
+    @State private var text = ""
+    @State private var didLoad = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            TextField("Ziffern, durch Komma getrennt", text: $text, axis: .vertical)
+                .keyboardType(.numbersAndPunctuation)
+                .monospacedDigit()
+            if Barcode.hasInvalidEntry(in: text) {
+                Label("Ein Code besteht die Prüfziffer nicht und wird nicht gespeichert.", systemImage: "exclamationmark.triangle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+            }
+        }
+        .onAppear {
+            guard !didLoad else { return }
+            didLoad = true
+            text = gtins.joined(separator: ", ")
+        }
+        .onChange(of: text) { _, newValue in
+            gtins = Barcode.list(from: newValue)
+        }
     }
 }
