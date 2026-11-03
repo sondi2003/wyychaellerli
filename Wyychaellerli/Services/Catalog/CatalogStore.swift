@@ -119,6 +119,109 @@ final class CatalogStore: Sendable {
         return collected.sorted { ($0.createdAt ?? .distantPast) > ($1.createdAt ?? .distantPast) }
     }
 
+    // MARK: Katalog verwalten (Admin)
+
+    /// Der ganze Katalog, ohne Etiketten – die würden bei ein paar hundert Weinen
+    /// zig Megabyte laden. Das Bild holt `wineImage(_:)` erst beim Öffnen eines Eintrags.
+    func allWines() async throws -> [CatalogWine] {
+        let query = CKQuery(recordType: RecordType.wine, predicate: NSPredicate(value: true))
+        let keys = ["name", "producer", "vintage", "grape", "region", "country", "typeRaw",
+                    "alcoholPercent", "source", "sourceID", "adminEdited"]
+        var collected: [CatalogWine] = []
+        var (results, cursor) = try await database.records(matching: query, desiredKeys: keys, resultsLimit: 400)
+        collected += results.compactMap { try? $0.1.get() }.map(Self.catalogWine)
+        while let next = cursor {
+            (results, cursor) = try await database.records(continuingMatchFrom: next, desiredKeys: keys, resultsLimit: 400)
+            collected += results.compactMap { try? $0.1.get() }.map(Self.catalogWine)
+        }
+        return collected
+    }
+
+    /// Das Etikett eines Eintrags, oder `nil`, wenn keines hinterlegt ist.
+    func wineImage(_ id: String) async throws -> Data? {
+        let fetched = try await database.records(for: [CKRecord.ID(recordName: id)], desiredKeys: ["image"])
+        let record = try fetched.values.first?.get()
+        return (record?["image"] as? CKAsset)?.fileURL.flatMap { try? Data(contentsOf: $0) }
+    }
+
+    /// Was mit dem Etikett beim Sichern passiert.
+    enum ImageChange: Sendable {
+        case keep
+        case replace(Data)
+        case remove
+    }
+
+    enum EditError: LocalizedError {
+        /// Unter dem neuen Schlüssel steht schon ein anderer Eintrag.
+        case keyTaken(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .keyTaken(let name):
+                return tr("Mit diesen Angaben steht schon „\(name)“ im Katalog. Ändere Name, Produzent oder Jahrgang, oder lösche einen der beiden Einträge.")
+            }
+        }
+    }
+
+    /// Sichert einen bearbeiteten Eintrag.
+    ///
+    /// Haben sich Name, Produzent oder Jahrgang geändert, ändert sich der Schlüssel: Der
+    /// Eintrag zieht dann unter den neuen Schlüssel um, damit ein späterer Scan ihn auf
+    /// dem schnellsten Weg findet, und der alte wird gelöscht. Steht unter dem neuen
+    /// Schlüssel schon ein anderer Eintrag, wird nichts überschrieben.
+    @discardableResult
+    func save(_ entry: CatalogWine, previousID: String, image: ImageChange) async throws -> CatalogWine {
+        var entry = entry
+        entry.id = CatalogKey.make(producer: entry.producer, name: entry.name, vintage: entry.vintage)
+        let moves = entry.id != previousID
+
+        let record: CKRecord
+        var imageData: Data?
+        if moves {
+            if let taken = try await fetchWine(entry.id) {
+                throw EditError.keyTaken(taken.name)
+            }
+            record = CKRecord(recordType: RecordType.wine, recordID: CKRecord.ID(recordName: entry.id))
+            // Beim Umzug muss das bestehende Etikett mit – es hängt am alten Datensatz.
+            if case .keep = image { imageData = try await wineImage(previousID) }
+        } else {
+            record = try await database.record(for: CKRecord.ID(recordName: entry.id))
+        }
+
+        record["name"] = entry.name
+        record["producer"] = entry.producer
+        record["vintage"] = Int64(entry.vintage)
+        record["grape"] = entry.grape
+        record["region"] = entry.region
+        record["country"] = entry.country
+        record["typeRaw"] = entry.typeRaw
+        record["alcoholPercent"] = entry.alcoholPercent
+        record["searchTokens"] = CatalogKey.tokens(name: entry.name, producer: entry.producer)
+        record["source"] = entry.source.isEmpty ? "admin" : entry.source
+        record["sourceID"] = entry.sourceID
+        record["adminEdited"] = Int64(1)
+
+        switch image {
+        case .keep: break
+        case .replace(let data): imageData = data
+        case .remove: record["image"] = nil
+        }
+        let imageFile = try imageData.map(Self.temporaryFile)
+        if let imageFile { record["image"] = CKAsset(fileURL: imageFile) }
+        defer { if let imageFile { try? FileManager.default.removeItem(at: imageFile) } }
+
+        let deleting = moves ? [CKRecord.ID(recordName: previousID)] : []
+        _ = try await database.modifyRecords(saving: [record], deleting: deleting, savePolicy: .changedKeys)
+        Self.logger.info("Katalog bearbeitet: \(previousID, privacy: .public) → \(entry.id, privacy: .public)")
+        entry.adminEdited = true
+        return entry
+    }
+
+    func deleteWine(_ id: String) async throws {
+        _ = try await database.modifyRecords(saving: [], deleting: [CKRecord.ID(recordName: id)])
+        Self.logger.info("Aus dem Katalog gelöscht: \(id, privacy: .public)")
+    }
+
     // MARK: Admin
 
     /// Steht die eigene Kennung im Admin-Datensatz? Nur für die Anzeige – geschützt wird

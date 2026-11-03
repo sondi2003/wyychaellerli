@@ -1,11 +1,16 @@
 import SwiftUI
 
-/// Tab 3: API-Keys (Keychain) und Modellnamen pro Anbieter.
+/// Einstellungen: Sprache, Darstellung, Freigabe, Katalog, KI und Hilfe.
 ///
-/// Der Anbieter mit hinterlegtem Key ist automatisch aktiv. Nur wenn mehrere
-/// Keys hinterlegt sind, erscheint eine Auswahl, welcher bevorzugt wird.
+/// Öffnet sich als Blatt über das Zahnrad im Keller (kein eigener Reiter mehr – man
+/// braucht sie selten). Der Anbieter mit hinterlegtem Key ist automatisch aktiv. Nur
+/// wenn mehrere Keys hinterlegt sind, erscheint eine Auswahl, welcher bevorzugt wird.
 struct SettingsView: View {
 
+    /// Als Blatt geöffnet: mit „Fertig“ oben rechts.
+    var isSheet = false
+
+    @Environment(\.dismiss) private var dismiss
     @Environment(AISettings.self) private var settings
     @Environment(CurrentRater.self) private var rater
     @Environment(LocalAIStatus.self) private var localAI
@@ -130,6 +135,13 @@ struct SettingsView: View {
 
             }
             .navigationTitle("Einstellungen")
+            .toolbar {
+                if isSheet {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fertig") { dismiss() }
+                    }
+                }
+            }
             .fullScreenCover(isPresented: $isShowingWalkthrough) {
                 WalkthroughView()
             }

@@ -9,6 +9,9 @@ import SwiftUI
 /// würde diese Frage nie beantworten.
 struct RatingsOverviewView: View {
 
+    /// Als Reiter in der Leiste: grosser Titel, kein „Fertig“.
+    var isTab = false
+
     @Environment(\.dismiss) private var dismiss
 
     @FetchRequest(
@@ -54,10 +57,12 @@ struct RatingsOverviewView: View {
                 }
             }
             .navigationTitle("Bewertungen")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(isTab ? .large : .inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Fertig") { dismiss() }
+                if !isTab {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fertig") { dismiss() }
+                    }
                 }
             }
         }

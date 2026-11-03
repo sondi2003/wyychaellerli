@@ -265,6 +265,63 @@ struct PillChip: View {
     }
 }
 
+/// Öffnet das Filterblatt. Weinrot umrandet, damit er sich von den Weinart-Chips abhebt;
+/// sind Filter eingeschaltet, steht ihre Zahl daneben.
+struct FilterButtonChip: View {
+    let count: Int
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(.caption.weight(.bold))
+                Text("Filter")
+                    .font(.subheadline.weight(.semibold))
+                if count > 0 {
+                    Text(verbatim: "\(count)")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Brand.onAccent)
+                        .frame(minWidth: 18, minHeight: 18)
+                        .background(Circle().fill(Brand.accent))
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .foregroundStyle(Brand.accent)
+            .background(Capsule().strokeBorder(Brand.accent, lineWidth: 1.5))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(count > 0 ? tr("Filter, \(count) aktiv") : tr("Filter"))
+    }
+}
+
+/// Ein eingeschalteter Filter als rosa Chip; ein Tipp nimmt ihn wieder heraus.
+struct RemovableChip: View {
+    let title: String
+    let onRemove: () -> Void
+
+    var body: some View {
+        Button(action: onRemove) {
+            HStack(spacing: 5) {
+                Text(verbatim: title)
+                    .font(.subheadline.weight(.semibold))
+                Image(systemName: "xmark")
+                    .font(.caption2.weight(.bold))
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+            .foregroundStyle(Brand.accent)
+            .background(Capsule().fill(Brand.blush))
+            .overlay(Capsule().strokeBorder(Brand.accent.opacity(0.4), lineWidth: 1))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(tr("\(title) entfernen"))
+    }
+}
+
 /// Kapsel-Knöpfe der Marke: gefüllt (Weinrot), Hauptaktion (Grün) oder umrandet.
 struct BrandButtonStyle: ButtonStyle {
     /// `destructive` ist rot umrandet, nicht gefüllt: neben einem gefüllten Hauptknopf

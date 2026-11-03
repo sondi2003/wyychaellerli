@@ -116,4 +116,51 @@ struct CatalogTests {
         #expect(groups.count == 2)
         #expect(groups.contains { $0.items.count == 2 })
     }
+
+    // MARK: Suche und Filter im Admin-Bereich
+
+    private func full(_ name: String, _ producer: String, _ vintage: Int, type: String = "red",
+                      country: String = "Schweiz", source: String = "nutzer", grape: String = "Pinot Noir") -> CatalogWine {
+        CatalogWine(id: name, name: name, producer: producer, vintage: vintage, grape: grape,
+                    region: "Bündnerland", country: country, typeRaw: type, alcoholPercent: 13, source: source)
+    }
+
+    @Test("Teilwörter und fehlende Akzente finden den Wein")
+    func searchFindsPartsAndAccents() {
+        let entries = [full("Cicero", "Rutishauser", 2023), full("La Pinède", "Tour Vieille", 2021)]
+        #expect(CatalogFilter(text: "cice").apply(to: entries).map(\.name) == ["Cicero"])
+        #expect(CatalogFilter(text: "pinede").apply(to: entries).map(\.name) == ["La Pinède"])
+    }
+
+    @Test("Mehrere Wörter grenzen gemeinsam ein")
+    func searchCombinesWords() {
+        let entries = [full("Cicero", "Rutishauser", 2023), full("Cicero", "Rutishauser", 2022)]
+        #expect(CatalogFilter(text: "cicero 2022").apply(to: entries).map(\.vintage) == [2022])
+    }
+
+    @Test("Weinart, Land und Herkunft filtern")
+    func filters() {
+        let entries = [
+            full("A", "X", 2020, type: "red", country: "Schweiz", source: "nutzer"),
+            full("B", "X", 2020, type: "white", country: "Italien", source: "admin"),
+            full("C", "X", 2020, type: "white", country: "Schweiz", source: "nutzer")
+        ]
+        #expect(CatalogFilter(type: .white).apply(to: entries).map(\.name) == ["B", "C"])
+        #expect(CatalogFilter(country: "Schweiz").apply(to: entries).map(\.name) == ["A", "C"])
+        #expect(CatalogFilter(source: "admin").apply(to: entries).map(\.name) == ["B"])
+        #expect(CatalogFilter(type: .white, country: "Schweiz").apply(to: entries).map(\.name) == ["C"])
+    }
+
+    @Test("Lückenhafte Einträge lassen sich herausfiltern")
+    func incomplete() {
+        let entries = [full("Komplett", "X", 2020), full("Ohne Jahrgang", "X", 0), full("Ohne Rebsorte", "X", 2020, grape: "")]
+        #expect(CatalogFilter(onlyIncomplete: true).apply(to: entries).map(\.name) == ["Ohne Jahrgang", "Ohne Rebsorte"])
+    }
+
+    @Test("Länderliste ohne Leere und Doppel, alphabetisch")
+    func countryList() {
+        let entries = [full("A", "", 0, country: "Schweiz"), full("B", "", 0, country: "Italien"),
+                       full("C", "", 0, country: ""), full("D", "", 0, country: "Schweiz")]
+        #expect(CatalogFilter.countries(in: entries) == ["Italien", "Schweiz"])
+    }
 }

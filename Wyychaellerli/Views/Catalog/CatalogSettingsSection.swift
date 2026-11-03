@@ -35,6 +35,11 @@ struct CatalogSettingsSection: View {
                 } label: {
                     Label("Vorführung: Vorschlag prüfen" as String, systemImage: "hammer")
                 }
+                NavigationLink {
+                    CatalogManagerView(demoEntries: CatalogWine.demoCatalog)
+                } label: {
+                    Label("Vorführung: Katalog verwalten" as String, systemImage: "hammer")
+                }
             }
             #endif
             if catalog.isAdmin {
@@ -54,6 +59,11 @@ struct CatalogSettingsSection: View {
                                 .fixedSize()
                         }
                     }
+                }
+                NavigationLink {
+                    CatalogManagerView()
+                } label: {
+                    Label("Katalog verwalten", systemImage: "books.vertical")
                 }
             }
         } header: {

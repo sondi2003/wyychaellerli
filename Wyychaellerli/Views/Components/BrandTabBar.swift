@@ -8,14 +8,16 @@ struct BrandTabBar: View {
 
     @Binding var selection: AppTab
     let onScan: () -> Void
+    /// Langes Drücken auf den Scan-Knopf: die Auswahl zeigt `ContentView`.
+    var onShowOptions: () -> Void = {}
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 0) {
             item(.cellar, title: "Wyychällerli", symbol: "cabinet")
             item(.advisor, title: "Wein-Berater", symbol: "sparkles")
-            scanButton
+            ScanButton(onScan: onScan, onShowOptions: onShowOptions)
             item(.rack, title: "Regal", symbol: "square.grid.3x3")
-            item(.settings, title: "Einstellungen", symbol: "gearshape")
+            item(.ratings, title: "Bewertungen", symbol: "star")
         }
         .padding(.horizontal, 6)
         .padding(.top, 6)
@@ -57,23 +59,44 @@ struct BrandTabBar: View {
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
         .animation(.snappy, value: isSelected)
     }
+}
 
-    /// Weisser Kreis, der über die Leiste hinausragt – der schnellste Weg zur neuen Flasche.
-    private var scanButton: some View {
-        Button(action: onScan) {
-            Image(systemName: "camera.fill")
-                .font(.system(size: 24, weight: .semibold))
-                .foregroundStyle(Brand.burgundy)
-                .frame(width: 62, height: 62)
-                .background(Circle().fill(.white))
-                .overlay(Circle().strokeBorder(Brand.burgundy, lineWidth: 4))
-                .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
-        }
-        .buttonStyle(.plain)
-        .offset(y: -14)
-        .padding(.bottom, -14)
-        .frame(maxWidth: .infinity)
-        .accessibilityLabel("Etikett scannen")
+/// Weisser Kreis, der über die Leiste hinausragt – der schnellste Weg zur neuen Flasche.
+///
+/// Ein Tipp öffnet sofort die Kamera, langes Drücken die Auswahl: Foto aus der
+/// Mediathek oder ganz ohne Foto. Ohne Foto braucht es selten (Etikett unlesbar,
+/// Flasche schon getrunken), deshalb kein eigener Knopf dafür.
+///
+/// **Nichts an der Leiste präsentieren** – kein `Menu`, kein `.contextMenu`, kein
+/// `popoverTip`, kein `confirmationDialog`. Mit jedem davon zeichnete SwiftUI die Leiste
+/// nach einem Reiterwechsel nicht mehr neu („AttributeGraph: cycle detected“): Die Leiste
+/// wird vermessen (`onGeometryChange` in `ContentView`), und die Präsentation hängt an
+/// ihrer Lage. Die Markierung blieb dann auf dem ersten Reiter stehen. Ein
+/// `confirmationDialog` weiter oben in `ContentView` tat dasselbe. Deshalb nur Gesten; die
+/// Auswahl ist ein Blatt (`ScanOptionsSheet`), der Tipp steht in der Kellerliste.
+private struct ScanButton: View {
+    let onScan: () -> Void
+    let onShowOptions: () -> Void
+
+    var body: some View {
+        Image(systemName: "camera.fill")
+            .font(.system(size: 24, weight: .semibold))
+            .foregroundStyle(Brand.burgundy)
+            .frame(width: 62, height: 62)
+            .background(Circle().fill(.white))
+            .overlay(Circle().strokeBorder(Brand.burgundy, lineWidth: 4))
+            .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
+            .contentShape(Circle())
+            .onTapGesture { onScan() }
+            .onLongPressGesture(minimumDuration: 0.4) { onShowOptions() }
+            .offset(y: -14)
+            .padding(.bottom, -14)
+            .frame(maxWidth: .infinity)
+            .accessibilityElement()
+            .accessibilityAddTraits(.isButton)
+            .accessibilityLabel("Etikett scannen")
+            .accessibilityAction { onScan() }
+            .accessibilityAction(named: "Weitere Wege") { onShowOptions() }
     }
 }
 
@@ -97,6 +120,6 @@ extension EnvironmentValues {
     @Previewable @State var tab = AppTab.cellar
     VStack {
         Spacer()
-        BrandTabBar(selection: $tab) { }
+        BrandTabBar(selection: $tab, onScan: {})
     }
 }

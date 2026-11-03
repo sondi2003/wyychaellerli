@@ -92,6 +92,8 @@ Zusätzlich **Queryable**: `CatalogWine.searchTokens`, `WineSubmission.status`,
 4. **Detailseite**: Karte mit dem Katalog-Status und „Zur Prüfung senden“.
 5. **Admin**: Einstellungen → „Vorschläge prüfen“. Gleiche Vorschläge erscheinen
    zusammengefasst. Felder anpassen, aufnehmen oder ablehnen.
+   Einstellungen → „Katalog verwalten“: ganzen Katalog durchsuchen und filtern
+   (Weinart, Land, Herkunft, lückenhaft), Einträge korrigieren, Etikett tauschen, löschen.
 6. **Mitteilung**: CloudKit-Abo (`CKQuerySubscription`) des Nutzers auf seine eigenen
    Vorschläge, ausgelöst bei Statuswechsel. Richard hat ein Abo auf neue Vorschläge.
    Kein eigener Server nötig.
@@ -151,8 +153,8 @@ Cicero aus dem Test ist nur in Development.
    Die Liste zeigt die neuen Typen `CatalogWine`, `CatalogAdmin`, `WineSubmission`, ihre
    Indizes und die Rollen (auch `Admin`). `CD_…` sollte nicht dabei sein. Bestätigen.
 2. **Build hochladen** (TestFlight, Production-Umgebung). Danach die TestFlight-App
-   einmal öffnen und unter Meine Vorschläge die Kennung ablesen – in Production kann sie
-   anders sein als in Development.
+   einmal öffnen, damit der Benutzer-Datensatz in Production entsteht. Die Kennung ist
+   dieselbe wie in Development (am 2.11.2026 geprüft).
 3. **Konsole → Production**: Records → Public Database → `CatalogAdmin` → + →
    Record Name `admins`, `userRecordNames` = Kennung aus Schritt 2.
 4. **Production → Users**: Index `recordName` (Queryable) gibt es dort erst nach dem

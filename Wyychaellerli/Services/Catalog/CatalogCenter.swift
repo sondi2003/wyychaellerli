@@ -187,6 +187,24 @@ final class CatalogCenter {
         pendingCount = max(0, pendingCount - newlyDecided)
     }
 
+    // MARK: Katalog verwalten
+
+    func allCatalogWines() async throws -> [CatalogWine] {
+        try await store.allWines()
+    }
+
+    func catalogImage(_ id: String) async -> Data? {
+        try? await store.wineImage(id)
+    }
+
+    func saveCatalogWine(_ entry: CatalogWine, previousID: String, image: CatalogStore.ImageChange) async throws -> CatalogWine {
+        try await store.save(entry, previousID: previousID, image: image)
+    }
+
+    func deleteCatalogWine(_ id: String) async throws {
+        try await store.deleteWine(id)
+    }
+
     func myRecordName() async -> String? {
         await store.myRecordName()
     }

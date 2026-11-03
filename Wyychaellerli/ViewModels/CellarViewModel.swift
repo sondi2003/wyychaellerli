@@ -22,8 +22,21 @@ final class CellarViewModel {
     /// „leicht“ zu behaupten, wo nichts bekannt ist, wäre geraten.
     var strengthFilter: Wine.Strength?
 
-    /// Für das Symbol in der Toolbar: Ist gerade irgendein Filter aktiv?
-    var isFiltering: Bool { showArchived || showOnlyDrinkSoon || strengthFilter != nil }
+    /// Ist im Filterblatt etwas eingeschaltet? Die Weinart zählt nicht dazu, die steht
+    /// ohnehin sichtbar in der Chip-Reihe.
+    var isFiltering: Bool { activeFilterCount > 0 }
+
+    /// Für die Zahl am Filter-Chip.
+    var activeFilterCount: Int {
+        [showArchived, showOnlyDrinkSoon, strengthFilter != nil].filter { $0 }.count
+    }
+
+    /// „Filter zurücksetzen“ im Filterblatt. Die Weinart bleibt, wie sie ist.
+    func resetFilters() {
+        showArchived = false
+        showOnlyDrinkSoon = false
+        strengthFilter = nil
+    }
 
     // MARK: Sheet- und Dialog-Zustand
 

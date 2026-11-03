@@ -169,31 +169,7 @@ struct AdminSubmissionEditor: View {
                 }
             }
 
-            Section("Wein") {
-                field("Name", text: $entry.name)
-                field("Produzent", text: $entry.producer)
-                LabeledContent("Jahrgang") {
-                    TextField("Jahrgang", value: $entry.vintage, format: .number.grouping(.never))
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
-                }
-                Picker("Weinart", selection: $entry.typeRaw) {
-                    ForEach(WineType.allCases) { type in
-                        Text(type.displayName).tag(type.rawValue)
-                    }
-                }
-            }
-
-            Section("Herkunft") {
-                field("Rebsorte", text: $entry.grape)
-                field("Region", text: $entry.region)
-                field("Land", text: $entry.country)
-                LabeledContent("Alkohol (Prozent)") {
-                    TextField("Alkohol (Prozent)", value: $entry.alcoholPercent, format: .number)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                }
-            }
+            CatalogFormFields(entry: $entry)
 
             if let errorMessage {
                 Section {
@@ -247,15 +223,6 @@ struct AdminSubmissionEditor: View {
         .padding(.top, 10)
         .padding(.bottom, 10 + tabBarClearance)
         .background(.bar)
-    }
-
-    /// Feld mit fester Beschriftung links. Ein blosser Platzhalter verschwindet, sobald
-    /// etwas drinsteht – dann stand „2026“ oder „0“ ohne Hinweis, wofür.
-    private func field(_ title: LocalizedStringKey, text: Binding<String>) -> some View {
-        LabeledContent(title) {
-            TextField(title, text: text)
-                .multilineTextAlignment(.trailing)
-        }
     }
 
     private func accept() async {

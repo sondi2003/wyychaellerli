@@ -6,18 +6,16 @@ import TipKit
 struct CellarView: View {
 
     private let consumeTip = ConsumeTip()
+    private let scanOptionsTip = ScanOptionsTip()
 
     @Environment(\.managedObjectContext) private var context
-    @Environment(PartySession.self) private var party
+    @Environment(\.openSettings) private var openSettings
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: false)],
         animation: .default
     ) private var fetchedWines: FetchedResults<Wine>
     @State private var viewModel = CellarViewModel()
-    @State private var isShowingRatings = false
-    @State private var isShowingRack = false
-    @State private var isShowingPartyHistory = false
-    @State private var isMissingDeviceLock = false
+    @State private var isShowingFilters = false
     /// Wein, der gerade bewertet wird – nach dem Austrinken der letzten Flasche.
     @State private var wineToRate: Wine?
     /// Wein, dessen Löschen noch bestätigt werden muss. Löschen ist endgültig und geht
@@ -61,20 +59,11 @@ struct CellarView: View {
             }
             .navigationTitle("Wyychällerli")
             .toolbar { toolbarContent }
-            .sheet(isPresented: $isShowingRatings) {
-                RatingsOverviewView()
+            .sheet(isPresented: $isShowingFilters) {
+                CellarFilterSheet(viewModel: viewModel)
             }
-            .sheet(isPresented: $isShowingRack) {
-                RackView()
-            }
-            .sheet(isPresented: $isShowingPartyHistory) {
-                PartyHistoryView()
-            }
-            .alert("Gerät ohne Sperre", isPresented: $isMissingDeviceLock) {
-                Button("Verstanden", role: .cancel) { }
-            } message: {
-                Text("Der Party-Modus lässt sich nur mit Face ID, Touch ID oder Gerätecode wieder verlassen. Richte in den iPhone-Einstellungen unter „Face ID & Code“ eine Sperre ein.")
-            }
+            // Der Tipp zum langen Drücken auf den Scan-Knopf kommt erst mit dem ersten Wein.
+            .task(id: wines.isEmpty) { ScanOptionsTip.hasWines = !wines.isEmpty }
             // Fest unter dem Titel: Ohne Systemleiste setzt iOS 26 die Suche sonst nach unten,
             // wo sie unter der eigenen Leiste (`BrandTabBar`) verschwindet.
             .searchable(
@@ -130,6 +119,10 @@ struct CellarView: View {
                 // Erst wenn es etwas abzubuchen gibt; im leeren Keller wäre er nur Rauschen.
                 if !groups.isEmpty {
                     TipView(consumeTip)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowBackground(Color.clear)
+                    // Als Karte hier, nicht als Blase am Scan-Knopf – siehe `ScanButton`.
+                    TipView(scanOptionsTip)
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .listRowBackground(Color.clear)
                 }
@@ -228,9 +221,25 @@ struct CellarView: View {
         }
     }
 
+    /// Eine Reihe: vorne der Filter-Chip und was davon eingeschaltet ist, dahinter die
+    /// Weinarten. Der Filter steht vorne, nicht hinten – hinten läge er bei sechs Weinarten
+    /// ausserhalb des Bildschirms. Aktive Filter stehen als eigene Chips da, damit man
+    /// jederzeit sieht, warum die Liste kürzer ist.
     private var typeFilterChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
+                FilterButtonChip(count: viewModel.activeFilterCount) {
+                    isShowingFilters = true
+                }
+                if viewModel.showOnlyDrinkSoon {
+                    RemovableChip(title: tr("Bald trinken")) { viewModel.showOnlyDrinkSoon = false }
+                }
+                if let strength = viewModel.strengthFilter {
+                    RemovableChip(title: strength.title) { viewModel.strengthFilter = nil }
+                }
+                if viewModel.showArchived {
+                    RemovableChip(title: tr("Archiv")) { viewModel.showArchived = false }
+                }
                 PillChip(title: tr("Alle"), isSelected: viewModel.typeFilter == nil) {
                     viewModel.typeFilter = nil
                 }
@@ -280,71 +289,17 @@ struct CellarView: View {
 
     // MARK: Toolbar
 
+    /// Nur das Zahnrad. Filter liegen in der Chip-Reihe, Neuzugänge kommen über den
+    /// Scan-Knopf der Leiste, Regal und Bewertungen sind Reiter, die Party liegt im Berater.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Menu {
-                Toggle(isOn: $viewModel.showArchived) {
-                    Label("Archiv anzeigen", systemImage: "archivebox")
-                }
-                Toggle(isOn: $viewModel.showOnlyDrinkSoon) {
-                    Label("Nur was dran ist", systemImage: "clock.badge.exclamationmark")
-                }
-                // Nach Schwere filtern: „heute nur was Leichtes“.
-                Picker("Alkoholgehalt", selection: $viewModel.strengthFilter) {
-                    Text("Alle").tag(Wine.Strength?.none)
-                    ForEach(Wine.Strength.allCases) { strength in
-                        Label("\(strength.title) (\(strength.range))", systemImage: strength.symbolName)
-                            .tag(Wine.Strength?.some(strength))
-                    }
-                }
-                Divider()
-                Button {
-                    isShowingRack = true
-                } label: {
-                    Label("Regal", systemImage: "square.grid.3x3")
-                }
-                Button {
-                    isShowingRatings = true
-                } label: {
-                    Label("Bewertungen", systemImage: "star")
-                }
-                Divider()
-                Button {
-                    // Ohne Gerätesperre kein Party-Modus – sonst käme man nicht heraus.
-                    if PartyLock.isAvailable {
-                        party.start()
-                    } else {
-                        isMissingDeviceLock = true
-                    }
-                } label: {
-                    Label("Party-Modus", systemImage: "party.popper")
-                }
-                Button {
-                    isShowingPartyHistory = true
-                } label: {
-                    Label("Party-Historie", systemImage: "trophy")
-                }
-            } label: {
-                Image(systemName: viewModel.isFiltering ? "line.3.horizontal.decrease.circle.fill" : "ellipsis.circle")
-            }
-        }
         ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                Button {
-                    viewModel.addMode = .scan
-                } label: {
-                    Label("Etikett scannen", systemImage: "text.viewfinder")
-                }
-                Button {
-                    viewModel.addMode = .manual
-                } label: {
-                    Label("Manuell eingeben", systemImage: "square.and.pencil")
-                }
+            Button {
+                openSettings()
             } label: {
-                Image(systemName: "plus")
+                Image(systemName: "gearshape")
             }
-            .accessibilityLabel("Wein hinzufügen")
+            .accessibilityLabel("Einstellungen")
         }
     }
 }

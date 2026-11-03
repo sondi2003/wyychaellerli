@@ -4,8 +4,8 @@ import CoreData
 /// Tab 2: Essens-Stichwort eingeben und Top-3-Empfehlung vom aktiven Anbieter holen.
 struct AdvisorView: View {
 
-    @Binding var selectedTab: AppTab
-
+    @Environment(\.openSettings) private var openSettings
+    @Environment(PartySession.self) private var party
     @Environment(AISettings.self) private var settings
     @Environment(\.aiService) private var aiService
     @Environment(LocalAIStatus.self) private var localAI
@@ -15,6 +15,8 @@ struct AdvisorView: View {
     @FocusState private var dishFieldFocused: Bool
     /// Abbuchen mit demselben Ablauf wie in der Kellerliste (Fach, letzte Flasche, Bewerten).
     @State private var consumer = BottleConsumer()
+    @State private var isShowingPartyHistory = false
+    @State private var isMissingDeviceLock = false
 
     private var wines: [Wine] { Array(fetchedWines) }
 
@@ -58,6 +60,8 @@ struct AdvisorView: View {
                     } else if let response = viewModel.response {
                         resultSection(response)
                     }
+
+                    partyCard
                 }
                 .padding()
             }
@@ -65,7 +69,7 @@ struct AdvisorView: View {
             .navigationTitle("Wein-Berater")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    ProviderStatusBadge(settings: settings, local: localAI) { selectedTab = .settings }
+                    ProviderStatusBadge(settings: settings, local: localAI) { openSettings() }
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -74,7 +78,74 @@ struct AdvisorView: View {
             .navigationDestination(for: Wine.self) { wine in
                 WineDetailView(wine: wine)
             }
+            .sheet(isPresented: $isShowingPartyHistory) {
+                PartyHistoryView()
+            }
+            .alert("Gerät ohne Sperre", isPresented: $isMissingDeviceLock) {
+                Button("Verstanden", role: .cancel) { }
+            } message: {
+                Text("Der Party-Modus lässt sich nur mit Face ID, Touch ID oder Gerätecode wieder verlassen. Richte in den iPhone-Einstellungen unter „Face ID & Code“ eine Sperre ein.")
+            }
         }
+    }
+
+    // MARK: Party
+
+    /// Die zweite Antwort auf „Welche Flasche öffnen wir?“: nicht nach dem Essen, sondern
+    /// nach Stimmen. Deshalb hier und nicht mehr im Menü der Kellerliste, wo sie zwei
+    /// Ebenen tief zwischen Filtern lag.
+    private var partyCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label {
+                Text("Gemeinsam abstimmen")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+            } icon: {
+                Image(systemName: "party.popper.fill")
+                    .foregroundStyle(Brand.rose)
+            }
+            Text("Die Gäste wählen, welche Flasche heute aufgeht. Das iPhone geht von Hand zu Hand.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.8))
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 10) {
+                Button {
+                    // Ohne Gerätesperre kein Party-Modus – sonst käme man nicht heraus.
+                    if PartyLock.isAvailable {
+                        party.start()
+                    } else {
+                        isMissingDeviceLock = true
+                    }
+                } label: {
+                    Label("Party starten", systemImage: "party.popper")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(Brand.burgundy)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 11)
+                        .background(Capsule().fill(.white))
+                }
+                .buttonStyle(.plain)
+                Button {
+                    isShowingPartyHistory = true
+                } label: {
+                    Label("Historie", systemImage: "trophy")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 11)
+                        .background(Capsule().strokeBorder(Brand.rose.opacity(0.8), lineWidth: 1.5))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .strokeBorder(Brand.rose.opacity(0.7), lineWidth: 1.5)
+        )
+        .padding(.top, 8)
     }
 
     // MARK: Eingabe
@@ -187,7 +258,7 @@ struct AdvisorView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                Button("Einstellungen öffnen") { selectedTab = .settings }
+                Button("Einstellungen öffnen") { openSettings() }
                     .font(.footnote.weight(.semibold))
             }
         }
@@ -234,7 +305,7 @@ struct AdvisorView: View {
             HStack {
                 if error.suggestsSettings {
                     Button {
-                        selectedTab = .settings
+                        openSettings()
                     } label: {
                         Label("Einstellungen", systemImage: "gearshape")
                     }
@@ -493,7 +564,8 @@ struct ProviderStatusBadge: View {
 }
 
 #Preview {
-    AdvisorView(selectedTab: .constant(.advisor))
+    AdvisorView()
         .environment(\.managedObjectContext, PreviewData.context)
+        .environment(PartySession())
         .environment(AISettings(defaults: PreviewData.defaults))
 }

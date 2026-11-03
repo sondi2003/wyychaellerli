@@ -1,13 +1,29 @@
 import CoreData
+import PhotosUI
 import SwiftUI
+import TipKit
 import UIKit
 
-/// Die Reiter der App. Der Scan in der Mitte ist kein Reiter, sondern öffnet ein Blatt.
+/// Die Reiter der App. Der Scan in der Mitte ist kein Reiter, sondern öffnet die Kamera.
+/// Die Einstellungen sind ebenfalls keiner: Man braucht sie selten, sie öffnen sich über
+/// das Zahnrad oben im Keller (`openSettings`).
 enum AppTab: Hashable {
     case cellar
     case advisor
     case rack
-    case settings
+    case ratings
+}
+
+/// Öffnet die Einstellungen als Blatt – von jedem Reiter aus, ohne den Reiter zu wechseln.
+private struct OpenSettingsKey: EnvironmentKey {
+    static let defaultValue: @MainActor () -> Void = {}
+}
+
+extension EnvironmentValues {
+    var openSettings: @MainActor () -> Void {
+        get { self[OpenSettingsKey.self] }
+        set { self[OpenSettingsKey.self] = newValue }
+    }
 }
 
 struct ContentView: View {
@@ -40,8 +56,15 @@ struct ContentView: View {
     @State private var frontForScan: CapturedPhoto?
     @State private var pendingScan: LabelScanResult?
     @State private var finishedScan: LabelScanResult?
-    /// Rückfall ohne Kamera: Formular mit Scan-Blatt wie aus dem Plus-Menü.
+    /// Rückfall ohne Kamera: Formular mit Scan-Blatt darin.
     @State private var isScanning = false
+    /// Langes Drücken auf den Scan-Knopf: Foto aus der Mediathek oder ganz ohne Foto.
+    @State private var isPickingPhoto = false
+    @State private var pickedPhoto: PhotosPickerItem?
+    @State private var isAddingManually = false
+    @State private var isShowingScanOptions = false
+    @State private var scanOption: ScanOptionsSheet.Option?
+    @State private var isShowingSettings = false
     @State private var isKeyboardVisible = false
     /// Gemessene Höhe der Leiste ohne Home-Indikator.
     @State private var tabBarHeight: CGFloat = 56
@@ -57,9 +80,9 @@ struct ContentView: View {
             ZStack(alignment: .bottom) {
                 ZStack {
                     tab(.cellar) { CellarView() }
-                    tab(.advisor) { AdvisorView(selectedTab: $selectedTab) }
+                    tab(.advisor) { AdvisorView() }
                     tab(.rack) { RackView(isTab: true) }
-                    tab(.settings) { SettingsView() }
+                    tab(.ratings) { RatingsOverviewView(isTab: true) }
                 }
                 // Die Leiste liegt über den Reitern; jede Liste bekommt ihre Höhe als
                 // Rand am Ende des Inhalts. `.safeAreaInset` und `.safeAreaPadding` an
@@ -72,9 +95,40 @@ struct ContentView: View {
 
                 // Über der Tastatur stünde die Leiste nur im Weg.
                 if !isKeyboardVisible {
-                    BrandTabBar(selection: $selectedTab) { startScan() }
-                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
+                    BrandTabBar(
+                        selection: $selectedTab,
+                        onScan: startScan,
+                        onShowOptions: showScanOptions
+                    )
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
                 }
+            }
+            .environment(\.openSettings) { isShowingSettings = true }
+            // Ein Blatt, keine Blase: Unter iOS 26 verankern sich `confirmationDialog`,
+            // `Menu`, `.contextMenu` und `popoverTip` an einer Stelle – und jede davon hielt
+            // die Markierung der Leiste fest (siehe `ScanButton`). Blätter sind nicht
+            // verankert. Der gewählte Weg startet erst nach dem Schliessen, sonst verschluckt
+            // UIKit die zweite Präsentation.
+            .sheet(isPresented: $isShowingScanOptions, onDismiss: runScanOption) {
+                ScanOptionsSheet { scanOption = $0 }
+            }
+            .sheet(isPresented: $isShowingSettings) {
+                SettingsView(isSheet: true)
+            }
+            // Ein Foto aus der Mediathek nimmt denselben Weg wie eines aus der Kamera.
+            .photosPicker(isPresented: $isPickingPhoto, selection: $pickedPhoto, matching: .images)
+            .onChange(of: pickedPhoto) { _, item in
+                guard let item else { return }
+                Task { @MainActor in
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        frontForScan = CapturedPhoto(image: image)
+                    }
+                    pickedPhoto = nil
+                }
+            }
+            .sheet(isPresented: $isAddingManually) {
+                WineFormView(mode: .add)
             }
             // Mittelknopf: erst nur die Kamera, ohne Formular und Scan-Blatt darunter –
             // sonst stapeln sich drei Ebenen sichtbar übereinander. Danach das Scan-Blatt mit
@@ -153,6 +207,21 @@ struct ContentView: View {
         }
         .fullScreenCover(isPresented: $isShowingWalkthrough) {
             WalkthroughView()
+        }
+    }
+
+    private func showScanOptions() {
+        ScanOptionsTip().invalidate(reason: .actionPerformed)
+        isShowingScanOptions = true
+    }
+
+    private func runScanOption() {
+        guard let option = scanOption else { return }
+        scanOption = nil
+        switch option {
+        case .camera: startScan()
+        case .photos: isPickingPhoto = true
+        case .manual: isAddingManually = true
         }
     }
 

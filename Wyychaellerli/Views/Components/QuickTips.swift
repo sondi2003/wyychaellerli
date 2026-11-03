@@ -49,6 +49,21 @@ struct ScanWholeBottleTip: Tip {
     var image: Image? { Image(systemName: "camera.viewfinder") }
 }
 
+/// In der Kellerliste: Ohne Foto und aus der Mediathek liegen hinter langem Drücken auf
+/// den Scan-Knopf. Als Karte, nicht als Blase am Knopf – siehe `ScanButton`.
+struct ScanOptionsTip: Tip {
+    var id: String { "scan.options.\(QuickTips.generation)" }
+    var title: Text { Text("Kamera unten lange drücken") }
+    var message: Text? {
+        Text("Ein Foto aus der Mediathek nehmen oder einen Wein ganz ohne Foto erfassen.")
+    }
+    var image: Image? { Image(systemName: "hand.tap") }
+
+    /// Erst wenn schon Weine da sind: Den Grundweg (einfach tippen) soll man zuerst kennen.
+    @Parameter static var hasWines: Bool = false
+    var rules: [Rule] { #Rule(Self.$hasWines) { $0 } }
+}
+
 /// In der Kellerliste, sobald Weine da sind.
 struct ConsumeTip: Tip {
     var id: String { "consume.\(QuickTips.generation)" }
