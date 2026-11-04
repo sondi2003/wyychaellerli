@@ -101,6 +101,8 @@ struct SubmissionGroup: Identifiable {
     /// Einreicher, ohne Doppel.
     var asCatalogWine: CatalogWine {
         var entry = first.asCatalogWine
+        // Mehrere Vorschläge zum selben Wein ergänzen sich: Was einer leer lässt, liefert ein anderer.
+        for other in items.dropFirst() { entry.fillEmptyFields(from: other.asCatalogWine) }
         entry.gtins = CatalogStore.unique(items.map(\.barcode).filter { !$0.isEmpty })
         return entry
     }
@@ -144,6 +146,7 @@ struct AdminSubmissionEditor: View {
 
     @State private var entry: CatalogWine
     @State private var existing: CatalogWine?
+    @State private var existingHasImage = false
     @State private var isWorking = false
     @State private var isConfirmingReject = false
     @State private var errorMessage: String?
@@ -171,10 +174,10 @@ struct AdminSubmissionEditor: View {
                     if group.items.count > 1 {
                         Label(tr("\(group.items.count) Personen haben diesen Wein vorgeschlagen."), systemImage: "person.2")
                     }
-                    if let existing {
-                        if Self.differsOnlyByBarcode(entry, from: existing) {
-                            // Eine Ergänzung: Die Angaben sind die des bestehenden Eintrags.
-                            Label("Bringt nur einen neuen Strichcode für den bestehenden Eintrag mit. Aufnehmen fügt ihn hinzu und ändert sonst nichts.", systemImage: "barcode")
+                    if existing != nil {
+                        if let added = supplement {
+                            // Eine Ergänzung: Vorhandenes bleibt, es kommt nur Neues dazu.
+                            Label(tr("Ergänzt den bestehenden Eintrag um: \(added.joined(separator: ", ")). Aufnehmen fügt das hinzu und ändert sonst nichts."), systemImage: "plus.circle")
                         } else {
                             Label("Steht schon im Katalog – Aufnehmen überschreibt den Eintrag mit diesen Angaben.", systemImage: "exclamationmark.triangle")
                                 .foregroundStyle(.orange)
@@ -212,7 +215,18 @@ struct AdminSubmissionEditor: View {
         }
         .task {
             existing = await catalog.existingEntry(for: group.id)
+            if existing != nil {
+                existingHasImage = await catalog.catalogImage(group.id) != nil
+            }
         }
+    }
+
+    /// Was dieser Vorschlag dem bestehenden Eintrag hinzufügt – `nil`, wenn er etwas
+    /// Vorhandenes ändert oder nichts Neues bringt.
+    private var supplement: [String]? {
+        guard let existing, var added = entry.additions(over: existing) else { return nil }
+        if group.labelImageData != nil, !existingHasImage { added.append(tr("Foto")) }
+        return added.isEmpty ? nil : added
     }
 
     /// Gleiche Angaben wie der bestehende Eintrag, nur ein Strichcode kommt dazu? Dann ist
@@ -260,6 +274,13 @@ struct AdminSubmissionEditor: View {
         // Weins genau diesen Eintrag findet.
         final.id = CatalogKey.make(producer: final.producer, name: final.name, vintage: final.vintage)
         final.source = final == group.asCatalogWine ? "nutzer" : "admin"
+        if let existing, supplement != nil {
+            // Eine Ergänzung bleibt am Eintrag: Ein neu ausgefüllter Produzent würde sonst
+            // den Schlüssel ändern und einen zweiten Eintrag anlegen.
+            final.id = existing.id
+            final.source = existing.source
+            final.sourceID = existing.sourceID
+        }
         do {
             try await catalog.accept(group.items, as: final)
             onDecided(group)

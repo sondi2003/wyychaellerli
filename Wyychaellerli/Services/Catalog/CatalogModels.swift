@@ -27,6 +27,39 @@ struct CatalogWine: Sendable, Equatable, Identifiable {
 
     var wineType: WineType? { WineType(rawValue: typeRaw) }
 
+    /// Was dieser Eintrag dem bestehenden **hinzufügt**, als Feldnamen für die Anzeige –
+    /// oder `nil`, wenn er etwas Vorhandenes ändert (dann ist es keine Ergänzung, sondern
+    /// ein Überschreiben). Eine leere Liste heisst: nichts Neues.
+    func additions(over existing: CatalogWine) -> [String]? {
+        guard name == existing.name, vintage == existing.vintage, typeRaw == existing.typeRaw else { return nil }
+        var added: [String] = []
+        for (label, old, new) in [
+            (tr("Produzent"), existing.producer, producer),
+            (tr("Rebsorte"), existing.grape, grape),
+            (tr("Region"), existing.region, region),
+            (tr("Land"), existing.country, country)
+        ] where new != old {
+            guard old.isEmpty else { return nil }
+            added.append(label)
+        }
+        if alcoholPercent != existing.alcoholPercent {
+            guard existing.alcoholPercent == 0 else { return nil }
+            added.append(tr("Alkohol"))
+        }
+        guard existing.gtins.allSatisfy(gtins.contains) else { return nil }
+        if !gtins.allSatisfy(existing.gtins.contains) { added.append(tr("Strichcode")) }
+        return added
+    }
+
+    /// Füllt leere Felder aus einem weiteren Vorschlag zum selben Wein.
+    mutating func fillEmptyFields(from other: CatalogWine) {
+        if producer.isEmpty { producer = other.producer }
+        if grape.isEmpty { grape = other.grape }
+        if region.isEmpty { region = other.region }
+        if country.isEmpty { country = other.country }
+        if alcoholPercent == 0 { alcoholPercent = other.alcoholPercent }
+    }
+
     var candidate: DuplicateFinder.Candidate {
         DuplicateFinder.Candidate(name: name, producer: producer, vintage: vintage)
     }
@@ -126,6 +159,38 @@ struct SubmissionDraft: Sendable {
             region: entry.region, country: entry.country, typeRaw: entry.typeRaw,
             alcoholPercent: entry.alcoholPercent, wineUUID: wineUUID, labelImageData: nil,
             barcode: barcode, targetKey: entry.id
+        )
+    }
+
+    /// Die Angaben, die ein Wein dem bestehenden Eintrag **hinzufügt**: Felder, die im
+    /// Eintrag leer sind und die der Wein kennt, ein Strichcode, den der Eintrag noch nicht
+    /// trägt, und das Etikettfoto, falls der Eintrag keines hat. `nil`, wenn nichts Neues
+    /// dabei ist. Vorhandenes wird nie angefasst; Name, Jahrgang und Weinart ebenso wenig,
+    /// denn der Jahrgang steckt im Schlüssel.
+    init?(
+        supplementing entry: CatalogWine, producer: String, grape: String, region: String,
+        country: String, alcoholPercent: Double, barcode: String, labelImageData: Data?,
+        entryHasImage: Bool, wineUUID: String
+    ) {
+        func fill(_ existing: String, _ new: String) -> String {
+            existing.isEmpty ? new.trimmingCharacters(in: .whitespacesAndNewlines) : existing
+        }
+        let newBarcode = barcode.isEmpty || entry.gtins.contains(barcode) ? "" : barcode
+        let newImage = entryHasImage ? nil : labelImageData
+        let filled = (
+            producer: fill(entry.producer, producer), grape: fill(entry.grape, grape),
+            region: fill(entry.region, region), country: fill(entry.country, country),
+            alcohol: entry.alcoholPercent > 0 ? entry.alcoholPercent : max(0, alcoholPercent)
+        )
+        let addsFields = filled.producer != entry.producer || filled.grape != entry.grape
+            || filled.region != entry.region || filled.country != entry.country
+            || filled.alcohol != entry.alcoholPercent
+        guard addsFields || !newBarcode.isEmpty || newImage != nil else { return nil }
+        self.init(
+            name: entry.name, producer: filled.producer, vintage: entry.vintage, grape: filled.grape,
+            region: filled.region, country: filled.country, typeRaw: entry.typeRaw,
+            alcoholPercent: filled.alcohol, wineUUID: wineUUID, labelImageData: newImage,
+            barcode: newBarcode, targetKey: entry.id
         )
     }
 

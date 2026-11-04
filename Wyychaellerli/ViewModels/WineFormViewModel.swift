@@ -185,10 +185,55 @@ final class WineFormViewModel {
     /// Der Katalogeintrag, aus dem nach dem Scan Lücken gefüllt wurden.
     var catalogMatch: CatalogWine?
 
+    /// Ein Treffer, der dem Nutzer gezeigt wird und auf seine Antwort wartet.
+    var catalogCandidate: CatalogWine?
+    private var candidateImageData: Data?
+    /// „Anderer Wein“: Dieser Treffer wird nicht noch einmal angeboten.
+    private(set) var declinedCatalogID: String?
+
     /// Das Etikettfoto des Katalogeintrags – nur ein **Angebot**, nie automatisch übernommen.
     var catalogImageData: Data?
     /// Das eigene Foto, solange das Katalogfoto an seiner Stelle steht (für „Mein Foto“).
     private var ownImageData: Data?
+
+    /// Was beim Sichern an den Katalog geht, je nach Antwort des Nutzers.
+    var catalogChoice: CatalogCenter.CatalogChoice {
+        if let catalogMatch { return .confirmed(catalogMatch) }
+        if let catalogCandidate { return .ignored(id: catalogCandidate.id) }
+        if let declinedCatalogID { return .declined(id: declinedCatalogID) }
+        return .none
+    }
+
+    /// Ein Treffer des Katalogs. Ein Strichcodetreffer mit gleichem Jahrgang ist so gut wie
+    /// sicher und wird gleich übernommen; alles andere fragt zuerst.
+    func offerCatalogEntry(_ entry: CatalogWine?, image: Data?) {
+        guard let entry else {
+            catalogCandidate = nil
+            return
+        }
+        guard entry.id != declinedCatalogID, entry.id != catalogMatch?.id else { return }
+        let code = validBarcode
+        if !code.isEmpty, entry.gtins.contains(code), vintage == 0 || entry.vintage == vintage {
+            catalogCandidate = nil
+            catalogImageData = image
+            fillGaps(from: entry)
+        } else {
+            catalogCandidate = entry
+            candidateImageData = image
+        }
+    }
+
+    func confirmCatalogCandidate() {
+        guard let entry = catalogCandidate else { return }
+        catalogCandidate = nil
+        catalogImageData = candidateImageData
+        fillGaps(from: entry)
+    }
+
+    func declineCatalogCandidate() {
+        declinedCatalogID = catalogCandidate?.id
+        catalogCandidate = nil
+    }
 
     /// Wechselt zwischen dem eigenen Foto und dem aus dem Katalog.
     func toggleCatalogImage() {

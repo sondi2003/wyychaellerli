@@ -7911,6 +7911,72 @@
           }
         }
       }
+    },
+    "Im gemeinsamen Katalog gefunden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronađeno u zajedničkom katalogu"
+          }
+        }
+      }
+    },
+    "Das ist mein Wein" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To je moje vino"
+          }
+        }
+      }
+    },
+    "Anderer Wein" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugo vino"
+          }
+        }
+      }
+    },
+    "Bei „Das ist mein Wein“ werden fehlende Angaben ergänzt. Deine eigenen bleiben." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kod „To je moje vino“ dopunjuju se podaci koji nedostaju. Tvoji ostaju."
+          }
+        }
+      }
+    },
+    "Foto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografija"
+          }
+        }
+      }
+    },
+    "Ergänzt den bestehenden Eintrag um: %@. Aufnehmen fügt das hinzu und ändert sonst nichts." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dopunjuje postojeći unos: %@. Prihvatanje to dodaje i ništa drugo ne menja."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

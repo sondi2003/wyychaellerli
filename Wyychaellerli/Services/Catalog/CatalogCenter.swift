@@ -139,19 +139,43 @@ final class CatalogCenter {
         submissions = (try? await store.mySubmissions()) ?? submissions
     }
 
+    /// Was der Nutzer zum angezeigten Katalogtreffer gesagt hat.
+    enum CatalogChoice: Sendable {
+        /// Kein Treffer gezeigt: Beim Sichern wird noch einmal nachgesehen.
+        case none
+        /// „Das ist mein Wein“: Fehlendes geht als Ergänzung zur Prüfung.
+        case confirmed(CatalogWine)
+        /// „Anderer Wein“: Es ist ein eigener, neuer Vorschlag.
+        case declined(id: String)
+        /// Der Treffer wurde gezeigt, aber nicht beantwortet: Es geht nichts an den Katalog –
+        /// weder ein Duplikat noch eine Ergänzung an einen Wein, der vielleicht nicht passt.
+        case ignored(id: String)
+    }
+
     /// Nach dem Sichern eines neuen Weins: Ist das Vorschlagen eingeschaltet und der Wein
     /// noch nicht vorgeschlagen, geht er still zur Prüfung.
     ///
-    /// Steht er schon im Katalog, aber ohne **diesen Strichcode**, geht nur der Strichcode
-    /// als Ergänzung zur Prüfung. Direkt eintragen darf ein Nutzer nichts: Schreiben kann
-    /// nur der Admin, das ist so gewollt (sonst könnte jeder den Katalog verfälschen).
-    func submitIfNew(_ wine: Wine) async {
+    /// Steht er schon im Katalog (und der Nutzer hat es bestätigt), geht nur das als
+    /// **Ergänzung** zur Prüfung, was dem Eintrag fehlt: leere Felder, ein Strichcode, ein
+    /// Foto. Direkt eintragen darf ein Nutzer nichts: Schreiben kann nur der Admin, das ist
+    /// so gewollt (sonst könnte jeder den Katalog verfälschen).
+    func submitIfNew(_ wine: Wine, choice: CatalogChoice = .none) async {
         guard contributesNewWines, submissionStatus(for: wine) == nil else { return }
-        let found = await lookup(wine)
+        let found: CatalogWine?
+        switch choice {
+        case .confirmed(let entry):
+            found = entry
+        case .ignored:
+            return
+        case .declined(let id):
+            let again = await lookup(wine)
+            found = again?.id == id ? nil : again
+        case .none:
+            found = await lookup(wine)
+        }
         do {
             if let found {
-                guard !wine.barcode.isEmpty, !found.gtins.contains(wine.barcode) else { return }
-                try await submitBarcode(wine.barcode, to: found, from: wine)
+                try await submitSupplement(to: found, from: wine)
             } else {
                 try await submit(wine)
             }
@@ -160,12 +184,19 @@ final class CatalogCenter {
         }
     }
 
-    private func submitBarcode(_ barcode: String, to entry: CatalogWine, from wine: Wine) async throws {
+    private func submitSupplement(to entry: CatalogWine, from wine: Wine) async throws {
         if wine.uuid == nil {
             wine.uuid = UUID()
             wine.managedObjectContext?.saveChanges()
         }
-        try await store.submit(SubmissionDraft(adding: barcode, to: entry, wineUUID: wine.uuid?.uuidString ?? ""))
+        let hasImage = wine.labelImageData == nil ? true : await catalogImage(entry.id) != nil
+        guard let draft = SubmissionDraft(
+            supplementing: entry, producer: wine.producer, grape: wine.grape, region: wine.region,
+            country: wine.country, alcoholPercent: wine.alcoholPercent, barcode: wine.barcode,
+            labelImageData: wine.labelImageData, entryHasImage: hasImage,
+            wineUUID: wine.uuid?.uuidString ?? ""
+        ) else { return }
+        try await store.submit(draft)
         await requestNotificationPermission()
         await installSubscriptions()
         submissions = (try? await store.mySubmissions()) ?? submissions

@@ -30,6 +30,8 @@ struct WineFormView: View {
 
     /// Mit fertigem Scan geöffnet (Mittelknopf der Leiste) – dann gleich auf Doppel prüfen.
     private let startsWithScan: Bool
+    /// „Ohne Foto erfassen“: kein Scan-Knopf, das widerspräche der Wahl.
+    private let isManualEntry: Bool
 
     /// - Parameter startWithScanner: öffnet sofort den Etikett-Scanner (Plus-Menü „Etikett scannen“).
     /// - Parameter scanResult: ein Scan, der schon vor dem Formular stattfand.
@@ -39,6 +41,11 @@ struct WineFormView: View {
         _viewModel = State(initialValue: model)
         _isShowingScanner = State(initialValue: startWithScanner)
         startsWithScan = scanResult != nil
+        if case .add = mode, scanResult == nil, !startWithScanner {
+            isManualEntry = true
+        } else {
+            isManualEntry = false
+        }
     }
 
     var body: some View {
@@ -47,64 +54,71 @@ struct WineFormView: View {
                 if let existing = viewModel.visibleDuplicate {
                     duplicateSection(existing)
                 }
-                Section {
-                    Button {
-                        isShowingScanner = true
-                    } label: {
-                        Label("Etikett scannen", systemImage: "text.viewfinder")
-                    }
-                    labelPhotoRow(
-                        title: tr("Vorderseite"),
-                        data: viewModel.labelImageData,
-                        remove: { viewModel.labelImageData = nil }
-                    )
-                    labelPhotoRow(
-                        title: tr("Rückseite"),
-                        data: viewModel.backLabelImageData,
-                        remove: { viewModel.backLabelImageData = nil }
-                    )
-                    if let source = viewModel.lastScanSource {
-                        Label {
-                            Text("Felder aus Etikett übernommen – Zuordnung via \(source.displayName). Bitte kurz prüfen.")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        } icon: {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
+                if let candidate = viewModel.catalogCandidate {
+                    candidateSection(candidate)
+                }
+                if showsPhotoSection {
+                    Section {
+                        if !isManualEntry {
+                            Button {
+                                isShowingScanner = true
+                            } label: {
+                                Label("Etikett scannen", systemImage: "text.viewfinder")
+                            }
                         }
-                    }
-                    if let data = viewModel.catalogImageData, let image = UIImage(data: data) {
-                        let isUsed = viewModel.labelImageData == data
-                        HStack(spacing: 12) {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 56, height: 70)
-                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Foto aus dem Katalog")
-                                    .font(.subheadline.weight(.medium))
-                                Text(isUsed ? "Wird als Vorderseite verwendet." : "Vielleicht besser als dein Foto.")
+                        labelPhotoRow(
+                            title: tr("Vorderseite"),
+                            data: viewModel.labelImageData,
+                            remove: { viewModel.labelImageData = nil }
+                        )
+                        labelPhotoRow(
+                            title: tr("Rückseite"),
+                            data: viewModel.backLabelImageData,
+                            remove: { viewModel.backLabelImageData = nil }
+                        )
+                        if let source = viewModel.lastScanSource {
+                            Label {
+                                Text("Felder aus Etikett übernommen – Zuordnung via \(source.displayName). Bitte kurz prüfen.")
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
+                            } icon: {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.green)
                             }
-                            .layoutPriority(1)
-                            Spacer()
-                            Button(isUsed ? "Mein Foto" : "Verwenden") {
-                                viewModel.toggleCatalogImage()
-                            }
-                            .buttonStyle(.brandOutline)
-                            .fixedSize()
                         }
-                    }
-                    if viewModel.catalogMatch != nil {
-                        Label {
-                            Text("Im gemeinsamen Katalog gefunden – fehlende Angaben ergänzt.")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        } icon: {
-                            Image(systemName: "books.vertical.fill")
-                                .foregroundStyle(Brand.accent)
+                        if let data = viewModel.catalogImageData, let image = UIImage(data: data) {
+                            let isUsed = viewModel.labelImageData == data
+                            HStack(spacing: 12) {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 56, height: 70)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Foto aus dem Katalog")
+                                        .font(.subheadline.weight(.medium))
+                                    Text(isUsed ? "Wird als Vorderseite verwendet." : "Vielleicht besser als dein Foto.")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .layoutPriority(1)
+                                Spacer()
+                                Button(isUsed ? "Mein Foto" : "Verwenden") {
+                                    viewModel.toggleCatalogImage()
+                                }
+                                .buttonStyle(.brandOutline)
+                                .fixedSize()
+                            }
+                        }
+                        if viewModel.catalogMatch != nil {
+                            Label {
+                                Text("Im gemeinsamen Katalog gefunden – fehlende Angaben ergänzt.")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            } icon: {
+                                Image(systemName: "books.vertical.fill")
+                                    .foregroundStyle(Brand.accent)
+                            }
                         }
                     }
                 }
@@ -288,7 +302,8 @@ struct WineFormView: View {
                     Button("Sichern") {
                         if let created = viewModel.save(in: context) {
                             // Läuft weiter, auch wenn das Formular schon zu ist.
-                            Task { await catalog.submitIfNew(created) }
+                            let choice = viewModel.catalogChoice
+                            Task { await catalog.submitIfNew(created, choice: choice) }
                         }
                         dismiss()
                     }
@@ -302,16 +317,21 @@ struct WineFormView: View {
                     // Direkt nach dem Scan prüfen – das ist der Moment, in dem man es
                     // wissen will, nicht erst beim Sichern.
                     viewModel.checkForDuplicates(in: context)
-                    Task { await consultCatalog() }
                 }
             }
             .onChange(of: viewModel.name) { _, _ in viewModel.checkForDuplicates(in: context) }
             .onChange(of: viewModel.producer) { _, _ in viewModel.checkForDuplicates(in: context) }
             .onChange(of: viewModel.vintage) { _, _ in viewModel.checkForDuplicates(in: context) }
+            // Nach dem Scan und beim Tippen: kurz warten, bis die Eingabe ruht.
+            .task(id: catalogQuery) {
+                guard viewModel.trimmedName.count >= 3 || !viewModel.validBarcode.isEmpty else { return }
+                try? await Task.sleep(for: .milliseconds(700))
+                guard !Task.isCancelled else { return }
+                await consultCatalog()
+            }
             .onAppear {
                 if startsWithScan {
                     viewModel.checkForDuplicates(in: context)
-                    Task { await consultCatalog() }
                 } else if case .add = viewModel.mode, !isShowingScanner {
                     focusedField = .name
                 }
@@ -319,19 +339,58 @@ struct WineFormView: View {
         }
     }
 
-    /// Fragt nach dem Scan den gemeinsamen Katalog und füllt Lücken. Ohne Netz oder ohne
-    /// Treffer passiert einfach nichts.
+    /// Bei „Ohne Foto erfassen“ erscheint der Abschnitt erst, wenn es etwas darin gibt.
+    private var showsPhotoSection: Bool {
+        !isManualEntry || viewModel.labelImageData != nil || viewModel.backLabelImageData != nil
+            || viewModel.catalogImageData != nil || viewModel.catalogMatch != nil
+    }
+
+    /// Ändert sich eine dieser Angaben, wird der Katalog neu gefragt.
+    private var catalogQuery: String {
+        [viewModel.name, viewModel.producer, String(viewModel.vintage), viewModel.barcode].joined(separator: "|")
+    }
+
+    /// Fragt den gemeinsamen Katalog – nach dem Scan und beim Tippen. Ohne Netz oder ohne
+    /// Treffer passiert einfach nichts. Ein Treffer wird **angeboten**, nicht übernommen.
     private func consultCatalog() async {
-        guard case .add = viewModel.mode else { return }
-        if let entry = await catalog.lookup(
+        guard case .add = viewModel.mode, viewModel.catalogMatch == nil else { return }
+        let entry = await catalog.lookup(
             name: viewModel.name,
             producer: viewModel.producer,
             vintage: viewModel.vintage,
             barcode: viewModel.validBarcode
-        ) {
-            viewModel.fillGaps(from: entry)
-            // Das Katalogfoto wird nur angeboten; ohne Netz oder Bild bleibt es beim eigenen.
-            viewModel.catalogImageData = await catalog.catalogImage(entry.id)
+        )
+        guard !Task.isCancelled else { return }
+        let image = entry == nil ? nil : await catalog.catalogImage(entry?.id ?? "")
+        guard !Task.isCancelled else { return }
+        viewModel.offerCatalogEntry(entry, image: image)
+    }
+
+    /// Die Frage „Ist das dein Wein?“ mit dem Treffer aus dem Katalog.
+    @ViewBuilder
+    private func candidateSection(_ entry: CatalogWine) -> some View {
+        Section {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.vintage > 0 ? "\(entry.name) \(String(entry.vintage))" : entry.name)
+                    .font(.body.weight(.semibold))
+                if !entry.producer.isEmpty {
+                    Text(entry.producer).foregroundStyle(.secondary)
+                }
+                let origin = [entry.grape, entry.region, entry.country].filter { !$0.isEmpty }.joined(separator: " · ")
+                if !origin.isEmpty {
+                    Text(origin).font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            HStack(spacing: 12) {
+                Button("Das ist mein Wein") { viewModel.confirmCatalogCandidate() }
+                    .buttonStyle(.brandFilled)
+                Button("Anderer Wein") { viewModel.declineCatalogCandidate() }
+                    .buttonStyle(.brandOutline)
+            }
+        } header: {
+            Text("Im gemeinsamen Katalog gefunden")
+        } footer: {
+            Text("Bei „Das ist mein Wein“ werden fehlende Angaben ergänzt. Deine eigenen bleiben.")
         }
     }
 
