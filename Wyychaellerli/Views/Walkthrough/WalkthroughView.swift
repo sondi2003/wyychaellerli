@@ -141,12 +141,17 @@ struct WalkthroughPage {
         ),
         WalkthroughPage(
             title: tr("Etikett scannen statt tippen"),
-            text: tr("Tippe unten in der Mitte auf die Kamera und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit."),
+            text: tr("Tippe unten in der Mitte auf die Kamera und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit. Hältst du den Knopf gedrückt, wählst du Fotos aus oder erfasst ohne Foto."),
             illustration: AnyView(ScanIllustration())
         ),
         WalkthroughPage(
+            title: tr("Der gemeinsame Katalog"),
+            text: tr("Die App kennt schon viele Weine. Beim Scannen und beim Tippen eines Namens schlägt sie passende Weine aus dem gemeinsamen Katalog vor. Bestätigst du einen, ergänzt sie fehlende Angaben und das Foto. Mit „Neue Weine vorschlagen“ in den Einstellungen hilfst du mit, den Katalog zu erweitern – nur Stammdaten und das Foto der Vorderseite, nie Notizen, Bewertungen oder Bestand."),
+            illustration: AnyView(CatalogIllustration())
+        ),
+        WalkthroughPage(
             title: tr("Bestand im Blick"),
-            text: tr("Jede Zeile zeigt, wie viele Flaschen da sind. Mit dem Minus buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll."),
+            text: tr("Jede Zeile zeigt, wie viele Flaschen da sind. Mit dem Minus buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll. Über „Filter“ grenzt du nach Land, Alkoholgehalt oder Trinkreife ein, unter „Bewertungen“ siehst du, was euch geschmeckt hat."),
             illustration: AnyView(StockIllustration())
         ),
         WalkthroughPage(

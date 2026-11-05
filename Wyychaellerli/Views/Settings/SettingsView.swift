@@ -130,11 +130,15 @@ struct SettingsView: View {
                 } header: {
                     Text("Hilfe")
                 } footer: {
-                    Text("Die Einführung sind die sechs Seiten vom ersten Start. Die Tipps sind die kleinen Hinweise am Ort – im Regal, beim Scannen, an der Liste –, die nach dem ersten Mal verschwinden.")
+                    Text("Die Einführung sind die Seiten vom ersten Start. Die Tipps sind die kleinen Hinweise am Ort – im Regal, beim Scannen, an der Liste –, die nach dem ersten Mal verschwinden.")
                 }
 
             }
-            .navigationTitle("Einstellungen")
+            // Als fertiger Text, nicht als Schlüssel: Der Titel eines schon geöffneten Blatts
+            // löst über die Umgebungssprache auf, und die kommt dort erst nach dem Neuaufbau an –
+            // „Einstellungen“ blieb nach dem Wechsel auf Serbisch deutsch stehen (und umgekehrt).
+            // `tr` liest die gewählte Sprache direkt und ist beim Wechsel sofort richtig.
+            .navigationTitle(tr("Einstellungen"))
             .toolbar {
                 if isSheet {
                     ToolbarItem(placement: .confirmationAction) {

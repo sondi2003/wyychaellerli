@@ -19,7 +19,7 @@ struct CatalogManagerView: View {
     @State private var errorMessage: String?
 
     private var filtered: [CatalogWine] { filter.apply(to: entries) }
-    private var countries: [String] { CatalogFilter.countries(in: entries) }
+    private var countryCounts: [(country: String, count: Int)] { CatalogFilter.countryCounts(in: entries) }
 
     var body: some View {
         List {
@@ -91,9 +91,9 @@ struct CatalogManagerView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     Menu {
-                        Button(tr("Alle Länder")) { filter.country = nil }
-                        ForEach(countries, id: \.self) { country in
-                            Button(Self.countryLabel(country)) { filter.country = country }
+                        Button("\(tr("Alle Länder")) (\(entries.count))") { filter.country = nil }
+                        ForEach(countryCounts, id: \.country) { item in
+                            Button("\(Self.countryLabel(item.country)) (\(item.count))") { filter.country = item.country }
                         }
                     } label: {
                         menuChip(filter.country.map(Self.countryLabel) ?? tr("Land"), isActive: filter.country != nil)

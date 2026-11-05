@@ -444,6 +444,13 @@ final class Wine: NSManagedObject, Identifiable {
 
     var strength: Strength? { Strength.from(percent: alcoholPercent) }
 
+    /// Schlüssel für den Länderfilter: der ISO-Code, wenn der Name erkannt wird (damit
+    /// „Schweiz“ und „Suisse“ dasselbe Land sind), sonst der Name klein geschrieben.
+    var countryKey: String {
+        CountryFlag.regionCode(for: country)
+            ?? country.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
     /// `true`, wenn ein Jahrgang bekannt ist.
     ///
     /// **0 heisst „nicht erkannt“, nicht „Jahr null“.** Steht auf dem Etikett kein

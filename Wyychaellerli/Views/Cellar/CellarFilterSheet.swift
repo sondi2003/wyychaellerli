@@ -9,6 +9,8 @@ import SwiftUI
 struct CellarFilterSheet: View {
 
     @Bindable var viewModel: CellarViewModel
+    /// Die Länder der Weine in der Liste, mit Weinzahl (`CellarViewModel.countryOptions`).
+    var countries: [CellarViewModel.CountryOption] = []
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -52,6 +54,21 @@ struct CellarFilterSheet: View {
                     Text("Alkoholgehalt")
                 } footer: {
                     Text(verbatim: Wine.Strength.allCases.map { "\($0.title) \($0.range)" }.joined(separator: " · "))
+                }
+
+                if !countries.isEmpty {
+                    Section {
+                        Picker("Land", selection: $viewModel.countryFilter) {
+                            Text("Alle Länder").tag(String?.none)
+                            ForEach(countries) { country in
+                                Text(verbatim: "\(country.label) (\(country.count))").tag(String?.some(country.key))
+                            }
+                        }
+                    } header: {
+                        Text("Land")
+                    } footer: {
+                        Text("Die Zahl nennt die Weine dieses Landes in der Liste.")
+                    }
                 }
 
                 Section {

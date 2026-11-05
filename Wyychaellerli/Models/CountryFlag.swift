@@ -22,6 +22,13 @@ enum CountryFlag {
         return table[key]
     }
 
+    /// Der Landesname in der Sprache der App („Schweiz“ bzw. „Švajcarska“), oder `nil`, wenn
+    /// der Name keinem Land zuzuordnen ist.
+    static func displayName(for country: String, locale: Locale) -> String? {
+        guard let code = regionCode(for: country) else { return nil }
+        return locale.localizedString(forRegionCode: code)
+    }
+
     /// Zwei Regional-Indicator-Zeichen ergeben die Flagge – so funktionieren alle Flaggen-Emoji.
     private static func flag(regionCode: String) -> String {
         regionCode.uppercased().unicodeScalars.compactMap { scalar -> Character? in

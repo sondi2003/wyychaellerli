@@ -209,8 +209,8 @@ enum PromptBuilder {
         - Gib nur die Übersetzung zurück, keine Erklärung, keine Anführungszeichen.
         - Eigennamen bleiben unverändert: Weingut, Lage, Rebsorte, Appellation, Ortsnamen.
         - Fachbegriffe in der Zielsprache, wo es einen gebräuchlichen gibt (schistes = \
-        \(language.isSerbian ? "škriljac" : "Schiefer"), élevage en fût = \
-        \(language.isSerbian ? "odležavanje u buretu" : "Ausbau im Fass")).
+        \(language.promptTermExamples.schist), élevage en fût = \
+        \(language.promptTermExamples.barrelAging)).
         - Länge und Aufbau beibehalten, nichts ergänzen und nichts weglassen.
         - Ist der Text bereits in der Zielsprache, gib ihn unverändert zurück.
         """

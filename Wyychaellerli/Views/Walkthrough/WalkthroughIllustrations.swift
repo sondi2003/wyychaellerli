@@ -270,6 +270,51 @@ struct AdvisorIllustration: View {
     }
 }
 
+// MARK: - Katalog: Eingabe „Brio“, darunter der Vorschlag mit seinen Jahrgängen
+
+struct CatalogIllustration: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                Text(verbatim: "Brio").font(.subheadline.weight(.medium))
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .frame(width: 220)
+            .background(Color(.tertiarySystemFill), in: Capsule())
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: "books.vertical").foregroundStyle(Color.accentColor)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(verbatim: "Con Brio").font(.subheadline.weight(.semibold))
+                        TextLine(width: 90)
+                    }
+                }
+                HStack(spacing: 8) {
+                    ForEach(["2020", "2019", "2018"], id: \.self) { year in
+                        Text(verbatim: year)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .foregroundStyle(year == "2019" ? Color(.systemBackground) : Color.primary)
+                            .background {
+                                if year == "2019" { Capsule().fill(Color.accentColor) }
+                                else { Capsule().strokeBorder(Color.secondary.opacity(0.4), lineWidth: 1) }
+                            }
+                    }
+                }
+            }
+            .padding(12)
+            .frame(width: 220, alignment: .leading)
+            .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.secondary.opacity(0.25), lineWidth: 1))
+        }
+    }
+}
+
 // MARK: - Teilen: zwei Geräte, dazwischen die Wolke
 
 struct ShareIllustration: View {
@@ -313,6 +358,7 @@ struct ShareIllustration: View {
         VStack(spacing: 20) {
             WelcomeIllustration()
             ScanIllustration()
+            CatalogIllustration()
             StockIllustration()
             RackIllustration()
             AdvisorIllustration()

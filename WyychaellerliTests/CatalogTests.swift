@@ -162,5 +162,8 @@ struct CatalogTests {
         let entries = [full("A", "", 0, country: "Schweiz"), full("B", "", 0, country: "Italien"),
                        full("C", "", 0, country: ""), full("D", "", 0, country: "Schweiz")]
         #expect(CatalogFilter.countries(in: entries) == ["Italien", "Schweiz"])
+        let counts = CatalogFilter.countryCounts(in: entries)
+        #expect(counts.map(\.country) == ["Italien", "Schweiz"])
+        #expect(counts.map(\.count).reduce(0, +) == entries.filter { !$0.country.isEmpty }.count)
     }
 }

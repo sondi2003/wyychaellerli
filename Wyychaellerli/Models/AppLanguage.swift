@@ -1,6 +1,6 @@
 import Foundation
 
-/// Sprache der App: dem System folgen oder fest Deutsch bzw. Serbisch (lateinische Schrift).
+/// Sprache der App: dem System folgen oder fest Deutsch, Englisch oder Serbisch (lateinische Schrift).
 ///
 /// Bewusst in `UserDefaults`: Es ist eine Geräte-Einstellung, wie das Erscheinungsbild.
 /// Die Quellsprache der Texte ist Deutsch; die Übersetzung liegt in `Localizable.xcstrings`.
@@ -8,6 +8,8 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
 
     case system
     case german
+    /// Englisch ohne regionale Färbung: Kennung „en“, nicht „en-US“ oder „en-GB“.
+    case english
     case serbian
 
     /// Schlüssel für `@AppStorage`, an einer Stelle definiert.
@@ -21,6 +23,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .system:  return tr("System")
         case .german:  return "Deutsch"
+        case .english: return "English"
         case .serbian: return "Srpski"
         }
     }
@@ -29,14 +32,24 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
     var resolvedIdentifier: String {
         switch self {
         case .german:  return "de"
+        case .english: return "en"
         case .serbian: return "sr-Latn"
         case .system:
-            let first = Locale.preferredLanguages.first ?? "de"
-            return first.hasPrefix("sr") ? "sr-Latn" : "de"
+            return Self.identifier(forPreferred: Locale.preferredLanguages.first)
         }
     }
 
+    /// Welche Sprache der App zu einer Gerätesprache gehört. Regionen zählen nicht: „en-CH“,
+    /// „en-GB“ und „en-US“ ergeben alle „en“. Alles Unbekannte fällt auf Deutsch zurück.
+    static func identifier(forPreferred preferred: String?) -> String {
+        let code = (preferred ?? "de").lowercased()
+        if code.hasPrefix("sr") { return "sr-Latn" }
+        if code.hasPrefix("en") { return "en" }
+        return "de"
+    }
+
     var isSerbian: Bool { resolvedIdentifier == "sr-Latn" }
+    var isEnglish: Bool { resolvedIdentifier == "en" }
 
     var locale: Locale { Locale(identifier: resolvedIdentifier) }
 
@@ -46,25 +59,50 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
 
     /// „Antworte auf …“
     var promptName: String {
-        isSerbian ? "Serbisch (lateinische Schrift, ekavisch)" : "Deutsch"
+        switch resolvedIdentifier {
+        case "sr-Latn": return "Serbisch (lateinische Schrift, ekavisch)"
+        case "en":      return "Englisch (neutral, ohne regionale Eigenheiten)"
+        default:        return "Deutsch"
+        }
     }
 
     /// „Übersetze ins …“
     var promptTarget: String {
-        isSerbian ? "Serbische (lateinische Schrift, ekavisch)" : "Deutsche"
+        switch resolvedIdentifier {
+        case "sr-Latn": return "Serbische (lateinische Schrift, ekavisch)"
+        case "en":      return "Englische (neutral, ohne regionale Eigenheiten)"
+        default:        return "Deutsche"
+        }
     }
 
     /// Länderbeispiele im Etikett-Prompt, damit das Modell die Schreibweise der Sprache trifft.
     var promptCountryExamples: String {
-        isSerbian ? "\"Francuska\", \"Nemačka\", \"Italija\"" : "\"Frankreich\", \"Deutschland\", \"Italien\""
+        switch resolvedIdentifier {
+        case "sr-Latn": return "\"Francuska\", \"Nemačka\", \"Italija\""
+        case "en":      return "\"France\", \"Germany\", \"Italy\""
+        default:        return "\"Frankreich\", \"Deutschland\", \"Italien\""
+        }
     }
 
     /// Speisebeispiele im Etikett-Prompt.
     var promptFoodExamples: String {
-        isSerbian ? "[\"Meso sa roštilja\", \"Tvrdi sir\"]" : "[\"Gegrilltes Fleisch\", \"Hartkäse\"]"
+        switch resolvedIdentifier {
+        case "sr-Latn": return "[\"Meso sa roštilja\", \"Tvrdi sir\"]"
+        case "en":      return "[\"Grilled meat\", \"Hard cheese\"]"
+        default:        return "[\"Gegrilltes Fleisch\", \"Hartkäse\"]"
+        }
     }
 
-    var isGerman: Bool { !isSerbian }
+    /// Beispiele für Fachbegriffe im Übersetzungs-Prompt: „schistes“ und „élevage en fût“.
+    var promptTermExamples: (schist: String, barrelAging: String) {
+        switch resolvedIdentifier {
+        case "sr-Latn": return ("škriljac", "odležavanje u buretu")
+        case "en":      return ("schist", "barrel aging")
+        default:        return ("Schiefer", "Ausbau im Fass")
+        }
+    }
+
+    var isGerman: Bool { resolvedIdentifier == "de" }
 
     /// Die gewählte Sprache dieses Geräts.
     static var current: AppLanguage {

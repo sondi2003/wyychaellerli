@@ -60,6 +60,21 @@ struct WyychaellerliApp: App {
                     LegacyImporter.importIfNeeded(into: persistence.viewContext)
                     // Alkoholgehalt aus den Notizen ins eigene Feld holen.
                     AlcoholNoteMigration.run(in: persistence.viewContext)
+                    #if DEBUG
+                    // Vorführung: ein paar erfundene Weine, damit sich Filter im Simulator ansehen lassen.
+                    if ProcessInfo.processInfo.environment["CELLAR_DEMO"] == "1" {
+                        let context = persistence.viewContext
+                        if (try? context.count(for: Wine.fetchRequest())) == 0 {
+                            for (name, country, type) in [("Cicero", "Schweiz", WineType.red), ("Jeninser", "Suisse", .red),
+                                                          ("Cuvée Prestige", "Frankreich", .red), ("Barolo", "Italien", .red),
+                                                          ("Chianti", "Italien", .red), ("Fendant", "Schweiz", .white)] {
+                                Wine.create(in: context, cellar: Cellar.active(in: context), name: name, vintage: 2022, grape: "Merlot",
+                                            country: country, type: type, quantity: 2)
+                            }
+                            context.saveChanges()
+                        }
+                    }
+                    #endif
                     await rater.refresh()
                     rater.adoptExistingRatings(in: persistence.viewContext)
                     Task { await catalog.refreshDirectory() }

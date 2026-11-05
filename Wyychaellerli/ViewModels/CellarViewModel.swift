@@ -21,6 +21,9 @@ final class CellarViewModel {
     /// `nil` = alle Stärken. Flaschen ohne Angabe fallen bei gesetztem Filter heraus –
     /// „leicht“ zu behaupten, wo nichts bekannt ist, wäre geraten.
     var strengthFilter: Wine.Strength?
+    /// Schlüssel des gewählten Landes (`Wine.countryKey`), `nil` = alle Länder. Weine ohne
+    /// Landesangabe fallen bei gesetztem Filter heraus.
+    var countryFilter: String?
 
     /// Ist im Filterblatt etwas eingeschaltet? Die Weinart zählt nicht dazu, die steht
     /// ohnehin sichtbar in der Chip-Reihe.
@@ -28,7 +31,7 @@ final class CellarViewModel {
 
     /// Für die Zahl am Filter-Chip.
     var activeFilterCount: Int {
-        [showArchived, showOnlyDrinkSoon, strengthFilter != nil].filter { $0 }.count
+        [showArchived, showOnlyDrinkSoon, strengthFilter != nil, countryFilter != nil].filter { $0 }.count
     }
 
     /// „Filter zurücksetzen“ im Filterblatt. Die Weinart bleibt, wie sie ist.
@@ -36,6 +39,35 @@ final class CellarViewModel {
         showArchived = false
         showOnlyDrinkSoon = false
         strengthFilter = nil
+        countryFilter = nil
+    }
+
+    /// Ein Land im Filterblatt: Schlüssel, Name, Flagge und Zahl der Weine.
+    struct CountryOption: Identifiable, Equatable {
+        let key: String
+        let name: String
+        let flag: String?
+        let count: Int
+        var id: String { key }
+        var label: String { [flag, name].compactMap { $0 }.joined(separator: " ") }
+    }
+
+    /// Die Länder der Weine, die gerade in der Liste stehen (Bestand oder Archiv), mit ihrer
+    /// Weinzahl, alphabetisch. „Schweiz“, „Suisse“ und „Switzerland“ zählen als ein Land.
+    func countryOptions(in wines: [Wine]) -> [CountryOption] {
+        let visible = wines.filter { $0.isArchived == showArchived }
+        let groups = Dictionary(grouping: visible.filter { !$0.country.isEmpty }, by: \.countryKey)
+        return groups
+            .map { key, wines in
+                let raw = wines.first?.country ?? key
+                return CountryOption(
+                    key: key,
+                    name: CountryFlag.displayName(for: raw, locale: AppLanguage.current.locale) ?? raw,
+                    flag: CountryFlag.emoji(for: raw),
+                    count: wines.count
+                )
+            }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
     // MARK: Sheet- und Dialog-Zustand
@@ -68,6 +100,7 @@ final class CellarViewModel {
             if showOnlyDrinkSoon, !wine.needsDrinkingSoon { return false }
             if let typeFilter, wine.type != typeFilter { return false }
             if let strengthFilter, wine.strength != strengthFilter { return false }
+            if let countryFilter, wine.countryKey != countryFilter { return false }
             guard !query.isEmpty else { return true }
             return wine.name.lowercased().contains(query)
                 || wine.producer.lowercased().contains(query)

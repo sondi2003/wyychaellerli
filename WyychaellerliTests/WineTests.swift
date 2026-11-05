@@ -106,3 +106,52 @@ struct WineTests {
         #expect(wine.foodPairings.isEmpty)
     }
 }
+
+/// Länderfilter der Kellerliste: ein Land, egal in welcher Schreibweise.
+struct CountryFilterTests {
+
+    @Test("Schreibweisen desselben Landes zählen zusammen")
+    @MainActor
+    func spellingsMerge() {
+        let context = TestStack.makeContext()
+        let wines = [
+            TestStack.makeWine(in: context, name: "A", country: "Schweiz"),
+            TestStack.makeWine(in: context, name: "B", country: "Suisse"),
+            TestStack.makeWine(in: context, name: "C", country: "Italien"),
+            TestStack.makeWine(in: context, name: "D", country: "")
+        ]
+        let model = CellarViewModel()
+        let options = model.countryOptions(in: wines)
+        #expect(options.count == 2)
+        #expect(options.first { $0.key == "CH" }?.count == 2)
+        #expect(options.first { $0.key == "IT" }?.count == 1)
+    }
+
+    @Test("Der Filter lässt nur das Land durch, Weine ohne Land fallen heraus")
+    @MainActor
+    func filters() {
+        let context = TestStack.makeContext()
+        let wines = [
+            TestStack.makeWine(in: context, name: "A", country: "Schweiz"),
+            TestStack.makeWine(in: context, name: "B", country: "Italien"),
+            TestStack.makeWine(in: context, name: "C", country: "")
+        ]
+        let model = CellarViewModel()
+        model.countryFilter = "CH"
+        #expect(model.filtered(wines).map(\.name) == ["A"])
+        #expect(model.activeFilterCount == 1)
+        model.resetFilters()
+        #expect(model.countryFilter == nil)
+        #expect(model.filtered(wines).count == 3)
+    }
+
+    @Test("Ein unbekannter Landesname bleibt ein eigener Eintrag")
+    @MainActor
+    func unknownCountry() {
+        let context = TestStack.makeContext()
+        let wine = TestStack.makeWine(in: context, name: "A", country: "Atlantis")
+        let options = CellarViewModel().countryOptions(in: [wine])
+        #expect(options.map(\.name) == ["Atlantis"])
+        #expect(options.first?.flag == nil)
+    }
+}

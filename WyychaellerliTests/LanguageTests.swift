@@ -82,4 +82,62 @@ struct LanguageTests {
         #expect(LabelNotesTranslator.foreignLanguage(in: german, target: .serbian) != nil)
         #expect(LabelNotesTranslator.foreignLanguage(in: german, target: .german) == nil)
     }
+
+    // MARK: Englisch
+
+    private func english(_ resource: LocalizedStringResource) -> String {
+        var resource = resource
+        resource.locale = Locale(identifier: "en")
+        return String(localized: resource)
+    }
+
+    @Test("Englisch trennt Einzahl und Mehrzahl")
+    func englishPlurals() {
+        #expect(english("\(1) Flaschen") == "1 bottle")
+        #expect(english("\(2) Flaschen") == "2 bottles")
+        #expect(english("\(1) Stimmen") == "1 vote")
+        #expect(english("\(3) Stimmen") == "3 votes")
+        #expect(english("von \(1) Stimmen") == "of 1 vote")
+        #expect(english("\(0) Weine") == "0 wines")
+    }
+
+    @Test("Englisch mit mehreren Platzhaltern und ohne regionale Färbung")
+    func englishText() {
+        #expect(english("Zu \("Lasagne") empfehle ich \("Barolo"), Jahrgang \("2018").") == "With Lasagne I recommend Barolo, vintage 2018.")
+        #expect(english("\(3) von \(12) Fächern belegt · \(9) frei") == "3 of 12 slots filled · 9 free")
+        #expect(english("Keller") == "Cellar")
+        #expect(english("Weinkeller teilen") == "Share wine cellar")
+    }
+
+    @Test("Die Gerätesprache wird ohne Region gelesen")
+    func systemLanguageMapping() {
+        #expect(AppLanguage.identifier(forPreferred: "en-CH") == "en")
+        #expect(AppLanguage.identifier(forPreferred: "en-GB") == "en")
+        #expect(AppLanguage.identifier(forPreferred: "en") == "en")
+        #expect(AppLanguage.identifier(forPreferred: "de-CH") == "de")
+        #expect(AppLanguage.identifier(forPreferred: "sr-Latn-RS") == "sr-Latn")
+        #expect(AppLanguage.identifier(forPreferred: "fr-FR") == "de")
+        #expect(AppLanguage.identifier(forPreferred: nil) == "de")
+        #expect(AppLanguage.english.resolvedIdentifier == "en")
+        #expect(AppLanguage.english.isEnglish)
+        #expect(!AppLanguage.english.isGerman)
+    }
+
+    @Test("Die KI-Anweisungen nennen Englisch ausdrücklich ohne regionale Eigenheiten")
+    func englishPrompts() {
+        #expect(AppLanguage.english.promptName.contains("Englisch"))
+        #expect(AppLanguage.english.promptName.contains("ohne regionale"))
+        #expect(AppLanguage.english.promptCountryExamples.contains("Germany"))
+        let prompt = PromptBuilder.translationSystemPrompt(language: .english)
+        #expect(prompt.contains("Englische"))
+        #expect(prompt.contains("schist"))
+    }
+
+    @Test("Beim Englischen ist Englisch die Zielsprache, Deutsch nicht")
+    func englishNotesTarget() {
+        let english = "The vineyards lie on steep slopes above the sea, and the soil is rich in schist and limestone."
+        #expect(LabelNotesTranslator.foreignLanguage(in: english, target: .english) == nil)
+        let german = "Die Reben wachsen an steilen Hängen über dem Meer, der Boden ist reich an Schiefer und Kalkstein."
+        #expect(LabelNotesTranslator.foreignLanguage(in: german, target: .english) != nil)
+    }
 }

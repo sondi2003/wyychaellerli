@@ -71,7 +71,12 @@ enum LabelNotesTranslator {
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(text)
         guard let language = recognizer.dominantLanguage else { return nil }
-        let targetCodes: Set<String> = target.isSerbian ? ["sr", "sr-Latn", "hr", "bs"] : ["de"]
+        let targetCodes: Set<String>
+        switch target.resolvedIdentifier {
+        case "sr-Latn": targetCodes = ["sr", "sr-Latn", "hr", "bs"]
+        case "en":      targetCodes = ["en"]
+        default:        targetCodes = ["de"]
+        }
         guard !targetCodes.contains(language.rawValue) else { return nil }
         let confidence = recognizer.languageHypotheses(withMaximum: 3)[language] ?? 0
         guard confidence >= minimumConfidence else { return nil }

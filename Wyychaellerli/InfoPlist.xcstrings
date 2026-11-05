@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "Wyychällerli"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyychällerli"
+          }
         }
       }
     },
@@ -20,6 +26,12 @@
         "de" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "Wyychaellerli"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Wyychaellerli"
           }
         }
@@ -33,6 +45,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Die Kamera wird genutzt, um Weinetiketten zu fotografieren und die Angaben automatisch auszulesen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The camera is used to photograph wine labels and read the details automatically."
           }
         },
         "sr-Latn" : {
@@ -53,6 +71,12 @@
             "value" : "Face ID entsperrt den Party-Modus, damit Gäste ihn nicht selbst verlassen können."
           }
         },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face ID unlocks party mode so guests cannot leave it on their own."
+          }
+        },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -61,9 +85,7 @@
         }
       }
     },
-    "Wyychällerli-Wein" : {
-
-    }
+    "Wyychällerli-Wein" : {}
   },
   "version" : "1.0"
 }

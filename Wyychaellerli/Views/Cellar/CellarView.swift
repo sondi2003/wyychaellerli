@@ -60,7 +60,7 @@ struct CellarView: View {
             .navigationTitle("Wyychällerli")
             .toolbar { toolbarContent }
             .sheet(isPresented: $isShowingFilters) {
-                CellarFilterSheet(viewModel: viewModel)
+                CellarFilterSheet(viewModel: viewModel, countries: viewModel.countryOptions(in: wines))
             }
             // Der Tipp zum langen Drücken auf den Scan-Knopf kommt erst mit dem ersten Wein.
             .task(id: wines.isEmpty) { ScanOptionsTip.hasWines = !wines.isEmpty }
@@ -236,6 +236,11 @@ struct CellarView: View {
                 }
                 if let strength = viewModel.strengthFilter {
                     RemovableChip(title: strength.title) { viewModel.strengthFilter = nil }
+                }
+                if let key = viewModel.countryFilter {
+                    RemovableChip(title: viewModel.countryOptions(in: wines).first { $0.key == key }?.label ?? key) {
+                        viewModel.countryFilter = nil
+                    }
                 }
                 if viewModel.showArchived {
                     RemovableChip(title: tr("Archiv")) { viewModel.showArchived = false }

@@ -53,6 +53,14 @@ struct CatalogFilter: Equatable {
             .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
     }
 
+    /// Länder mit der Zahl ihrer Weine, alphabetisch – für das Auswahlmenü.
+    static func countryCounts(in entries: [CatalogWine]) -> [(country: String, count: Int)] {
+        let counts = Dictionary(grouping: entries.map(\.country).filter { !$0.isEmpty }, by: { $0 }).mapValues(\.count)
+        return counts
+            .map { (country: $0.key, count: $0.value) }
+            .sorted { $0.country.localizedCaseInsensitiveCompare($1.country) == .orderedAscending }
+    }
+
     private static func fold(_ value: String) -> String {
         value.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "de"))
     }
