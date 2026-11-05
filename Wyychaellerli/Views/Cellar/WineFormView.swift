@@ -106,7 +106,7 @@ struct WineFormView: View {
                                 }
                                 .layoutPriority(1)
                                 Spacer()
-                                Button(isUsed ? "Mein Foto" : "Verwenden") {
+                                Button(isUsed ? (viewModel.hasOwnImageToRestore ? "Mein Foto" : "Entfernen") : "Verwenden") {
                                     viewModel.toggleCatalogImage()
                                 }
                                 .buttonStyle(.brandOutline)
@@ -405,6 +405,7 @@ struct WineFormView: View {
         let data = await catalog.catalogImage(entry.id)
         guard viewModel.catalogMatch?.id == entry.id else { return }
         viewModel.catalogImageData = data
+        viewModel.adoptCatalogImageIfFree()
     }
 
     private func choose(_ entry: CatalogWine) {

@@ -81,6 +81,21 @@ final class CatalogCenter {
         guard !isLoadingDirectory else { return }
         #if DEBUG
         // Vorführung ohne iCloud: erfundene Weine, damit sich die Suche im Simulator ansehen lässt.
+        // Vorführung der Länderübersicht: 621 erfundene Weine aus zwölf Ländern.
+        if ProcessInfo.processInfo.environment["CATALOG_DEMO"] == "2" {
+            let counts: [(String, Int)] = [
+                ("Chile", 193), ("Italien", 110), ("Argentinien", 97), ("USA", 96), ("Neuseeland", 96),
+                ("Frankreich", 8), ("Schweiz", 8), ("Deutschland", 4), ("Portugal", 3), ("Spanien", 3),
+                ("Südafrika", 2), ("Nordmazedonien", 1)
+            ]
+            directory = CatalogDirectory(entries: counts.flatMap { country, count in
+                (0..<count).map { index in
+                    CatalogWine(id: "demo_\(country)_\(index)", name: "Wein \(index)", producer: "", vintage: 2020, grape: "",
+                                region: "", country: country, typeRaw: "red", alcoholPercent: 0, source: "")
+                }
+            })
+            return
+        }
         if ProcessInfo.processInfo.environment["CATALOG_DEMO"] == "1" {
             func demo(_ name: String, _ producer: String, _ vintage: Int, _ region: String) -> CatalogWine {
                 CatalogWine(id: "demo_\(name)_\(vintage)", name: name, producer: producer, vintage: vintage, grape: "Merlot",

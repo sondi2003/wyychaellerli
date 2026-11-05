@@ -190,7 +190,9 @@ final class WineFormViewModel {
     /// „Anderer Wein“: Dieser Treffer wird nicht noch einmal angeboten.
     private(set) var declinedCatalogID: String?
 
-    /// Das Etikettfoto des Katalogeintrags – nur ein **Angebot**, nie automatisch übernommen.
+    /// Das Etikettfoto des Katalogeintrags. Hat der Nutzer noch kein eigenes Foto, wird es mit
+    /// der Bestätigung des Weins übernommen (`adoptCatalogImageIfFree`); ein eigenes Foto
+    /// ersetzt es **nie** von selbst, dann bleibt es ein Angebot („Verwenden“).
     var catalogImageData: Data?
     /// Das eigene Foto, solange das Katalogfoto an seiner Stelle steht (für „Mein Foto“).
     private var ownImageData: Data?
@@ -275,6 +277,18 @@ final class WineFormViewModel {
         declinedCatalogID = catalogCandidate?.id
         catalogCandidate = nil
     }
+
+    /// Wer einen Wein aus dem Katalog bestätigt hat und noch kein Foto besitzt, bekommt das
+    /// des Katalogs. Vorher musste man „Verwenden“ antippen – das übersah man, und der Wein
+    /// landete ohne Bild im Keller (TestFlight, 5.11.2026).
+    func adoptCatalogImageIfFree() {
+        guard let catalogImageData, labelImageData == nil else { return }
+        ownImageData = nil
+        labelImageData = catalogImageData
+    }
+
+    /// Gibt es ein eigenes Foto, zu dem „Mein Foto“ zurückführen kann?
+    var hasOwnImageToRestore: Bool { ownImageData != nil }
 
     /// Wechselt zwischen dem eigenen Foto und dem aus dem Katalog.
     func toggleCatalogImage() {

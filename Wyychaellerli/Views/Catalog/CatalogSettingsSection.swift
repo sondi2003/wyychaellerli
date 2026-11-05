@@ -6,9 +6,18 @@ struct CatalogSettingsSection: View {
     @Environment(CatalogCenter.self) private var catalog
     @State private var isCheckingRights = false
     @State private var rightsResult: String?
+    @State private var overview: CatalogOverview?
+    @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
 
     var body: some View {
         @Bindable var catalog = catalog
+        if let overview, overview.isWorthShowing {
+            Section {
+                CatalogMosaicCard(overview: overview)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+            }
+        }
         Section {
             Toggle("Neue Weine vorschlagen", isOn: $catalog.contributesNewWines)
             NavigationLink {
@@ -95,6 +104,12 @@ struct CatalogSettingsSection: View {
             Button("Verstanden", role: .cancel) { }
         } message: {
             Text(verbatim: rightsResult ?? "")
+        }
+        // Neu rechnen, wenn die Liste wächst oder die Sprache wechselt (Ländernamen).
+        .task(id: "\(catalog.directory.count)-\(language.rawValue)") {
+            let entries = catalog.directory.entries
+            let locale = language.locale
+            overview = await Task.detached { CatalogOverview(entries: entries, locale: locale) }.value
         }
     }
 }

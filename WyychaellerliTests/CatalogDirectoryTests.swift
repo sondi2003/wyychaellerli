@@ -164,3 +164,51 @@ struct CatalogDirectoryTests {
         }
     }
 }
+
+/// Das Katalogfoto kommt mit der Bestätigung, wenn noch keins da ist.
+@Suite("Katalogfoto übernehmen")
+struct CatalogImageAdoptionTests {
+
+    private let catalogPhoto = Data([1, 2, 3])
+    private let ownPhoto = Data([9, 9])
+
+    @MainActor
+    @Test("Ohne eigenes Foto wird das Katalogfoto zur Vorderseite")
+    func adoptsWhenFree() {
+        let model = WineFormViewModel(mode: .add)
+        model.catalogImageData = catalogPhoto
+        model.adoptCatalogImageIfFree()
+        #expect(model.labelImageData == catalogPhoto)
+    }
+
+    @MainActor
+    @Test("Ein eigenes Foto bleibt, das Katalogfoto ist nur ein Angebot")
+    func keepsOwnPhoto() {
+        let model = WineFormViewModel(mode: .add)
+        model.labelImageData = ownPhoto
+        model.catalogImageData = catalogPhoto
+        model.adoptCatalogImageIfFree()
+        #expect(model.labelImageData == ownPhoto)
+    }
+
+    @MainActor
+    @Test("Ohne Katalogfoto passiert nichts")
+    func nothingToAdopt() {
+        let model = WineFormViewModel(mode: .add)
+        model.adoptCatalogImageIfFree()
+        #expect(model.labelImageData == nil)
+    }
+
+    @MainActor
+    @Test("Abwählen bringt kein Foto zurück, wenn es nie ein eigenes gab")
+    func toggleBackWithoutOwn() {
+        let model = WineFormViewModel(mode: .add)
+        model.catalogImageData = catalogPhoto
+        model.adoptCatalogImageIfFree()
+        #expect(!model.hasOwnImageToRestore)
+        model.toggleCatalogImage()
+        #expect(model.labelImageData == nil)
+        model.toggleCatalogImage()
+        #expect(model.labelImageData == catalogPhoto)
+    }
+}

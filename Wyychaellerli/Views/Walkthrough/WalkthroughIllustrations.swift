@@ -273,6 +273,14 @@ struct AdvisorIllustration: View {
 // MARK: - Katalog: Eingabe „Brio“, darunter der Vorschlag mit seinen Jahrgängen
 
 struct CatalogIllustration: View {
+
+    @Environment(CatalogCenter.self) private var catalog
+    /// Der Rahmen ist 220 pt hoch; bei sehr grosser Schrift bliebe für die Zeile kein Platz.
+    @Environment(\.dynamicTypeSize) private var typeSize
+    /// Erst ab `CatalogOverview.minimumForDisplay` Weinen: Eine Zeile „12 Weine aus 3 Ländern“
+    /// würde den Katalog kleiner machen, als er wirken soll.
+    @State private var overview: CatalogOverview?
+
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 8) {
@@ -311,6 +319,25 @@ struct CatalogIllustration: View {
             .frame(width: 220, alignment: .leading)
             .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.secondary.opacity(0.25), lineWidth: 1))
+
+            if let overview, overview.isWorthShowing, !typeSize.isAccessibilitySize {
+                HStack(spacing: 6) {
+                    Image(systemName: "globe.europe.africa")
+                    Text("\(overview.total) Weine")
+                    Text(verbatim: "·")
+                    Text("\(overview.countries.count) Länder")
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Color.accentColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.accentColor.opacity(0.12), in: Capsule())
+            }
+        }
+        .task(id: catalog.directory.count) {
+            let entries = catalog.directory.entries
+            let locale = AppLanguage.current.locale
+            overview = await Task.detached { CatalogOverview(entries: entries, locale: locale) }.value
         }
     }
 }

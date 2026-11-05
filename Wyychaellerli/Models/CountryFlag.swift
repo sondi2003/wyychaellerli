@@ -26,6 +26,8 @@ enum CountryFlag {
     /// der Name keinem Land zuzuordnen ist.
     static func displayName(for country: String, locale: Locale) -> String? {
         guard let code = regionCode(for: country) else { return nil }
+        // iOS schreibt „United States“ bzw. „Vereinigte Staaten“; auf einem Weinetikett steht „USA“.
+        if code == "US" { return locale.language.languageCode?.identifier == "sr" ? "SAD" : "USA" }
         return locale.localizedString(forRegionCode: code)
     }
 

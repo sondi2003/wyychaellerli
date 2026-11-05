@@ -174,4 +174,5 @@ struct WalkthroughPage {
 
 #Preview {
     WalkthroughView()
+        .environment(CatalogCenter())
 }
