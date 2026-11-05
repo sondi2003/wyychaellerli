@@ -33,6 +33,12 @@ final class CatalogCenter {
     private(set) var isAdmin = false
     /// Offene Vorschläge (nur für den Admin geladen).
     private(set) var pendingCount = 0
+    /// Alle Katalogweine als Text auf dem Gerät, für die Suche beim Tippen. Keine Bilder.
+    private(set) var directory = CatalogDirectory.empty
+    private var isLoadingDirectory = false
+    static let directoryRefreshedKey = "catalog.directory.refreshedAt"
+    /// So alt darf die Liste werden, bevor beim nächsten Start neu geladen wird.
+    static let directoryMaxAge: TimeInterval = 12 * 3600
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -64,6 +70,58 @@ final class CatalogCenter {
     func submissionStatus(for wine: Wine) -> SubmissionStatus? {
         guard let uuid = wine.uuid?.uuidString else { return nil }
         return submissions.first { $0.wineUUID == uuid }?.status
+    }
+
+    // MARK: Liste auf dem Gerät
+
+    /// Liest die gespeicherte Liste sofort und lädt sie bei Bedarf neu: wenn sie leer ist
+    /// oder älter als zwölf Stunden. Schlägt das Laden fehl (kein Netz, kein Konto), bleibt
+    /// die alte Liste stehen – lieber eine ältere als keine.
+    func refreshDirectory(force: Bool = false) async {
+        guard !isLoadingDirectory else { return }
+        #if DEBUG
+        // Vorführung ohne iCloud: erfundene Weine, damit sich die Suche im Simulator ansehen lässt.
+        if ProcessInfo.processInfo.environment["CATALOG_DEMO"] == "1" {
+            func demo(_ name: String, _ producer: String, _ vintage: Int, _ region: String) -> CatalogWine {
+                CatalogWine(id: "demo_\(name)_\(vintage)", name: name, producer: producer, vintage: vintage, grape: "Merlot",
+                            region: region, country: "Schweiz", typeRaw: "red", alcoholPercent: 13.5, source: "vivino")
+            }
+            directory = CatalogDirectory(entries: [
+                demo("Con Brio", "Cantina Zeni", 2018, "Tessin"), demo("Con Brio", "Cantina Zeni", 2019, "Tessin"),
+                demo("Con Brio", "Cantina Zeni", 2020, "Tessin"), demo("Cicero", "Weingut Studach", 2021, "Graubünden"),
+                demo("Trio", "Kellerei Test", 2020, "Wallis")
+            ])
+            return
+        }
+        #endif
+        isLoadingDirectory = true
+        defer { isLoadingDirectory = false }
+
+        if directory.isEmpty {
+            let stored = await Task.detached { CatalogDirectoryStorage.load() }.value
+            if !stored.isEmpty { directory = await Task.detached { CatalogDirectory(entries: stored) }.value }
+        }
+        let last = defaults.object(forKey: Self.directoryRefreshedKey) as? Date
+        let isStale = last.map { Date().timeIntervalSince($0) > Self.directoryMaxAge } ?? true
+        guard force || directory.isEmpty || isStale else { return }
+
+        do {
+            let entries = try await store.allWines()
+            // Ein leeres Ergebnis ist verdächtig (Index fehlt, Fehler): nicht über eine
+            // gute Liste schreiben.
+            guard !entries.isEmpty else { return }
+            directory = await Task.detached { CatalogDirectory(entries: entries) }.value
+            await Task.detached { CatalogDirectoryStorage.save(entries) }.value
+            defaults.set(Date(), forKey: Self.directoryRefreshedKey)
+            Self.logger.info("Katalogliste geladen: \(entries.count) Weine")
+        } catch {
+            Self.logger.info("Katalogliste nicht geladen: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    /// Vorschläge beim Tippen – sofort, ohne Netz.
+    func suggestions(for query: String, vintage: Int) -> [CatalogDirectory.Suggestion] {
+        directory.suggestions(for: query, vintage: vintage)
     }
 
     // MARK: Abgleich

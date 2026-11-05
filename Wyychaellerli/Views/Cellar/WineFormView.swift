@@ -30,6 +30,8 @@ struct WineFormView: View {
 
     /// Mit fertigem Scan geöffnet (Mittelknopf der Leiste) – dann gleich auf Doppel prüfen.
     private let startsWithScan: Bool
+    /// Im Formular wurde ein Etikett gescannt – dann gilt der Abgleich über CloudKit.
+    @State private var didScanHere = false
     /// „Ohne Foto erfassen“: kein Scan-Knopf, das widerspräche der Wahl.
     private let isManualEntry: Bool
 
@@ -129,6 +131,7 @@ struct WineFormView: View {
                         .textInputAutocapitalization(.words)
                         .submitLabel(.next)
                         .onSubmit { focusedField = .producer }
+                    suggestionRows
 
                     TextField("Produzent / Weingut", text: $viewModel.producer)
                         .focused($focusedField, equals: .producer)
@@ -314,6 +317,7 @@ struct WineFormView: View {
             .sheet(isPresented: $isShowingScanner) {
                 LabelScanView { result in
                     viewModel.apply(result)
+                    didScanHere = true
                     // Direkt nach dem Scan prüfen – das ist der Moment, in dem man es
                     // wissen will, nicht erst beim Sichern.
                     viewModel.checkForDuplicates(in: context)
@@ -322,12 +326,27 @@ struct WineFormView: View {
             .onChange(of: viewModel.name) { _, _ in viewModel.checkForDuplicates(in: context) }
             .onChange(of: viewModel.producer) { _, _ in viewModel.checkForDuplicates(in: context) }
             .onChange(of: viewModel.vintage) { _, _ in viewModel.checkForDuplicates(in: context) }
-            // Nach dem Scan und beim Tippen: kurz warten, bis die Eingabe ruht.
+            // Beim Tippen schlägt die Liste auf dem Gerät vor (sofort, ohne Netz) …
+            .onChange(of: viewModel.name) { _, _ in updateSuggestions() }
+            .onChange(of: viewModel.vintage) { _, _ in updateSuggestions() }
+            .onChange(of: catalog.directory.count) { _, _ in updateSuggestions() }
+            // … der Abgleich über CloudKit gilt nur dem Scan und dem Strichcode.
             .task(id: catalogQuery) {
-                guard viewModel.trimmedName.count >= 3 || !viewModel.validBarcode.isEmpty else { return }
-                try? await Task.sleep(for: .milliseconds(700))
+                guard usesServerLookup else {
+                    if viewModel.catalogCandidate != nil { viewModel.offerCatalogEntry(nil) }
+                    return
+                }
+                guard viewModel.trimmedName.count >= 3 || !viewModel.validBarcode.isEmpty else {
+                    viewModel.offerCatalogEntry(nil)
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(400))
                 guard !Task.isCancelled else { return }
                 await consultCatalog()
+            }
+            .task {
+                await catalog.refreshDirectory()
+                updateSuggestions()
             }
             .onAppear {
                 if startsWithScan {
@@ -347,11 +366,25 @@ struct WineFormView: View {
 
     /// Ändert sich eine dieser Angaben, wird der Katalog neu gefragt.
     private var catalogQuery: String {
-        [viewModel.name, viewModel.producer, String(viewModel.vintage), viewModel.barcode].joined(separator: "|")
+        [viewModel.name, viewModel.producer, String(viewModel.vintage), viewModel.barcode, String(didScanHere)]
+            .joined(separator: "|")
     }
 
-    /// Fragt den gemeinsamen Katalog – nach dem Scan und beim Tippen. Ohne Netz oder ohne
+    /// Der Abgleich über CloudKit ist für Scan und Strichcode da. Beim reinen Tippen
+    /// übernimmt ihn die Liste auf dem Gerät.
+    private var usesServerLookup: Bool {
+        startsWithScan || didScanHere || !viewModel.validBarcode.isEmpty
+    }
+
+    private func updateSuggestions() {
+        guard case .add = viewModel.mode else { return }
+        viewModel.releaseSuggestionIfNameChanged()
+        viewModel.updateSuggestions(catalog.suggestions(for: viewModel.name, vintage: viewModel.vintage))
+    }
+
+    /// Fragt den gemeinsamen Katalog – nach dem Scan und beim Strichcode. Ohne Netz oder ohne
     /// Treffer passiert einfach nichts. Ein Treffer wird **angeboten**, nicht übernommen.
+    /// Das Foto kommt erst, wenn der Treffer bestätigt ist.
     private func consultCatalog() async {
         guard case .add = viewModel.mode, viewModel.catalogMatch == nil else { return }
         let entry = await catalog.lookup(
@@ -361,9 +394,60 @@ struct WineFormView: View {
             barcode: viewModel.validBarcode
         )
         guard !Task.isCancelled else { return }
-        let image = entry == nil ? nil : await catalog.catalogImage(entry?.id ?? "")
-        guard !Task.isCancelled else { return }
-        viewModel.offerCatalogEntry(entry, image: image)
+        viewModel.offerCatalogEntry(entry)
+        if let entry, viewModel.catalogMatch?.id == entry.id { await loadCatalogImage(for: entry) }
+    }
+
+    /// Holt das eine Katalogfoto des bestätigten Weins – nur im Speicher. Dauerhaft liegt es
+    /// erst am Wein, wenn der Nutzer es verwendet und den Wein sichert.
+    private func loadCatalogImage(for entry: CatalogWine) async {
+        let data = await catalog.catalogImage(entry.id)
+        guard viewModel.catalogMatch?.id == entry.id else { return }
+        viewModel.catalogImageData = data
+    }
+
+    private func choose(_ entry: CatalogWine) {
+        viewModel.selectSuggestion(entry)
+        Task { await loadCatalogImage(for: entry) }
+    }
+
+    /// Vorschläge aus dem Katalog, direkt unter dem Namensfeld.
+    @ViewBuilder
+    private var suggestionRows: some View {
+        ForEach(viewModel.suggestions) { suggestion in
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 8) {
+                    Image(systemName: "books.vertical")
+                        .font(.footnote)
+                        .foregroundStyle(Brand.accent)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(suggestion.name).font(.subheadline.weight(.semibold))
+                        let detail = [suggestion.producer, suggestion.origin].filter { !$0.isEmpty }.joined(separator: " · ")
+                        if !detail.isEmpty {
+                            Text(detail).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                    .layoutPriority(1)
+                    Spacer(minLength: 0)
+                }
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(suggestion.entries) { entry in
+                            PillChip(
+                                title: entry.vintage > 0 ? String(entry.vintage) : tr("Ohne Jahrgang"),
+                                isSelected: false
+                            ) { choose(entry) }
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 2)
+        }
+        if !viewModel.suggestions.isEmpty {
+            Text("Aus dem gemeinsamen Katalog – tippe auf den Jahrgang, um den Wein zu übernehmen.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
     }
 
     /// Die Frage „Ist das dein Wein?“ mit dem Treffer aus dem Katalog.
@@ -382,7 +466,10 @@ struct WineFormView: View {
                 }
             }
             HStack(spacing: 12) {
-                Button("Das ist mein Wein") { viewModel.confirmCatalogCandidate() }
+                Button("Das ist mein Wein") {
+                    viewModel.confirmCatalogCandidate()
+                    Task { await loadCatalogImage(for: entry) }
+                }
                     .buttonStyle(.brandFilled)
                 Button("Anderer Wein") { viewModel.declineCatalogCandidate() }
                     .buttonStyle(.brandOutline)

@@ -95,18 +95,18 @@ struct SupplementTests {
     func candidateIsAsked() {
         let model = WineFormViewModel(mode: .add)
         model.name = "Pinot Noir"
-        model.offerCatalogEntry(entry(), image: nil)
+        model.offerCatalogEntry(entry())
         #expect(model.catalogCandidate != nil)
         #expect(model.catalogMatch == nil)
         model.declineCatalogCandidate()
         #expect(model.catalogCandidate == nil)
         // Abgelehnt: derselbe Treffer kommt nicht wieder.
-        model.offerCatalogEntry(entry(), image: nil)
+        model.offerCatalogEntry(entry())
         #expect(model.catalogCandidate == nil)
 
         let sure = WineFormViewModel(mode: .add)
         sure.barcode = code
-        sure.offerCatalogEntry(entry(gtins: [code]), image: nil)
+        sure.offerCatalogEntry(entry(gtins: [code]))
         #expect(sure.catalogCandidate == nil)
         #expect(sure.catalogMatch != nil)
     }

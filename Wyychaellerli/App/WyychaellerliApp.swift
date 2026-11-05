@@ -62,6 +62,7 @@ struct WyychaellerliApp: App {
                     AlcoholNoteMigration.run(in: persistence.viewContext)
                     await rater.refresh()
                     rater.adoptExistingRatings(in: persistence.viewContext)
+                    Task { await catalog.refreshDirectory() }
                     await catalog.refresh()
                 }
         }

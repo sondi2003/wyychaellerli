@@ -1931,6 +1931,17 @@
         }
       }
     },
+    "Aus dem gemeinsamen Katalog – tippe auf den Jahrgang, um den Wein zu übernehmen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iz zajedničkog kataloga – dodirni berbu da preuzmeš vino."
+          }
+        }
+      }
+    },
     "Auslosung" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -5,7 +5,7 @@ import Foundation
 ///
 /// Bewusst ein reiner Werttyp ohne CloudKit, damit Schlüssel, Suchwörter und Abgleich
 /// ohne Netz testbar sind. Die Umwandlung von und nach `CKRecord` steht in `CatalogStore`.
-struct CatalogWine: Sendable, Equatable, Identifiable {
+struct CatalogWine: Sendable, Equatable, Identifiable, Codable {
     /// Der Datensatzname, zugleich der Schlüssel gegen Doppeleinträge.
     var id: String
     var name: String

@@ -160,7 +160,12 @@ final class CatalogStore: Sendable {
     func wineImage(_ id: String) async throws -> Data? {
         let fetched = try await database.records(for: [CKRecord.ID(recordName: id)], desiredKeys: ["image"])
         let record = try fetched.values.first?.get()
-        return (record?["image"] as? CKAsset)?.fileURL.flatMap { try? Data(contentsOf: $0) }
+        guard let url = (record?["image"] as? CKAsset)?.fileURL else { return nil }
+        let data = try? Data(contentsOf: url)
+        // Die heruntergeladene Datei braucht niemand mehr: Das Bild steht im Speicher und
+        // landet nur dann dauerhaft am Wein, wenn der Nutzer es verwendet.
+        try? FileManager.default.removeItem(at: url)
+        return data
     }
 
     /// Was mit dem Etikett beim Sichern passiert.
@@ -351,7 +356,7 @@ final class CatalogStore: Sendable {
     /// nichts – er hängt am Datensatz `admins`, den jeder lesen darf. Die Rechte hängen an
     /// der Rolle in der Konsole.
     func checkAdminRights() async throws {
-        let id = CKRecord.ID(recordName: "_rechtepruefung")
+        let id = CKRecord.ID(recordName: "rechtepruefung")
         try await modify(saving: [CKRecord(recordType: RecordType.wine, recordID: id)], deleting: [])
         try await modify(saving: [], deleting: [id])
     }

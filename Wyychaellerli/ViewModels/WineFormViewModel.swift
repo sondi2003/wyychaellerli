@@ -187,7 +187,6 @@ final class WineFormViewModel {
 
     /// Ein Treffer, der dem Nutzer gezeigt wird und auf seine Antwort wartet.
     var catalogCandidate: CatalogWine?
-    private var candidateImageData: Data?
     /// „Anderer Wein“: Dieser Treffer wird nicht noch einmal angeboten.
     private(set) var declinedCatalogID: String?
 
@@ -196,17 +195,62 @@ final class WineFormViewModel {
     /// Das eigene Foto, solange das Katalogfoto an seiner Stelle steht (für „Mein Foto“).
     private var ownImageData: Data?
 
+    /// Der Katalogeintrag stammt aus der Auswahl unter dem Namensfeld (nicht aus einem Scan).
+    private var pickedFromSuggestions = false
+
+    /// Ändert der Nutzer den Namen, nachdem er einen Vorschlag gewählt hat, und es ist nicht
+    /// mehr derselbe Wein, gilt die Wahl nicht mehr: Die Vorschläge erscheinen wieder, das
+    /// Katalogfoto verschwindet. Bereits ergänzte Felder bleiben, sie gehören jetzt ihm.
+    func releaseSuggestionIfNameChanged() {
+        guard pickedFromSuggestions, let match = catalogMatch,
+              CatalogDirectory.fold(trimmedName) != CatalogDirectory.fold(match.name) else { return }
+        pickedFromSuggestions = false
+        catalogMatch = nil
+        if labelImageData != nil, labelImageData == catalogImageData {
+            labelImageData = ownImageData
+            ownImageData = nil
+        }
+        catalogImageData = nil
+    }
+
+    /// Die Vorschläge unter dem Namensfeld (Suche beim Tippen auf dem Gerät).
+    var suggestions: [CatalogDirectory.Suggestion] = []
+
+    /// Zeigt die Suche Vorschläge, hat der Nutzer sie aber nicht angenommen? Dann bleibt der
+    /// Katalog beim Sichern unberührt: Es ist unklar, ob er einen davon meinte.
+    func updateSuggestions(_ found: [CatalogDirectory.Suggestion]) {
+        guard case .add = mode, catalogMatch == nil, catalogCandidate == nil else {
+            suggestions = []
+            return
+        }
+        if found != suggestions { suggestions = found }
+    }
+
+    /// Der Nutzer wählt einen Wein aus den Vorschlägen: Name, Produzent und Jahrgang kommen
+    /// aus dem Katalog, leere Felder werden ergänzt, Eigenes bleibt.
+    func selectSuggestion(_ entry: CatalogWine) {
+        pickedFromSuggestions = true
+        name = entry.name
+        if producer.isEmpty { producer = entry.producer }
+        if Self.vintageRange.contains(entry.vintage) { vintage = entry.vintage }
+        catalogCandidate = nil
+        declinedCatalogID = nil
+        suggestions = []
+        fillGaps(from: entry)
+    }
+
     /// Was beim Sichern an den Katalog geht, je nach Antwort des Nutzers.
     var catalogChoice: CatalogCenter.CatalogChoice {
         if let catalogMatch { return .confirmed(catalogMatch) }
         if let catalogCandidate { return .ignored(id: catalogCandidate.id) }
+        if let offered = suggestions.first?.entries.first { return .ignored(id: offered.id) }
         if let declinedCatalogID { return .declined(id: declinedCatalogID) }
         return .none
     }
 
     /// Ein Treffer des Katalogs. Ein Strichcodetreffer mit gleichem Jahrgang ist so gut wie
     /// sicher und wird gleich übernommen; alles andere fragt zuerst.
-    func offerCatalogEntry(_ entry: CatalogWine?, image: Data?) {
+    func offerCatalogEntry(_ entry: CatalogWine?) {
         guard let entry else {
             catalogCandidate = nil
             return
@@ -215,18 +259,15 @@ final class WineFormViewModel {
         let code = validBarcode
         if !code.isEmpty, entry.gtins.contains(code), vintage == 0 || entry.vintage == vintage {
             catalogCandidate = nil
-            catalogImageData = image
             fillGaps(from: entry)
         } else {
             catalogCandidate = entry
-            candidateImageData = image
         }
     }
 
     func confirmCatalogCandidate() {
         guard let entry = catalogCandidate else { return }
         catalogCandidate = nil
-        catalogImageData = candidateImageData
         fillGaps(from: entry)
     }
 
