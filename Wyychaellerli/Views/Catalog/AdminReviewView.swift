@@ -10,10 +10,16 @@ import SwiftUI
 /// Daten aber durch die Rolle in der CloudKit-Konsole, nicht durch das Ausblenden.
 struct AdminReviewView: View {
 
+    /// Aus einer Mitteilung: Datensatz des neuen Vorschlags. Seine Gruppe geht nach dem Laden
+    /// von selbst auf, damit die Prüfung sofort beginnt.
+    var focusRecordName: String?
+
     @Environment(CatalogCenter.self) private var catalog
     @State private var groups: [SubmissionGroup] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var focusedGroupID: String?
+    @State private var didFocus = false
 
     var body: some View {
         List {
@@ -45,6 +51,13 @@ struct AdminReviewView: View {
         }
         .refreshable { await load() }
         .task { await load() }
+        .navigationDestination(item: $focusedGroupID) { id in
+            if let group = groups.first(where: { $0.id == id }) {
+                AdminSubmissionEditor(group: group) { decided in
+                    groups.removeAll { $0.id == decided.id }
+                }
+            }
+        }
     }
 
     private func row(_ group: SubmissionGroup) -> some View {
@@ -84,6 +97,12 @@ struct AdminReviewView: View {
             let pending = try await catalog.pendingSubmissions()
             groups = SubmissionGroup.grouping(pending)
             errorMessage = nil
+            // Nur beim ersten Laden und nur, wenn der Vorschlag noch offen ist – wurde er
+            // inzwischen entschieden, bleibt die Liste stehen.
+            if !didFocus, let focusRecordName {
+                didFocus = true
+                focusedGroupID = groups.first { $0.items.contains { $0.id == focusRecordName } }?.id
+            }
         } catch {
             errorMessage = CatalogStore.friendlyMessage(for: error, asAdmin: true)
         }
@@ -166,6 +185,7 @@ struct AdminSubmissionEditor: View {
                         .scaledToFit()
                         .frame(maxWidth: .infinity, maxHeight: 200)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .labelLens(data)
                 }
             }
 

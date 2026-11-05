@@ -330,6 +330,7 @@ struct CatalogWineEditor: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: imageData == nil ? 60 : 120, maxHeight: 200)
+        .labelLens(imageData)
     }
 
     /// Löschen links, Sichern rechts – fest über der Tableiste, wie beim Prüfen.

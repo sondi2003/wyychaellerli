@@ -96,6 +96,7 @@ struct WineFormView: View {
                                     .scaledToFill()
                                     .frame(width: 56, height: 70)
                                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                    .labelLens(data, title: tr("Foto aus dem Katalog"), compact: true)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Foto aus dem Katalog")
                                         .font(.subheadline.weight(.medium))
@@ -547,6 +548,7 @@ struct WineFormView: View {
                     .scaledToFill()
                     .frame(width: 56, height: 70)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .labelLens(data, title: title, compact: true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.subheadline.weight(.medium))

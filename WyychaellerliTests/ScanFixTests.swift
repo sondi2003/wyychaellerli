@@ -109,3 +109,51 @@ struct ScanFixTests {
         #expect(PairingRequest(dish: "x", inventory: [], guests: 0).guests == nil)
     }
 }
+
+/// Der Name stammt von der Vorderseite, nicht aus den Pflichtangaben hinten.
+/// Fall aus dem Katalog (5.11.2026): „Nettoinhalt / Netto inhoud / Volume net“ wurde als
+/// Weinname vorgeschlagen, weil die Regeln die erste gemischt geschriebene Zeile nahmen.
+@Suite("Weinname aus der Texterkennung")
+struct NameDetectionTests {
+
+    private let prosecco = """
+    [Vorderseite]
+    VALDOBBIADENE
+    PROSECCO
+    SUPERIORE
+    EXTRA
+    DRY
+    2025
+    ITALIA
+
+    [Rückseite]
+    etinhalt:/ Netto inhoud: / Volume net: /
+    750 ml
+    Contiene solfiti / Contains sulphites
+    """
+
+    @Test("Pflichtangaben der Rückseite sind kein Name")
+    func ignoresBackLabelBoilerplate() {
+        let name = HeuristicLabelParser.parse(recognizedText: prosecco).name
+        #expect(!name.lowercased().contains("inhoud"))
+        #expect(name == "Valdobbiadene")
+    }
+
+    @Test("Der Name kommt von vorne, auch wenn hinten schöner geschrieben steht")
+    func prefersFront() {
+        let text = "[Vorderseite]\nLa Pinède\n\n[Rückseite]\nMis en bouteille au domaine\nVin de Pays"
+        #expect(HeuristicLabelParser.parse(recognizedText: text).name == "La Pinède")
+    }
+
+    @Test("Hinten allein genügt, wenn vorne nichts Brauchbares steht")
+    func fallsBackToBack() {
+        let text = "[Vorderseite]\n2019\n\n[Rückseite]\nLa Pinède"
+        #expect(HeuristicLabelParser.parse(recognizedText: text).name == "La Pinède")
+    }
+
+    @Test("Zeilen mit Doppelpunkt, Schrägstrich oder Land sind nie ein Name")
+    func rejectsSeparatorsAndCountries() {
+        let text = "[Vorderseite]\nNetto inhoud: / Volume net\nItalia\nMerlot del Veneto"
+        #expect(HeuristicLabelParser.parse(recognizedText: text).name == "Merlot del Veneto")
+    }
+}

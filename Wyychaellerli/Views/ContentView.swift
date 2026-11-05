@@ -65,6 +65,7 @@ struct ContentView: View {
     @State private var isShowingScanOptions = false
     @State private var scanOption: ScanOptionsSheet.Option?
     @State private var isShowingSettings = false
+    private let notificationRouter = NotificationRouter.shared
     @State private var isKeyboardVisible = false
     /// Gemessene Höhe der Leiste ohne Home-Indikator.
     @State private var tabBarHeight: CGFloat = 56
@@ -72,6 +73,13 @@ struct ContentView: View {
     private var tabBarClearance: CGFloat { isKeyboardVisible ? 0 : tabBarHeight + 16 }
     /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
     @State private var incomingShare: WineShare?
+
+    /// Öffnet die Einstellungen, wenn eine Mitteilung ein Ziel dort hinterlassen hat und
+    /// nichts im Weg ist. Bleibt das Ziel liegen, kommt es mit dem nächsten Anlass wieder hierher.
+    private func openNotificationTarget() {
+        guard notificationRouter.destination != nil, !isShowingSplash, !party.isRunning else { return }
+        isShowingSettings = true
+    }
 
     var body: some View {
         ZStack {
@@ -185,6 +193,12 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: party.isRunning)
         .onAppear { party.restoreIfNeeded(in: context) }
+        // Tipp auf eine Katalog-Mitteilung: Die Einstellungen öffnen sich und führen selbst
+        // zum Ziel (`SettingsView`). Erst nach dem Splash und nie während einer Party – der
+        // Keller soll in der gesperrten Runde nicht über eine Mitteilung aufgehen.
+        .onChange(of: notificationRouter.destination, initial: true) { openNotificationTarget() }
+        .onChange(of: isShowingSplash) { openNotificationTarget() }
+        .onChange(of: party.isRunning) { openNotificationTarget() }
         // Eine .wyy-Datei aus Nachrichten, Mail oder Dateien: erst zeigen, dann übernehmen.
         .onOpenURL { url in
             guard !party.isRunning, let share = Self.readShare(at: url) else { return }

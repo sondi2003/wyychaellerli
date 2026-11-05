@@ -18,6 +18,11 @@ struct SettingsView: View {
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
     @State private var isShowingWalkthrough = false
     @State private var didResetTips = false
+    // Ziele aus einer angetippten Katalog-Mitteilung (`NotificationRouter`).
+    @State private var isShowingReview = false
+    @State private var isShowingMySubmissions = false
+    @State private var reviewFocus: String?
+    private let notificationRouter = NotificationRouter.shared
 
     var body: some View {
         @Bindable var settings = settings
@@ -148,6 +153,24 @@ struct SettingsView: View {
             }
             .fullScreenCover(isPresented: $isShowingWalkthrough) {
                 WalkthroughView()
+            }
+            .navigationDestination(isPresented: $isShowingReview) {
+                AdminReviewView(focusRecordName: reviewFocus)
+            }
+            .navigationDestination(isPresented: $isShowingMySubmissions) {
+                MySubmissionsView()
+            }
+            // `initial`: Wurde die App erst durch den Tipp gestartet, steht das Ziel schon da,
+            // wenn dieses Blatt aufgeht.
+            .onChange(of: notificationRouter.destination, initial: true) {
+                guard let destination = notificationRouter.consume() else { return }
+                switch destination {
+                case .review(let recordName):
+                    reviewFocus = recordName
+                    isShowingReview = true
+                case .mySubmissions:
+                    isShowingMySubmissions = true
+                }
             }
         }
     }

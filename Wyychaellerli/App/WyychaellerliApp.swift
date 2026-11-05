@@ -61,6 +61,13 @@ struct WyychaellerliApp: App {
                     // Alkoholgehalt aus den Notizen ins eigene Feld holen.
                     AlcoholNoteMigration.run(in: persistence.viewContext)
                     #if DEBUG
+                    // Vorführung: Tipp auf eine Katalog-Mitteilung, ohne Push (im Simulator fehlt
+                    // die Erlaubnis). `NOTIFY_DEMO=review` oder `=mine`.
+                    switch ProcessInfo.processInfo.environment["NOTIFY_DEMO"] {
+                    case "review": NotificationRouter.shared.open(.review(recordName: nil))
+                    case "mine": NotificationRouter.shared.open(.mySubmissions)
+                    default: break
+                    }
                     // Vorführung: ein paar erfundene Weine, damit sich Filter im Simulator ansehen lassen.
                     if ProcessInfo.processInfo.environment["CELLAR_DEMO"] == "1" {
                         let context = persistence.viewContext

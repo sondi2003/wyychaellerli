@@ -64,6 +64,18 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         [.banner, .list, .sound]
     }
 
+    /// Tipp auf die Mitteilung: Das Ziel (Prüfung des Vorschlags, „Meine Vorschläge“) geht an
+    /// den Router, `ContentView` öffnet es.
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+        guard let destination = NotificationRouter.destination(
+            for: response.notification.request.content.userInfo
+        ) else { return }
+        await MainActor.run { NotificationRouter.shared.open(destination) }
+    }
+
     func application(
         _ application: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,

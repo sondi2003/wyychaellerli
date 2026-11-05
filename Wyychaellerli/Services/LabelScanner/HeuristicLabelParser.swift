@@ -13,6 +13,24 @@ enum HeuristicLabelParser {
             .filter { !$0.isEmpty && !$0.hasPrefix("[") }
     }
 
+    /// Die Zeilen der Vorderseite. Gibt es keinen Abschnitt „[Vorderseite]“ (ein einzelnes
+    /// Foto ohne Beschriftung, Tests), sind es alle.
+    private static func frontLines(from text: String) -> [String] {
+        var inFront = false
+        var sawSections = false
+        var front: [String] = []
+        for raw in text.components(separatedBy: .newlines) {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("[") {
+                sawSections = true
+                inFront = line.lowercased().hasPrefix("[vorderseite")
+                continue
+            }
+            if !line.isEmpty, inFront { front.append(line) }
+        }
+        return sawSections && !front.isEmpty ? front : cleanedLines(from: text)
+    }
+
     /// Nur ein Jahrgang, der **ausdrücklich** als solcher dasteht: hinter „Jahrgang“,
     /// „Millésime“ & Co. oder allein in einer Zeile. Alles andere – „Depuis 1952“,
     /// „Mis en bouteille 2021“, eine Jahreszahl mitten im Fliesstext – ist kein Beleg.
@@ -48,7 +66,14 @@ enum HeuristicLabelParser {
         result.producer = lines.first { line in
             producerKeywords.contains { line.lowercased().contains($0) }
         } ?? ""
-        result.name = detectName(in: lines, producer: result.producer, region: result.region)
+        // Der Name steht vorne. Die Rückseite trägt Pflichtangaben („Nettoinhalt / Netto inhoud /
+        // Volume net“), die als Name taugten, sobald vorne nichts Passendes steht.
+        let front = frontLines(from: text)
+        var name = detectName(in: front, producer: result.producer, region: result.region)
+        if name.isEmpty, front.count != lines.count {
+            name = detectName(in: lines, producer: result.producer, region: result.region)
+        }
+        result.name = name
         return result
     }
 
@@ -227,11 +252,30 @@ enum HeuristicLabelParser {
             guard !lowered.contains("appellation"), !line.contains("%"), !lowered.contains("www.") else { return false }
             guard !allTypeKeywords.contains(where: lowered.contains) else { return false }
             guard !lowered.hasPrefix("cépage"), !lowered.hasPrefix("terroir") else { return false }
+            // Mehrsprachige Pflichtangaben („Nettoinhalt:/ Netto inhoud: / Volume net: /“) tragen
+            // Doppelpunkte und Schrägstriche; ein Weinname hat beides nie.
+            guard !line.contains(":"), !line.contains("/"), !line.contains("@") else { return false }
+            guard !legalWords.contains(where: lowered.contains) else { return false }
+            // Das Herkunftsland allein („ITALIA“) ist kein Name.
+            guard !countries.contains(where: { $0.needles.contains(lowered) }) else { return false }
             return true
         }
         // Mischschreibung ("La Pinède") ist meist der Cuvée-Name; Versalien eher Produzent/Pflichttext.
-        return candidates.first { $0 != $0.uppercased() } ?? candidates.first ?? ""
+        if let mixed = candidates.first(where: { $0 != $0.uppercased() }) { return mixed }
+        // Nur Versalien (viele Etiketten): in normaler Schreibweise anzeigen.
+        guard let first = candidates.first else { return "" }
+        return first.filter(\.isLetter).count > 3 ? first.capitalized : first
     }
+
+    /// Wörter, an denen man Pflichtangaben und Kleingedrucktes erkennt – in den Sprachen, die
+    /// auf Etiketten nebeneinanderstehen.
+    private static let legalWords = [
+        "inhalt", "inhoud", "volume", "contenu", "contenido", "contenuto", "netto", "sulfit",
+        "sulphit", "contains", "enthält", "contient", "mis en bouteille", "imbottigliat",
+        "abgefüllt", "embotellado", "product of", "produit de", "produce of", "made in",
+        "prodotto in", "hergestellt", "importeur", "importé", "imported", "allerg", "schwanger",
+        "pregnan", "enceinte", "recycl", "consumption", "consumo", "konsum", "alkohol", "alcohol"
+    ]
 
     /// Levenshtein-Distanz für kurze Strings.
     private static func editDistance(_ a: String, _ b: String) -> Int {
