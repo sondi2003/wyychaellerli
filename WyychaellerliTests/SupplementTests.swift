@@ -142,6 +142,24 @@ struct CatalogPhotoFadeTests {
         #expect(CatalogPhotoFade.opacity(at: 0.97) == 0)
     }
 
+    @Test("Ein breites Foto mit Rand gilt als Flasche, sobald der Verlauf es bearbeitet hat")
+    func wideCatalogPhotoIsBottleAfterFade() throws {
+        // Echte Katalogfotos sind breit (schwarzer Rand), nicht schmal wie meine Demobilder.
+        let size = CGSize(width: 745, height: 1026)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let wide = renderer.image { context in
+            UIColor.black.setFill(); context.fill(CGRect(origin: .zero, size: size))
+        }
+        let png = try #require(wide.pngData())
+        let fadedData = try #require(CatalogPhotoFade.faded(from: png))
+        let fadedImage = try #require(UIImage(data: fadedData))
+        #expect(CatalogPhotoFade.isCatalogBottle(fadedImage))
+        // Dasselbe Foto ohne Verlauf (JPEG vom Scan) bleibt ein Etikettfoto.
+        let jpegData = try #require(wide.jpegData(compressionQuality: 0.9))
+        let jpegImage = try #require(UIImage(data: jpegData))
+        #expect(!CatalogPhotoFade.isCatalogBottle(jpegImage))
+    }
+
     @Test("Nur schmale, hohe Fotos gelten als Flasche")
     func bottleDetection() {
         #expect(CatalogPhotoFade.isBottle(width: 163, height: 600))

@@ -122,7 +122,7 @@ extension View {
     /// im Bild: Das gespeicherte Foto und alles, was geteilt wird, bleiben frei von Beschriftung.
     @ViewBuilder
     func bottleSignature(for image: UIImage) -> some View {
-        if CatalogPhotoFade.isBottle(width: Int(image.size.width), height: Int(image.size.height)) {
+        if CatalogPhotoFade.isCatalogBottle(image) {
             overlay(alignment: .bottom) {
                 Text(verbatim: "Wyychällerli")
                     .font(.system(size: 12, weight: .medium))
@@ -153,9 +153,7 @@ struct AdaptiveLabelImage: View {
     /// Schmaler als das gilt als Flasche.
     static let bottleAspectLimit: CGFloat = 0.55
 
-    private var isBottle: Bool {
-        image.size.height > 0 && image.size.width / image.size.height < Self.bottleAspectLimit
-    }
+    private var isBottle: Bool { CatalogPhotoFade.isCatalogBottle(image) }
 
     var body: some View {
         if isBottle {

@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import ImageIO
+import UIKit
 import UniformTypeIdentifiers
 
 /// Lässt ein Katalogfoto unten **sanft ausblenden**, damit das Wasserzeichen verschwindet.
@@ -14,7 +15,9 @@ import UniformTypeIdentifiers
 /// Gerechnet wird **auf dem Gerät** in die Bilddaten (PNG mit Alphakanal): Im Katalog bleibt das
 /// Original, und der Verlauf stimmt überall, wo das Foto gezeigt wird, auch im Vollbild.
 ///
-/// Nur **Flaschenfotos** (schmal und hoch). Ein Etikettfoto vom Scan wird nie angefasst.
+/// Gerechnet wird **nur an Katalogfotos** (`WineFormView.loadCatalogImage`), nie an Fotos vom Scan.
+/// Früher galten nur schmale Bilder als Flasche – echte Katalogfotos haben aber breite Ränder
+/// (schwarz oder weiss) und fielen durch; deshalb entscheidet nicht das Seitenverhältnis allein.
 enum CatalogPhotoFade {
 
     /// Schmaler als das gilt als Flaschenfoto (wie `AdaptiveLabelImage.bottleAspectLimit`).
@@ -38,11 +41,21 @@ enum CatalogPhotoFade {
         height > 0 && Double(width) / Double(height) < bottleAspectLimit
     }
 
-    /// Das Foto mit Verlauf (PNG), oder `nil`, wenn es kein Flaschenfoto ist.
+    /// Ist das ein Katalogfoto mit Flasche? Schmal und hoch – oder mit Alphakanal: Der Verlauf
+    /// schreibt ein PNG mit Durchsichtigkeit, Fotos vom Scan (JPEG zugeschnitten) haben keine.
+    static func isCatalogBottle(_ image: UIImage) -> Bool {
+        if isBottle(width: Int(image.size.width), height: Int(image.size.height)) { return true }
+        guard let alpha = image.cgImage?.alphaInfo else { return false }
+        switch alpha {
+        case .none, .noneSkipFirst, .noneSkipLast: return false
+        default: return true
+        }
+    }
+
+    /// Das Foto mit Verlauf (PNG), oder `nil`, wenn es sich nicht lesen lässt.
     static func faded(from data: Data) -> Data? {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              let image = CGImageSourceCreateImageAtIndex(source, 0, nil),
-              isBottle(width: image.width, height: image.height) else { return nil }
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
         let w = image.width, h = image.height
         var pixels = [UInt8](repeating: 0, count: w * h * 4)
         let space = CGColorSpaceCreateDeviceRGB()
