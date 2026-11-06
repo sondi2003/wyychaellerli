@@ -36,8 +36,12 @@ final class CatalogCenter {
     /// Alle Katalogweine als Text auf dem Gerät, für die Suche beim Tippen. Keine Bilder.
     private(set) var directory = CatalogDirectory.empty
     private var isLoadingDirectory = false
+    /// Zählt jedes Neuladen. Ansichten, die aus der Liste rechnen (Länderübersicht), hängen
+    /// ihre Berechnung daran – die Weinzahl allein bemerkt Änderungen ohne Zuwachs nicht.
+    private(set) var directoryVersion = 0
     static let directoryRefreshedKey = "catalog.directory.refreshedAt"
-    /// So alt darf die Liste werden, bevor beim nächsten Start neu geladen wird.
+    /// So alt darf die Liste werden, bevor sie neu geladen wird, wenn niemand etwas Genaueres
+    /// verlangt. Beim Start und beim Öffnen der App gilt kürzer (`refreshDirectory(maxAge:)`).
     static let directoryMaxAge: TimeInterval = 12 * 3600
 
     init(defaults: UserDefaults = .standard) {
@@ -77,7 +81,7 @@ final class CatalogCenter {
     /// Liest die gespeicherte Liste sofort und lädt sie bei Bedarf neu: wenn sie leer ist
     /// oder älter als zwölf Stunden. Schlägt das Laden fehl (kein Netz, kein Konto), bleibt
     /// die alte Liste stehen – lieber eine ältere als keine.
-    func refreshDirectory(force: Bool = false) async {
+    func refreshDirectory(force: Bool = false, maxAge: TimeInterval = CatalogCenter.directoryMaxAge) async {
         guard !isLoadingDirectory else { return }
         #if DEBUG
         // Vorführung ohne iCloud: erfundene Weine, damit sich die Suche im Simulator ansehen lässt.
@@ -117,7 +121,7 @@ final class CatalogCenter {
             if !stored.isEmpty { directory = await Task.detached { CatalogDirectory(entries: stored) }.value }
         }
         let last = defaults.object(forKey: Self.directoryRefreshedKey) as? Date
-        let isStale = last.map { Date().timeIntervalSince($0) > Self.directoryMaxAge } ?? true
+        let isStale = last.map { Date().timeIntervalSince($0) > maxAge } ?? true
         guard force || directory.isEmpty || isStale else { return }
 
         do {
@@ -126,6 +130,7 @@ final class CatalogCenter {
             // gute Liste schreiben.
             guard !entries.isEmpty else { return }
             directory = await Task.detached { CatalogDirectory(entries: entries) }.value
+            directoryVersion += 1
             await Task.detached { CatalogDirectoryStorage.save(entries) }.value
             defaults.set(Date(), forKey: Self.directoryRefreshedKey)
             Self.logger.info("Katalogliste geladen: \(entries.count) Weine")
@@ -320,7 +325,14 @@ final class CatalogCenter {
     }
 
     func catalogImage(_ id: String) async -> Data? {
-        try? await store.wineImage(id)
+        #if DEBUG
+        // Vorführung ohne iCloud: `CATALOG_DEMO_IMAGE=/Pfad/zum/Foto.png` liefert für jeden
+        // Katalogwein dieses Foto (zum Prüfen des Etikett-Zuschnitts im Simulator).
+        if let path = ProcessInfo.processInfo.environment["CATALOG_DEMO_IMAGE"] {
+            return try? Data(contentsOf: URL(fileURLWithPath: path))
+        }
+        #endif
+        return try? await store.wineImage(id)
     }
 
     func saveCatalogWine(_ entry: CatalogWine, previousID: String, image: CatalogStore.ImageChange) async throws -> CatalogWine {

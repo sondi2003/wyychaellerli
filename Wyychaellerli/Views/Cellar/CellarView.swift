@@ -16,6 +16,7 @@ struct CellarView: View {
     ) private var fetchedWines: FetchedResults<Wine>
     @State private var viewModel = CellarViewModel()
     @State private var isShowingFilters = false
+    @State private var isShowingStatistics = false
     /// Wein, der gerade bewertet wird – nach dem Austrinken der letzten Flasche.
     @State private var wineToRate: Wine?
     /// Wein, dessen Löschen noch bestätigt werden muss. Löschen ist endgültig und geht
@@ -57,8 +58,11 @@ struct CellarView: View {
                     wineList
                 }
             }
-            .navigationTitle("Wyychällerli")
+            .appTitle(tr("Wyychällerli"))
             .toolbar { toolbarContent }
+            .sheet(isPresented: $isShowingStatistics) {
+                CatalogStatisticsView()
+            }
             .sheet(isPresented: $isShowingFilters) {
                 CellarFilterSheet(viewModel: viewModel, countries: viewModel.countryOptions(in: wines))
             }
@@ -294,10 +298,19 @@ struct CellarView: View {
 
     // MARK: Toolbar
 
-    /// Nur das Zahnrad. Filter liegen in der Chip-Reihe, Neuzugänge kommen über den
+    /// Statistik links, Zahnrad rechts. Filter liegen in der Chip-Reihe, Neuzugänge kommen über den
     /// Scan-Knopf der Leiste, Regal und Bewertungen sind Reiter, die Party liegt im Berater.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
+        // Links, dem Zahnrad gegenüber: der Katalog in Zahlen.
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                isShowingStatistics = true
+            } label: {
+                Image(systemName: "chart.bar.xaxis")
+            }
+            .accessibilityLabel("Statistik")
+        }
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 openSettings()

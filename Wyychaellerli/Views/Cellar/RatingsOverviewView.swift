@@ -56,7 +56,7 @@ struct RatingsOverviewView: View {
                     }
                 }
             }
-            .navigationTitle("Bewertungen")
+            .appTitle(tr("Bewertungen"))
             .navigationBarTitleDisplayMode(isTab ? .large : .inline)
             .toolbar {
                 if !isTab {

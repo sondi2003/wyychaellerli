@@ -32,7 +32,7 @@ struct WineImportSheet: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Empfehlung")
+            .appTitle(tr("Empfehlung"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

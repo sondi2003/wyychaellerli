@@ -143,7 +143,7 @@ struct SettingsView: View {
             // löst über die Umgebungssprache auf, und die kommt dort erst nach dem Neuaufbau an –
             // „Einstellungen“ blieb nach dem Wechsel auf Serbisch deutsch stehen (und umgekehrt).
             // `tr` liest die gewählte Sprache direkt und ist beim Wechsel sofort richtig.
-            .navigationTitle(tr("Einstellungen"))
+            .appTitle(tr("Einstellungen"))
             .toolbar {
                 if isSheet {
                     ToolbarItem(placement: .confirmationAction) {

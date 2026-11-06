@@ -93,3 +93,15 @@ struct ShortlistTests {
         #expect(AISettings(defaults: defaults).prefersExternal == false)
     }
 }
+
+@Suite("Quellenschalter im Berater")
+struct AdvisorSourceToggleTests {
+
+    @Test("Nur mit Key und lokalem Modell gibt es etwas zu schalten")
+    func onlyWithBothSources() {
+        #expect(AdvisorSourceToggle.isAvailable(hasExternalKey: true, hasLocalModel: true))
+        #expect(!AdvisorSourceToggle.isAvailable(hasExternalKey: true, hasLocalModel: false))
+        #expect(!AdvisorSourceToggle.isAvailable(hasExternalKey: false, hasLocalModel: true))
+        #expect(!AdvisorSourceToggle.isAvailable(hasExternalKey: false, hasLocalModel: false))
+    }
+}

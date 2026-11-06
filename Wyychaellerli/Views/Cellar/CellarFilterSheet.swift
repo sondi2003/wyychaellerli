@@ -89,7 +89,7 @@ struct CellarFilterSheet: View {
                     .listRowInsets(EdgeInsets())
                 }
             }
-            .navigationTitle("Filter")
+            .appTitle(tr("Filter"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

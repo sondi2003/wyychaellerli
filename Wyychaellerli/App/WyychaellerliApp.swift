@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct WyychaellerliApp: App {
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Nötig, damit Freigabe-Einladungen ankommen (siehe SceneDelegate).
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
@@ -52,6 +53,10 @@ struct WyychaellerliApp: App {
                 .preferredColorScheme(appearance.colorScheme)
                 .tint(Brand.accent)
                 .environment(\.locale, language.locale)
+                // Kommt man nach einer Weile zurück in die App, steht die Liste wieder aktuell da.
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active { Task { await catalog.refreshDirectory(maxAge: 600) } }
+                }
                 .task(id: language) {
                     await localAI.refresh()
                 }
@@ -84,7 +89,7 @@ struct WyychaellerliApp: App {
                     #endif
                     await rater.refresh()
                     rater.adoptExistingRatings(in: persistence.viewContext)
-                    Task { await catalog.refreshDirectory() }
+                    Task { await catalog.refreshDirectory(maxAge: 600) }
                     await catalog.refresh()
                 }
         }

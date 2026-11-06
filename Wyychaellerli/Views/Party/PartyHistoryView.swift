@@ -7,6 +7,10 @@ import SwiftUI
 /// Wein. Die Flasche von Silvester ist längst leer – die Erinnerung bleibt trotzdem.
 struct PartyHistoryView: View {
 
+    /// Eingebettet in einen Navigationsstapel (aus der Party-Ansicht): kein eigener Stapel,
+    /// kein „Fertig“ – der Zurück-Pfeil führt zurück.
+    var isEmbedded = false
+
     @Environment(\.managedObjectContext) private var context
     @Environment(\.dismiss) private var dismiss
 
@@ -30,78 +34,86 @@ struct PartyHistoryView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if wins.isEmpty {
-                    ContentUnavailableView {
-                        Label("Noch keine Party", systemImage: "party.popper")
-                    } description: {
-                        Text("Wenn deine Gäste abgestimmt haben, steht die Siegerflasche hier – mit Anlass, Datum und Stimmen. Die Historie gehört zum Keller und ist auf allen Geräten gleich.")
-                    }
-                } else {
-                    List {
-                        Section {
-                            ForEach(wins) { win in
-                                row(win)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
-                                            winToDelete = win
-                                        } label: {
-                                            Label("Löschen", systemImage: "trash")
-                                        }
-                                    }
-                            }
-                        } footer: {
-                            Text("Zum Löschen nach links wischen. Die Historie gehört zum Keller – was du hier entfernst, verschwindet auch auf den anderen Geräten.")
-                        }
+        if isEmbedded {
+            content
+        } else {
+            NavigationStack { content }
+        }
+    }
 
-                        Section {
-                            Button(role: .destructive) {
-                                isConfirmingDeleteAll = true
-                            } label: {
-                                Label("Alle Einträge löschen", systemImage: "trash")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
+    private var content: some View {
+        Group {
+            if wins.isEmpty {
+                ContentUnavailableView {
+                    Label("Noch keine Party", systemImage: "party.popper")
+                } description: {
+                    Text("Wenn deine Gäste abgestimmt haben, steht die Siegerflasche hier – mit Anlass, Datum und Stimmen. Die Historie gehört zum Keller und ist auf allen Geräten gleich.")
+                }
+            } else {
+                List {
+                    Section {
+                        ForEach(wins) { win in
+                            row(win)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        winToDelete = win
+                                    } label: {
+                                        Label("Löschen", systemImage: "trash")
+                                    }
+                                }
+                        }
+                    } footer: {
+                        Text("Zum Löschen nach links wischen. Die Historie gehört zum Keller – was du hier entfernst, verschwindet auch auf den anderen Geräten.")
+                    }
+
+                    Section {
+                        Button(role: .destructive) {
+                            isConfirmingDeleteAll = true
+                        } label: {
+                            Label("Alle Einträge löschen", systemImage: "trash")
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                 }
             }
-            .navigationTitle("Party-Historie")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
+        }
+        .appTitle(tr("Party-Historie"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if !isEmbedded {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Fertig") { dismiss() }
                 }
-                if !wins.isEmpty {
-                    ToolbarItem(placement: .primaryAction) {
-                        EditButton()
-                    }
+            }
+            if !wins.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
+                    EditButton()
                 }
             }
-            .confirmationDialog(
-                "Eintrag löschen?",
-                isPresented: Binding(
-                    get: { winToDelete != nil },
-                    set: { if !$0 { winToDelete = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: winToDelete
-            ) { win in
-                Button("Löschen", role: .destructive) { delete(win) }
-                Button("Abbrechen", role: .cancel) { winToDelete = nil }
-            } message: { win in
-                Text("„\(win.displayTitle) – \(win.wineName)“ wird entfernt, auch auf den anderen Geräten.")
-            }
-            .confirmationDialog(
-                "Alle Einträge löschen?",
-                isPresented: $isConfirmingDeleteAll,
-                titleVisibility: .visible
-            ) {
-                Button("Alle \(wins.count) löschen", role: .destructive) { deleteAll() }
-                Button("Abbrechen", role: .cancel) { }
-            } message: {
-                Text("Die ganze Party-Historie wird entfernt – auf allen Geräten. Der Bestand im Keller bleibt unberührt.")
-            }
+        }
+        .confirmationDialog(
+            "Eintrag löschen?",
+            isPresented: Binding(
+                get: { winToDelete != nil },
+                set: { if !$0 { winToDelete = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: winToDelete
+        ) { win in
+            Button("Löschen", role: .destructive) { delete(win) }
+            Button("Abbrechen", role: .cancel) { winToDelete = nil }
+        } message: { win in
+            Text("„\(win.displayTitle) – \(win.wineName)“ wird entfernt, auch auf den anderen Geräten.")
+        }
+        .confirmationDialog(
+            "Alle Einträge löschen?",
+            isPresented: $isConfirmingDeleteAll,
+            titleVisibility: .visible
+        ) {
+            Button("Alle \(wins.count) löschen", role: .destructive) { deleteAll() }
+            Button("Abbrechen", role: .cancel) { }
+        } message: {
+            Text("Die ganze Party-Historie wird entfernt – auf allen Geräten. Der Bestand im Keller bleibt unberührt.")
         }
     }
 

@@ -71,7 +71,7 @@ struct NewRackView: View {
                     Text("Vorschau")
                 }
             }
-            .navigationTitle("Neues Regal")
+            .appTitle(tr("Neues Regal"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

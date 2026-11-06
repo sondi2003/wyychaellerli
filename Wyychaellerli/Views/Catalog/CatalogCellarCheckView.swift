@@ -65,7 +65,7 @@ struct CatalogCellarCheckView: View {
                 }
             }
         }
-        .navigationTitle("Keller abgleichen")
+        .appTitle(tr("Keller abgleichen"))
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             if let result, !result.missing.isEmpty {

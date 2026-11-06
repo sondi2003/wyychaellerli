@@ -91,7 +91,7 @@ struct RackEditorView: View {
                     }
                 }
             }
-            .navigationTitle("Regal bearbeiten")
+            .appTitle(tr("Regal bearbeiten"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

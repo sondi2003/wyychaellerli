@@ -41,7 +41,7 @@ struct MySubmissionsView: View {
                 }
             }
         }
-        .navigationTitle("Meine Vorschläge")
+        .appTitle(tr("Meine Vorschläge"))
         .listStyle(.insetGrouped)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await catalog.refresh() }

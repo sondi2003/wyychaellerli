@@ -36,6 +36,8 @@ struct CatalogMosaicCard: View {
                             )
                     }
                 }
+                // Wächst der Katalog, gleiten die Kacheln an ihren neuen Platz.
+                .animation(reduceMotion ? nil : .smooth(duration: 0.6), value: tiles)
             }
             .frame(height: 270)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -53,6 +55,7 @@ struct CatalogMosaicCard: View {
                 .font(.system(size: 34, weight: .semibold))
                 .foregroundStyle(.white)
                 .contentTransition(.numericText())
+                .animation(reduceMotion ? nil : .default, value: overview.total)
             Text("aus \(overview.countries.count) Ländern")
                 .font(.subheadline)
                 .foregroundStyle(Brand.rose)

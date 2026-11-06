@@ -1,7 +1,9 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
-    "" : {},
+    "" : {
+
+    },
     " (im Archiv)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -19,13 +21,266 @@
         }
       }
     },
-    "%@ %%" : {
+    ", Bestand %lld" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ %%"
+            "value" : ", stock %lld"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", zaliha %lld"
+          }
+        }
+      }
+    },
+    ", per Los entschieden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", decided by draw"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", odlučeno žrebom"
+          }
+        }
+      }
+    },
+    "· vorläufig, erst eine Person" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "· preliminary, only one person so far"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "· privremeno, tek jedna osoba"
+          }
+        }
+      }
+    },
+    "„%@ – %@“ wird entfernt, auch auf den anderen Geräten." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@ – %@” will be removed, on the other devices as well."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%1$@ – %2$@“ se uklanja, i na drugim uređajima."
+          }
+        }
+      }
+    },
+    "„%@“ ist jetzt leer. Was soll damit passieren?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is now empty. What should happen to it?"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“ je sada prazno. Šta treba da se uradi s njim?"
+          }
+        }
+      }
+    },
+    "„%@“ liegt bereits in deinem Keller%@. Übernimmst du ihn trotzdem, steht er zweimal in der Liste." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is already in your cellar%@. If you adopt it anyway, it will be in the list twice."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%1$@“ već je u tvom podrumu%2$@. Ako ga ipak preuzmeš, stajaće dvaput na listi."
+          }
+        }
+      }
+    },
+    "„%@“ wird dauerhaft entfernt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” will be removed permanently."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“ se trajno uklanja."
+          }
+        }
+      }
+    },
+    "„%@“ wird entfernt, auch auf den anderen Geräten. Die Flaschen bleiben im Keller, sie sind danach nur nicht mehr verortet." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” will be removed, on the other devices as well. The bottles stay in the cellar, they are just no longer placed afterwards."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“ se uklanja, i na drugim uređajima. Flaše ostaju u podrumu, samo više nemaju određeno mesto."
+          }
+        }
+      }
+    },
+    "„%@“ wird mit Etikett, Bewertungen und Regalplatz entfernt – auch auf den anderen Geräten. Zum Aufbewahren lieber archivieren." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” will be removed with its label, ratings and rack position – on the other devices as well. To keep it, archive it instead."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“ se uklanja sa etiketom, ocenama i mestom na stalku – i na drugim uređajima. Radije arhiviraj da ga sačuvaš."
+          }
+        }
+      }
+    },
+    "„Bestand erhöhen“ zählt deine Flaschen zum bestehenden Eintrag, statt einen zweiten anzulegen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Increase stock” adds your bottles to the existing entry instead of creating a second one."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Povećaj zalihu“ dodaje tvoje flaše postojećem unosu umesto da napravi drugi."
+          }
+        }
+      }
+    },
+    "„Bis“ liegt vor „Ab“ – die Angabe wird nicht verwendet." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“To” comes before “From” – the range is not used."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Do“ je pre „Od“ – podatak se ne koristi."
+          }
+        }
+      }
+    },
+    "(kein Fehlertext)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(no error text)"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(nema teksta greške)"
+          }
+        }
+      }
+    },
+    "%@ – %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ – %@"
+          }
+        }
+      }
+    },
+    "%@ · %lld/%lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld/%lld"
+          }
+        }
+      }
+    },
+    "%@ · Region nicht genau gefunden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Region not found exactly"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Region nije tačno pronađen"
+          }
+        }
+      }
+    },
+    "%@ (%@)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (%@)"
+          }
+        }
+      }
+    },
+    "%@ (%lld)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$lld)"
           }
         }
       }
@@ -41,13 +296,13 @@
         }
       }
     },
-    "%@ (%@)" : {
+    "%@ %%" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ (%@)"
+            "value" : "%@ %%"
           }
         }
       }
@@ -256,45 +511,6 @@
         }
       }
     },
-    "%@ · %lld/%lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · %lld/%lld"
-          }
-        }
-      }
-    },
-    "%@ · Region nicht genau gefunden" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Region not found exactly"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ · Region nije tačno pronađen"
-          }
-        }
-      }
-    },
-    "%@ – %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ – %@"
-          }
-        }
-      }
-    },
     "%@, %@ Alkohol" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -319,6 +535,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld ausgewählt – mehr Flaschen hast du nicht" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld selected – you have no more bottles"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izabrano: %lld – više flaša nemaš"
+          }
+        }
+      }
+    },
+    "%lld ausgewählt, noch %lld möglich" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld selected, %lld more possible"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izabrano: %1$lld, još moguće: %2$lld"
+          }
+        }
+      }
+    },
+    "%lld einräumen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place %lld"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Složi (%lld)"
           }
         }
       }
@@ -365,16 +632,16 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld unos"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld unosa"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld unos"
                 }
               },
               "other" : {
@@ -384,6 +651,40 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld Fächer übernommen, %lld Flaschen aus dem Regal genommen, weil das Fach schon belegt war. Der Bestand ist unverändert." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld slots adopted, %lld bottles taken out of the rack because the slot was already taken. The stock is unchanged."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld mesta preuzeto, %2$lld flaša uklonjeno sa stalka jer je mesto već bilo zauzeto. Zaliha je nepromenjena."
+          }
+        }
+      }
+    },
+    "%lld Fächer übernommen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld slots adopted."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preuzeto mesta: %lld."
           }
         }
       }
@@ -843,40 +1144,6 @@
         }
       }
     },
-    "%lld Fächer übernommen, %lld Flaschen aus dem Regal genommen, weil das Fach schon belegt war. Der Bestand ist unverändert." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld slots adopted, %lld bottles taken out of the rack because the slot was already taken. The stock is unchanged."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld mesta preuzeto, %2$lld flaša uklonjeno sa stalka jer je mesto već bilo zauzeto. Zaliha je nepromenjena."
-          }
-        }
-      }
-    },
-    "%lld Fächer übernommen." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld slots adopted."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preuzeto mesta: %lld."
-          }
-        }
-      }
-    },
     "%lld Gäste" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -942,6 +1209,23 @@
         }
       }
     },
+    "%lld gewählt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld chosen"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izabrano: %lld"
+          }
+        }
+      }
+    },
     "%lld Länder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -984,16 +1268,16 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld zemlja"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld zemlje"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld zemlja"
                 }
               },
               "other" : {
@@ -1049,16 +1333,16 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld osoba je predložila ovo vino."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld osobe su predložile ovo vino."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld osoba je predložila ovo vino."
                 }
               },
               "other" : {
@@ -1130,71 +1414,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld glasova"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld Stimmen je Gast" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Stimme je Gast"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Stimmen je Gast"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld vote per guest"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld votes per guest"
-                }
-              }
-            }
-          }
-        },
-        "sr-Latn" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld glasa po gostu"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld glas po gostu"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld glasova po gostu"
                 }
               }
             }
@@ -1332,6 +1551,71 @@
         }
       }
     },
+    "%lld Stimmen je Gast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Stimme je Gast"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Stimmen je Gast"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld vote per guest"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld votes per guest"
+                }
+              }
+            }
+          }
+        },
+        "sr-Latn" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld glasa po gostu"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld glas po gostu"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld glasova po gostu"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld Treffer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1374,16 +1658,16 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld rezultat"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld rezultata"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rezultat"
                 }
               },
               "other" : {
@@ -1393,6 +1677,57 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld von %lld Anwesenden haben gestimmt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld present have voted."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld od %2$lld prisutnih je glasalo."
+          }
+        }
+      }
+    },
+    "%lld von %lld Fächern belegt · %lld frei" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld slots filled · %lld free"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld od %2$lld mesta zauzeto · %3$lld slobodno"
+          }
+        }
+      }
+    },
+    "%lld von %lld verortet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld placed"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld od %2$lld ima mesto"
           }
         }
       }
@@ -1569,16 +1904,16 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Pošalji %lld vino"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Pošalji %lld vina"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pošalji %lld vino"
                 }
               },
               "other" : {
@@ -1588,125 +1923,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%lld ausgewählt – mehr Flaschen hast du nicht" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld selected – you have no more bottles"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Izabrano: %lld – više flaša nemaš"
-          }
-        }
-      }
-    },
-    "%lld ausgewählt, noch %lld möglich" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld selected, %lld more possible"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Izabrano: %1$lld, još moguće: %2$lld"
-          }
-        }
-      }
-    },
-    "%lld einräumen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Place %lld"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Složi (%lld)"
-          }
-        }
-      }
-    },
-    "%lld gewählt" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld chosen"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Izabrano: %lld"
-          }
-        }
-      }
-    },
-    "%lld von %lld Anwesenden haben gestimmt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld present have voted."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld od %2$lld prisutnih je glasalo."
-          }
-        }
-      }
-    },
-    "%lld von %lld Fächern belegt · %lld frei" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld slots filled · %lld free"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld od %2$lld mesta zauzeto · %3$lld slobodno"
-          }
-        }
-      }
-    },
-    "%lld von %lld verortet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld placed"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld od %2$lld ima mesto"
           }
         }
       }
@@ -1869,53 +2085,35 @@
         }
       }
     },
-    "(kein Fehlertext)" : {
+    "🇨🇭" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "(no error text)"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(nema teksta greške)"
+            "value" : "🇨🇭"
           }
         }
       }
     },
-    ", Bestand %lld" : {
+    "🇮🇹" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ", stock %lld"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ", zaliha %lld"
+            "value" : "🇮🇹"
           }
         }
       }
     },
-    ", per Los entschieden" : {
+    "🏆" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ", decided by draw"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ", odlučeno žrebom"
+            "value" : "🏆"
           }
         }
       }
@@ -1950,57 +2148,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "12 do 13,5 %"
-          }
-        }
-      }
-    },
-    "API-Key" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API key"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API ključ"
-          }
-        }
-      }
-    },
-    "API-Key entfernen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove API key"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ukloni API ključ"
-          }
-        }
-      }
-    },
-    "API-Key ungültig" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API key invalid"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API ključ nije važeći"
           }
         }
       }
@@ -2154,6 +2301,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Odbaciti glasanje?"
+          }
+        }
+      }
+    },
+    "Admin-Rechte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Admin rights"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administratorska prava"
+          }
+        }
+      }
+    },
+    "Admin-Rechte prüfen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check admin rights"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proveri administratorska prava"
           }
         }
       }
@@ -2379,6 +2558,40 @@
         }
       }
     },
+    "alle vergeben" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "all assigned"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "svi dodeljeni"
+          }
+        }
+      }
+    },
+    "alle verortet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "all placed"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sve imaju mesto"
+          }
+        }
+      }
+    },
     "Alles da – jeder Wein aus deinem Keller steht im Katalog oder wartet auf Prüfung." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2426,6 +2639,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Provajder nije dostupan"
+          }
+        }
+      }
+    },
+    "Ändere den Filter oder lege einen neuen Wein an." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change the filter or add a new wine."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promeni filter ili dodaj novo vino."
+          }
+        }
+      }
+    },
+    "Anderer Wein" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different wine"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugo vino"
+          }
+        }
+      }
+    },
+    "Änderungen am Bestand sehen beide Seiten." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both sides see changes to the stock."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promene zalihe vide obe strane."
+          }
+        }
+      }
+    },
+    "Änderungen gelten für alle, die den Wein künftig scannen. Wer ihn schon im Keller hat, behält seine Angaben." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes apply to everyone who scans the wine in future. Anyone who already has it in their cellar keeps their details."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izmene važe za sve koji ubuduće skeniraju ovo vino. Ko ga već ima u podrumu, zadržava svoje podatke."
           }
         }
       }
@@ -2600,6 +2881,74 @@
         }
       }
     },
+    "Apéro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperitif"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperitiv"
+          }
+        }
+      }
+    },
+    "API-Key" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API key"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API ključ"
+          }
+        }
+      }
+    },
+    "API-Key entfernen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove API key"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukloni API ključ"
+          }
+        }
+      }
+    },
+    "API-Key ungültig" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API key invalid"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API ključ nije važeći"
+          }
+        }
+      }
+    },
     "Apple Intelligence (auf dem Gerät)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2647,23 +2996,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple Private Cloud"
-          }
-        }
-      }
-    },
-    "Apéro" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aperitif"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aperitiv"
           }
         }
       }
@@ -2914,13 +3246,13 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
+              "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "iz %lld zemlje"
                 }
               },
-              "few" : {
+              "one" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "iz %lld zemlje"
@@ -2933,6 +3265,57 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Aus dem Archiv holen und aufstocken" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore from archive and add stock"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrati iz arhive i dopuni zalihu"
+          }
+        }
+      }
+    },
+    "Aus dem gemeinsamen Katalog – tippe auf den Jahrgang, um den Wein zu übernehmen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From the shared catalog – tap the vintage to adopt the wine."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iz zajedničkog kataloga – dodirni berbu da preuzmeš vino."
+          }
+        }
+      }
+    },
+    "Aus dem Katalog löschen?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete from the catalog?"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obrisati iz kataloga?"
           }
         }
       }
@@ -2967,57 +3350,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Iz predloga"
-          }
-        }
-      }
-    },
-    "Aus dem Archiv holen und aufstocken" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restore from archive and add stock"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vrati iz arhive i dopuni zalihu"
-          }
-        }
-      }
-    },
-    "Aus dem Katalog löschen?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete from the catalog?"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obrisati iz kataloga?"
-          }
-        }
-      }
-    },
-    "Aus dem gemeinsamen Katalog – tippe auf den Jahrgang, um den Wein zu übernehmen." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "From the shared catalog – tap the vintage to adopt the wine."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iz zajedničkog kataloga – dodirni berbu da preuzmeš vino."
           }
         }
       }
@@ -3107,6 +3439,23 @@
         }
       }
     },
+    "Beginnt mit „sk-…“ – erstellen unter platform.openai.com/api-keys" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts with “sk-…” – create at platform.openai.com/api-keys"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Počinje sa „sk-…“ – napravi na platform.openai.com/api-keys"
+          }
+        }
+      }
+    },
     "Beginnt mit „sk-ant-…“ – erstellen unter console.anthropic.com" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3124,19 +3473,19 @@
         }
       }
     },
-    "Beginnt mit „sk-…“ – erstellen unter platform.openai.com/api-keys" : {
+    "Bei „Das ist mein Wein“ werden fehlende Angaben ergänzt. Deine eigenen bleiben." : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Starts with “sk-…” – create at platform.openai.com/api-keys"
+            "value" : "With “That is my wine”, missing details are filled in. Your own stay."
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Počinje sa „sk-…“ – napravi na platform.openai.com/api-keys"
+            "value" : "Kod „To je moje vino“ dopunjuju se podaci koji nedostaju. Tvoji ostaju."
           }
         }
       }
@@ -3396,6 +3745,23 @@
         }
       }
     },
+    "Bringt nur einen neuen Strichcode für den bestehenden Eintrag mit. Aufnehmen fügt ihn hinzu und ändert sonst nichts." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only brings a new barcode for the existing entry. Accept adds it and changes nothing else."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donosi samo novi bar kod za postojeći unos. Prihvatanje ga dodaje i ništa drugo ne menja."
+          }
+        }
+      }
+    },
     "Bucht eine Flasche ab. Liegt sie im Regal, fragt die App, aus welchem Fach. Bei der letzten Flasche fragt sie, ob der Wein ins Archiv soll." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3443,6 +3809,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Za to nemaš dozvolu."
+          }
+        }
+      }
+    },
+    "Dafür fehlt die Berechtigung. Die Rolle „Admin“ ist dieser Apple-ID in dieser Umgebung nicht zugewiesen – in der CloudKit-Konsole beim eigenen Benutzer eintragen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The permission is missing. The “Admin” role is not assigned to this Apple ID in this environment – enter it for your own user in the CloudKit console."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za to nedostaje dozvola. Uloga „Admin“ nije dodeljena ovom Apple ID-ju u ovom okruženju – upiši je u CloudKit konzoli kod sopstvenog korisnika."
           }
         }
       }
@@ -3515,6 +3897,40 @@
         }
       }
     },
+    "Das hat gerade nicht geklappt. Versuch es in der App noch einmal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That did not work just now. Try again in the app."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ovo trenutno nije uspelo. Pokušaj ponovo u aplikaciji."
+          }
+        }
+      }
+    },
+    "Das ist mein Wein" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That is my wine"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To je moje vino"
+          }
+        }
+      }
+    },
     "Das Land macht die Karte auf der Detailseite eindeutig." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3566,23 +3982,6 @@
         }
       }
     },
-    "Das hat gerade nicht geklappt. Versuch es in der App noch einmal." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "That did not work just now. Try again in the app."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ovo trenutno nije uspelo. Pokušaj ponovo u aplikaciji."
-          }
-        }
-      }
-    },
     "Das würde klassisch passen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3613,6 +4012,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tvoja napomena"
+          }
+        }
+      }
+    },
+    "Dein iCloud-Speicher ist voll." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your iCloud storage is full."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tvoj iCloud prostor je pun."
           }
         }
       }
@@ -3719,23 +4135,6 @@
         }
       }
     },
-    "Dein iCloud-Speicher ist voll." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your iCloud storage is full."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tvoj iCloud prostor je pun."
-          }
-        }
-      }
-    },
     "Deine Katalog-Kennung" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3749,6 +4148,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tvoja oznaka u katalogu"
+          }
+        }
+      }
+    },
+    "den Gerätecode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the device passcode"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kôd uređaja"
           }
         }
       }
@@ -3889,6 +4305,23 @@
         }
       }
     },
+    "Der gemeinsame Katalog" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shared catalog"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zajednički katalog"
+          }
+        }
+      }
+    },
     "Der Katalog ergänzt beim Scannen fehlende Angaben. Eingeschaltet geht jeder neue Wein, der noch nicht drinsteht, zur Prüfung: nur Stammdaten und das Foto der Vorderseite, nie Notizen, Bewertungen oder Bestand. Über den Entscheid kommt eine Mitteilung." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3957,6 +4390,23 @@
         }
       }
     },
+    "Der Katalog wächst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The catalog is growing"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Katalog raste"
+          }
+        }
+      }
+    },
     "Der Keller ist leer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4004,6 +4454,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Režim žurke se može napustiti samo uz Face ID, Touch ID ili kôd uređaja. U podešavanjima iPhone-a, pod „Face ID i kôd“, podesi zaključavanje."
+          }
+        }
+      }
+    },
+    "Der passt gut zum Essen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This goes well with the meal."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lepo ide uz jelo."
           }
         }
       }
@@ -4089,40 +4556,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vinski podrum je prazan. Prvo dodaj flaše da bih mogao nešto da preporučim."
-          }
-        }
-      }
-    },
-    "Der gemeinsame Katalog" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The shared catalog"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zajednički katalog"
-          }
-        }
-      }
-    },
-    "Der passt gut zum Essen." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This goes well with the meal."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lepo ide uz jelo."
           }
         }
       }
@@ -4297,6 +4730,23 @@
         }
       }
     },
+    "Die bisherigen Stimmen gehen verloren." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The votes so far will be lost."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosadašnji glasovi se gube."
+          }
+        }
+      }
+    },
     "Die Einführung sind die Seiten vom ersten Start. Die Tipps sind die kleinen Hinweise am Ort – im Regal, beim Scannen, an der Liste –, die nach dem ersten Mal verschwinden." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4382,6 +4832,55 @@
         }
       }
     },
+    "Die ganze Party-Historie wird entfernt – auf allen Geräten. Der Bestand im Keller bleibt unberührt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The whole party history will be removed – on all devices. The stock in the cellar stays untouched."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela istorija žurki se uklanja – na svim uređajima. Zaliha u podrumu ostaje netaknuta."
+          }
+        }
+      }
+    },
+    "Die Gäste wählen, welche Flasche heute aufgeht. Das iPhone geht von Hand zu Hand." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guests choose which bottle gets opened today. The iPhone goes from hand to hand."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gosti biraju koja se flaša danas otvara. iPhone ide iz ruke u ruku."
+          }
+        }
+      }
+    },
+    "Die gewählten Flaschen und die erfassten Gäste gehen verloren." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chosen bottles and the guests you added will be lost."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izabrane flaše i uneti gosti se gube."
+          }
+        }
+      }
+    },
     "Die KI" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4412,6 +4911,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VI dvaput nije dala upotrebljivu preporuku (rezervisana mesta ili nepoznata vina). Pokušaj ponovo ili preciznije opiši jelo."
+          }
+        }
+      }
+    },
+    "Die Rolle „Admin“ wirkt in dieser Umgebung: Du darfst in den Katalog schreiben und Vorschläge entscheiden." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The “Admin” role works in this environment: You may write to the catalog and decide on suggestions."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uloga „Admin“ važi u ovom okruženju: smeš da upisuješ u katalog i odlučuješ o predlozima."
           }
         }
       }
@@ -4450,6 +4965,23 @@
         }
       }
     },
+    "Die Zahl nennt die Weine dieses Landes in der Liste." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number shows the wines of this country in the list."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Broj pokazuje koliko vina te zemlje ima na listi."
+          }
+        }
+      }
+    },
     "Die Zahl rechts sagt, wie viele Flaschen dieses Weins noch keinen Platz haben." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4463,40 +4995,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Broj desno pokazuje koliko flaša ovog vina još nema mesto."
-          }
-        }
-      }
-    },
-    "Die bisherigen Stimmen gehen verloren." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The votes so far will be lost."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dosadašnji glasovi se gube."
-          }
-        }
-      }
-    },
-    "Die ganze Party-Historie wird entfernt – auf allen Geräten. Der Bestand im Keller bleibt unberührt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The whole party history will be removed – on all devices. The stock in the cellar stays untouched."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cela istorija žurki se uklanja – na svim uređajima. Zaliha u podrumu ostaje netaknuta."
           }
         }
       }
@@ -4671,6 +5169,38 @@
         }
       }
     },
+    "Ein Code besteht die Prüfziffer nicht und wird nicht gespeichert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A code fails the check digit and is not saved."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedan kod ne prolazi kontrolnu cifru i neće biti sačuvan."
+          }
+        }
+      }
+    },
+    "Ein Foto aus der Mediathek nehmen oder einen Wein ganz ohne Foto erfassen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take a photo from the library or add a wine without any photo."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uzmi fotografiju iz biblioteke ili unesi vino sasvim bez fotografije."
+          }
+        }
+      }
+    },
     "Ein Weinkeller wurde mit dir geteilt. Verwalten kann ihn nur die Person, die ihn freigegeben hat." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4735,6 +5265,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Popij jednu flašu"
+          }
+        }
+      }
+    },
+    "einfache Erkennung ohne KI" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "simple recognition without AI"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jednostavno prepoznavanje bez VI"
           }
         }
       }
@@ -4977,6 +5524,23 @@
         }
       }
     },
+    "Ergänzt den bestehenden Eintrag um: %@. Aufnehmen fügt das hinzu und ändert sonst nichts." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds to the existing entry: %@. Accept adds this and changes nothing else."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dopunjuje postojeći unos: %@. Prihvatanje to dodaje i ništa drugo ne menja."
+          }
+        }
+      }
+    },
     "Ergebnis" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5198,6 +5762,22 @@
         }
       }
     },
+    "Etikett fotografieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photograph label"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografiši etiketu"
+          }
+        }
+      }
+    },
     "Etikett scannen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5345,23 +5925,6 @@
         }
       }
     },
-    "Fach %@. Tippen entnimmt die Flasche." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slot %@. Tap to take out the bottle."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mesto %@. Dodir vadi flašu."
-          }
-        }
-      }
-    },
     "Fach %@. „Fach räumen“ nimmt die Flasche nur aus dem Regal, der Bestand bleibt gleich." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5379,6 +5942,23 @@
         }
       }
     },
+    "Fach %@. Tippen entnimmt die Flasche." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slot %@. Tap to take out the bottle."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesto %@. Dodir vadi flašu."
+          }
+        }
+      }
+    },
     "Fach räumen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5392,6 +5972,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isprazni mesto"
+          }
+        }
+      }
+    },
+    "Fächer %@. Tippen entnimmt die Flasche." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slots %@. Tap to take out the bottle."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesta %@. Dodir vadi flašu."
+          }
+        }
+      }
+    },
+    "Fächer je Ebene" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slots per level"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesta po nivou"
+          }
+        }
+      }
+    },
+    "Fächer: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slots: %@"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesta: %@"
           }
         }
       }
@@ -5481,6 +6112,54 @@
         }
       }
     },
+    "Filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        }
+      }
+    },
+    "Filter zurücksetzen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset filters"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poništi filtere"
+          }
+        }
+      }
+    },
+    "Filter, %lld aktiv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter, %lld active"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter, aktivno: %lld"
+          }
+        }
+      }
+    },
     "Flasche einräumen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5549,6 +6228,39 @@
         }
       }
     },
+    "Flaschen, deren Trinkfenster dieses Jahr endet oder schon vorbei ist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottles whose drinking window ends this year or is already over."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flaše čiji period za pijenje ističe ove godine ili je već prošao."
+          }
+        }
+      }
+    },
+    "Foto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografija"
+          }
+        }
+      }
+    },
     "Foto %@ entfernen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5562,6 +6274,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ukloni fotografiju: %@"
+          }
+        }
+      }
+    },
+    "Foto aus dem Katalog" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo from the catalog"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografija iz kataloga"
           }
         }
       }
@@ -5647,57 +6376,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voćno"
-          }
-        }
-      }
-    },
-    "Fächer %@. Tippen entnimmt die Flasche." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slots %@. Tap to take out the bottle."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mesta %@. Dodir vadi flašu."
-          }
-        }
-      }
-    },
-    "Fächer je Ebene" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slots per level"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mesta po nivou"
-          }
-        }
-      }
-    },
-    "Fächer: %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slots: %@"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mesta: %@"
           }
         }
       }
@@ -5821,6 +6499,22 @@
         }
       }
     },
+    "Gemeinsam abstimmen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vote together"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glasajte zajedno"
+          }
+        }
+      }
+    },
     "Gemeinsamer Katalog" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5851,6 +6545,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trenutno je na akciji."
+          }
+        }
+      }
+    },
+    "Gerät ohne Sperre" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device without a lock"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uređaj bez zaključavanja"
           }
         }
       }
@@ -5889,19 +6600,19 @@
         }
       }
     },
-    "Gerät ohne Sperre" : {
+    "geschätzt" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Device without a lock"
+            "value" : "estimated"
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uređaj bez zaključavanja"
+            "value" : "procena"
           }
         }
       }
@@ -6161,6 +6872,23 @@
         }
       }
     },
+    "Hängt eine kleine Datei an. Wer Wyychällerli hat, tippt sie an und hat den Wein mit allen Angaben und Etiketten im eigenen Keller. Alle anderen sehen einfach Bild und Text." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attaches a small file. Anyone who has Wyychällerli taps it and has the wine in their own cellar with all details and labels. Everyone else just sees the image and text."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prilaže malu datoteku. Ko ima Wyychällerli, dodirne je i vino sa svim podacima i etiketama je u njegovom podrumu. Svi ostali vide samo sliku i tekst."
+          }
+        }
+      }
+    },
     "Harmonisch" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6174,6 +6902,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skladno"
+          }
+        }
+      }
+    },
+    "hat gestimmt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "has voted"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "je glasao"
           }
         }
       }
@@ -6297,19 +7042,18 @@
         }
       }
     },
-    "Hängt eine kleine Datei an. Wer Wyychällerli hat, tippt sie an und hat den Wein mit allen Angaben und Etiketten im eigenen Keller. Alle anderen sehen einfach Bild und Text." : {
-      "extractionState" : "manual",
+    "Historie" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attaches a small file. Anyone who has Wyychällerli taps it and has the wine in their own cellar with all details and labels. Everyone else just sees the image and text."
+            "value" : "History"
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prilaže malu datoteku. Ko ima Wyychällerli, dodirne je i vino sa svim podacima i etiketama je u njegovom podrumu. Svi ostali vide samo sliku i tekst."
+            "value" : "Istorija"
           }
         }
       }
@@ -6382,6 +7126,40 @@
         }
       }
     },
+    "Im gemeinsamen Katalog gefunden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Found in the shared catalog"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronađeno u zajedničkom katalogu"
+          }
+        }
+      }
+    },
+    "Im gemeinsamen Katalog gefunden – fehlende Angaben ergänzt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Found in the shared catalog – missing details filled in."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronađeno u zajedničkom katalogu – nedostajući podaci su dopunjeni."
+          }
+        }
+      }
+    },
     "Im Keller behalten" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6429,40 +7207,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Na stalku"
-          }
-        }
-      }
-    },
-    "Im gemeinsamen Katalog gefunden – fehlende Angaben ergänzt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Found in the shared catalog – missing details filled in."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronađeno u zajedničkom katalogu – nedostajući podaci su dopunjeni."
-          }
-        }
-      }
-    },
-    "In Karten öffnen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open in Maps"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otvori u Mapama"
           }
         }
       }
@@ -6518,6 +7262,22 @@
         }
       }
     },
+    "In den Einstellungen (Zahnrad oben rechts im Keller) teilst du deinen Keller mit einer zweiten Apple-ID. Bestand, Regal und Bewertungen bleiben auf allen Geräten gleich – nimmt jemand eine Flasche, sehen es alle." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Settings (gear at the top right in the cellar) you share your cellar with a second Apple ID. Stock, rack and ratings stay the same on all devices – when someone takes a bottle, everyone sees it."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "U podešavanjima (zupčanik gore desno u podrumu) deliš podrum sa drugim Apple ID-jem. Zaliha, stalak i ocene ostaju isti na svim uređajima – ako neko uzme flašu, svi to vide."
+          }
+        }
+      }
+    },
     "In den Katalog aufnehmen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6531,6 +7291,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prihvati u katalog"
+          }
+        }
+      }
+    },
+    "In Karten öffnen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in Maps"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvori u Mapama"
           }
         }
       }
@@ -6654,6 +7431,22 @@
         }
       }
     },
+    "Kamera unten lange drücken" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long-press the camera at the bottom"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dugo pritisni kameru dole"
+          }
+        }
+      }
+    },
     "Kann man wieder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6688,6 +7481,23 @@
         }
       }
     },
+    "Käseplatte" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheese platter"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tanjir sa sirevima"
+          }
+        }
+      }
+    },
     "Katalog verwalten" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6705,23 +7515,6 @@
         }
       }
     },
-    "Kein API-Key" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No API key"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nema API ključa"
-          }
-        }
-      }
-    },
     "Kein Anbieter eingerichtet" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6735,6 +7528,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Provajder nije podešen"
+          }
+        }
+      }
+    },
+    "Kein API-Key" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No API key"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema API ključa"
           }
         }
       }
@@ -6807,6 +7617,22 @@
         }
       }
     },
+    "Kein gültiger Strichcode: 13 oder 8 Ziffern, und die letzte muss stimmen. So wird er nicht gespeichert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a valid barcode: 13 or 8 digits, and the last one has to be right. It will not be saved like this."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nevažeći bar kod: 13 ili 8 cifara, a poslednja mora da se slaže. Ovako se ne čuva."
+          }
+        }
+      }
+    },
     "Kein Key" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6820,6 +7646,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nema ključa"
+          }
+        }
+      }
+    },
+    "keine" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "none"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nema"
+          }
+        }
+      }
+    },
+    "keine Angabe" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "not specified"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bez podatka"
           }
         }
       }
@@ -6960,57 +7820,6 @@
         }
       }
     },
-    "Keine Treffer." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No results."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nema rezultata."
-          }
-        }
-      }
-    },
-    "Keine Verbindung" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No connection"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nema veze"
-          }
-        }
-      }
-    },
-    "Keine Verbindung zu iCloud. Bitte später erneut versuchen." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No connection to iCloud. Please try again later."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nema veze sa iCloud-om. Pokušaj ponovo kasnije."
-          }
-        }
-      }
-    },
     "Keine offenen Vorschläge." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7058,6 +7867,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nema odgovarajuće flaše u podrumu"
+          }
+        }
+      }
+    },
+    "Keine Treffer." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No results."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema rezultata."
+          }
+        }
+      }
+    },
+    "Keine Verbindung" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No connection"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema veze"
+          }
+        }
+      }
+    },
+    "Keine Verbindung zu iCloud. Bitte später erneut versuchen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No connection to iCloud. Please try again later."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema veze sa iCloud-om. Pokušaj ponovo kasnije."
           }
         }
       }
@@ -7266,23 +8126,6 @@
         }
       }
     },
-    "Käseplatte" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cheese platter"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tanjir sa sirevima"
-          }
-        }
-      }
-    },
     "Küche" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7296,6 +8139,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kuhinja"
+          }
+        }
+      }
+    },
+    "Lade …" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading …"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Učitavam …"
           }
         }
       }
@@ -7330,23 +8190,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pozovi osobu sa sopstvenim Apple ID-jem. Oboje vidite istu zalihu, i kada se flaša skine."
-          }
-        }
-      }
-    },
-    "Lade …" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading …"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Učitavam …"
           }
         }
       }
@@ -7398,6 +8241,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prema etiketi odgovara uz „%@“"
+          }
+        }
+      }
+    },
+    "leer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "empty"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "prazno"
           }
         }
       }
@@ -7470,23 +8330,6 @@
         }
       }
     },
-    "Lege zuerst Flaschen an, damit ich etwas empfehlen kann." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add bottles first so I can recommend something."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prvo dodaj flaše da bih mogao nešto da preporučim."
-          }
-        }
-      }
-    },
     "Lege zuerst ein Regal an, dann kannst du Flaschen darin verorten." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7500,6 +8343,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prvo napravi stalak, pa u njemu možeš odrediti mesta flašama."
+          }
+        }
+      }
+    },
+    "Lege zuerst Flaschen an, damit ich etwas empfehlen kann." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add bottles first so I can recommend something."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prvo dodaj flaše da bih mogao nešto da preporučim."
           }
         }
       }
@@ -7606,23 +8466,6 @@
         }
       }
     },
-    "Losen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Draw lots"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Žrebaj"
-          }
-        }
-      }
-    },
     "Löschen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7636,6 +8479,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obriši"
+          }
+        }
+      }
+    },
+    "Losen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw lots"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Žrebaj"
           }
         }
       }
@@ -7670,6 +8530,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unesi ručno"
+          }
+        }
+      }
+    },
+    "Mehrere durch Komma trennen, zum Beispiel für verschiedene Flaschengrössen. Der Jahrgang entscheidet weiter, welcher Eintrag gemeint ist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separate several with commas, for example for different bottle sizes. The vintage still decides which entry is meant."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Više njih odvoji zarezom, na primer za različite veličine flaša. Berba i dalje odlučuje koji se unos misli."
+          }
+        }
+      }
+    },
+    "Mein Foto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My photo"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moja fotografija"
           }
         }
       }
@@ -8048,6 +8941,23 @@
         }
       }
     },
+    "noch %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld left"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "još %lld"
+          }
+        }
+      }
+    },
     "Noch kein Regal" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8163,6 +9073,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Još nije na stalku"
+          }
+        }
+      }
+    },
+    "noch nicht verortet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "not placed yet"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "još nema mesta"
           }
         }
       }
@@ -8303,6 +9230,39 @@
         }
       }
     },
+    "Öffnet das Regal, um die Flaschen einzuräumen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the rack so you can place the bottles."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvara stalak da bi se flaše složile."
+          }
+        }
+      }
+    },
+    "Ohne Foto erfassen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add without photo"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unesi bez fotografije"
+          }
+        }
+      }
+    },
     "Ohne Jahrgang" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8316,6 +9276,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bez berbe"
+          }
+        }
+      }
+    },
+    "ohne KI" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "without AI"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bez VI"
           }
         }
       }
@@ -8371,6 +9348,23 @@
         }
       }
     },
+    "Österreich" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Austria"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Austrija"
+          }
+        }
+      }
+    },
     "Party" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8388,6 +9382,38 @@
         }
       }
     },
+    "Party abbrechen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel party"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otkaži žurku"
+          }
+        }
+      }
+    },
+    "Party abbrechen?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel the party?"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otkazati žurku?"
+          }
+        }
+      }
+    },
     "Party beenden" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8401,6 +9427,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Završi žurku"
+          }
+        }
+      }
+    },
+    "Party starten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start party"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokreni žurku"
           }
         }
       }
@@ -8469,6 +9511,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prema etiketi ide uz"
+          }
+        }
+      }
+    },
+    "passt sehr gut" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goes very well"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "odlično odgovara"
           }
         }
       }
@@ -8965,6 +10024,22 @@
         }
       }
     },
+    "Sag, was es zu essen gibt. Der Berater schlägt bis zu drei Flaschen aus deinem Bestand vor und sagt ehrlich, wie gut sie passen. Geht auch per Siri. Mit Gästen lasst ihr im Party-Modus abstimmen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tell the app what is on the menu. The advisor suggests up to three bottles from your stock and tells you honestly how well they fit. Works with Siri too. With guests, you can vote in party mode."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reci šta ima za jelo. Savetnik predlaže do tri flaše iz tvoje zalihe i iskreno kaže koliko dobro odgovaraju. Radi i preko Siri. Sa gostima glasate u režimu žurke."
+          }
+        }
+      }
+    },
     "Samtig" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8999,6 +10074,23 @@
         }
       }
     },
+    "Schlägt einen passenden Wein aus deinem Weinkeller zum geplanten Essen vor." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggests a matching wine from your wine cellar for the planned meal."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predlaže odgovarajuće vino iz tvog vinskog podruma uz planirano jelo."
+          }
+        }
+      }
+    },
     "Schliessen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9016,19 +10108,19 @@
         }
       }
     },
-    "Schlägt einen passenden Wein aus deinem Weinkeller zum geplanten Essen vor." : {
+    "Schön frisch" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suggests a matching wine from your wine cellar for the planned meal."
+            "value" : "Nice and fresh"
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Predlaže odgovarajuće vino iz tvog vinskog podruma uz planirano jelo."
+            "value" : "Lepo sveže"
           }
         }
       }
@@ -9101,23 +10193,6 @@
         }
       }
     },
-    "Schön frisch" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nice and fresh"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lepo sveže"
-          }
-        }
-      }
-    },
     "Senden" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9176,6 +10251,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ovako se glasalo"
+          }
+        }
+      }
+    },
+    "Sobald genug Weine im gemeinsamen Katalog liegen, siehst du hier, aus welchen Ländern sie kommen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once the shared catalog holds enough wines, you will see here which countries they come from."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čim zajednički katalog sadrži dovoljno vina, ovde ćeš videti iz kojih zemalja potiču."
           }
         }
       }
@@ -9266,6 +10358,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Jezik"
+          }
+        }
+      }
+    },
+    "Statistik" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistika"
+          }
+        }
+      }
+    },
+    "Statt des Bestands erscheinen die archivierten Weine." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instead of the stock, the archived wines appear."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umesto zalihe prikazuju se arhivirana vina."
           }
         }
       }
@@ -9372,36 +10497,18 @@
         }
       }
     },
-    "Sushi" : {
-      "extractionState" : "manual",
+    "Strichcode" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sushi"
+            "value" : "Barcode"
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suši"
-          }
-        }
-      }
-    },
-    "System" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "System"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sistem"
+            "value" : "Bar kod"
           }
         }
       }
@@ -9436,6 +10543,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lako se pije"
+          }
+        }
+      }
+    },
+    "Sushi" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sushi"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suši"
+          }
+        }
+      }
+    },
+    "System" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem"
           }
         }
       }
@@ -9893,13 +11034,70 @@
         }
       }
     },
-    "USA" : {
+    "über 13,5 %" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "USA"
+            "value" : "over 13.5 %"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iznad 13,5 %"
+          }
+        }
+      }
+    },
+    "Über dem Höhepunkt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past its peak"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prošao vrhunac"
+          }
+        }
+      }
+    },
+    "Über den Entscheid kommt eine Mitteilung, sofern du sie erlaubt hast." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You get a notification about the decision, if you have allowed them."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O odluci stiže obaveštenje, ako si ga dozvolio."
+          }
+        }
+      }
+    },
+    "Überspringen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preskoči"
           }
         }
       }
@@ -9938,6 +11136,50 @@
         }
       }
     },
+    "Unten unter „Regal“ legst du dein Regal an – mit so vielen Ebenen und Fächern, wie es wirklich hat. Tippe auf einen Wein und wisch über die freien Fächer, um seine Flaschen einzuräumen. Später pulsiert auf der Detailseite das Fach, in dem er liegt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under “Rack” at the bottom you set up your rack – with as many levels and slots as it really has. Tap a wine and swipe across the free slots to place its bottles. Later, the slot it is in pulses on the detail page."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dole pod „Stalak“ praviš svoj stalak – sa onoliko nivoa i mesta koliko zaista ima. Dodirni vino i prevuci preko slobodnih mesta da složiš njegove flaše. Kasnije na stranici sa detaljima pulsira mesto na kom leži."
+          }
+        }
+      }
+    },
+    "unter 12 %" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "under 12 %"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ispod 12 %"
+          }
+        }
+      }
+    },
+    "USA" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USA"
+          }
+        }
+      }
+    },
     "Verstanden" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9951,6 +11193,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Razumem"
+          }
+        }
+      }
+    },
+    "Verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi"
           }
         }
       }
@@ -9972,6 +11231,23 @@
         }
       }
     },
+    "Vielleicht besser als dein Foto." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maybe better than your photo."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Možda bolja od tvoje fotografije."
+          }
+        }
+      }
+    },
     "Von %@, geteilt aus Wyychällerli" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9985,6 +11261,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Od: %@, podeljeno iz aplikacije Wyychällerli"
+          }
+        }
+      }
+    },
+    "von %lld Stimmen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "von %lld Stimme"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "von %lld Stimmen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "of %lld vote"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "of %lld votes"
+                }
+              }
+            }
+          }
+        },
+        "sr-Latn" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "od %lld glasa"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "od %lld glasa"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "od %lld glasova"
+                }
+              }
+            }
           }
         }
       }
@@ -10189,6 +11530,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Šta je bilo dobro?"
+          }
+        }
+      }
+    },
+    "Wechselt zwischen lokaler und externer KI." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches between local and external AI."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prebacuje između lokalne i spoljne VI."
           }
         }
       }
@@ -10448,6 +11806,22 @@
         }
       }
     },
+    "Weiter einrichten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep setting up"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastavi postavljanje"
+          }
+        }
+      }
+    },
     "Weiter zu den Gästen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10507,16 +11881,16 @@
         "sr-Latn" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "još %lld zemlja"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "još %lld zemlje"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "još %lld zemlja"
                 }
               },
               "other" : {
@@ -10543,6 +11917,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fotografiši dodatni prikaz: %@"
+          }
+        }
+      }
+    },
+    "Weitere Wege" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More ways"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugi načini"
           }
         }
       }
@@ -10700,6 +12090,23 @@
         }
       }
     },
+    "Wird als Vorderseite verwendet." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used as the front label."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi se kao prednja strana."
+          }
+        }
+      }
+    },
     "Wird ausgelost …" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10730,6 +12137,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pri skeniranju se preuzima sa etikete. Podešavanje na 0 znači „bez podatka“ – tada se ništa ne prikazuje."
+          }
+        }
+      }
+    },
+    "Wird beim Scannen von der Rückseite gelesen und hilft, den Wein im gemeinsamen Katalog wiederzufinden." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read from the back label when you scan and helps find the wine again in the shared catalog."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čita se pri skeniranju sa zadnje strane i pomaže da se vino pronađe u zajedničkom katalogu."
           }
         }
       }
@@ -10826,6 +12249,89 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wyychällerli katalog"
+          }
+        }
+      }
+    },
+    "z. B. Gegrilltes Fleisch, Hartkäse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. grilled meat, hard cheese"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npr. meso sa roštilja, tvrdi sir"
+          }
+        }
+      }
+    },
+    "z. B. gibt's bei Denner für 12.90" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. available at Denner for 12.90"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npr. ima u Denneru za 12,90"
+          }
+        }
+      }
+    },
+    "z. B. Raclette, Spaghetti Bolognese …" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. raclette, spaghetti Bolognese …"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npr. raclette, špageti bolonjeze …"
+          }
+        }
+      }
+    },
+    "Ziffern unter dem Strichcode" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digits under the barcode"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cifre ispod bar koda"
+          }
+        }
+      }
+    },
+    "Ziffern, durch Komma getrennt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digits, separated by commas"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cifre, odvojene zarezom"
           }
         }
       }
@@ -11166,1431 +12672,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodatno pitaj VI"
-          }
-        }
-      }
-    },
-    "alle vergeben" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "all assigned"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "svi dodeljeni"
-          }
-        }
-      }
-    },
-    "alle verortet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "all placed"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sve imaju mesto"
-          }
-        }
-      }
-    },
-    "den Gerätecode" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "the device passcode"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "kôd uređaja"
-          }
-        }
-      }
-    },
-    "einfache Erkennung ohne KI" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "simple recognition without AI"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "jednostavno prepoznavanje bez VI"
-          }
-        }
-      }
-    },
-    "geschätzt" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "estimated"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "procena"
-          }
-        }
-      }
-    },
-    "hat gestimmt" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "has voted"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "je glasao"
-          }
-        }
-      }
-    },
-    "keine" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "none"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nema"
-          }
-        }
-      }
-    },
-    "keine Angabe" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "not specified"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bez podatka"
-          }
-        }
-      }
-    },
-    "leer" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "empty"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "prazno"
-          }
-        }
-      }
-    },
-    "noch %lld" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld left"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "još %lld"
-          }
-        }
-      }
-    },
-    "noch nicht verortet" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "not placed yet"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "još nema mesta"
-          }
-        }
-      }
-    },
-    "ohne KI" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "without AI"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bez VI"
-          }
-        }
-      }
-    },
-    "passt sehr gut" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "goes very well"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "odlično odgovara"
-          }
-        }
-      }
-    },
-    "unter 12 %" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "under 12 %"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ispod 12 %"
-          }
-        }
-      }
-    },
-    "von %lld Stimmen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "von %lld Stimme"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "von %lld Stimmen"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "of %lld vote"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "of %lld votes"
-                }
-              }
-            }
-          }
-        },
-        "sr-Latn" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "od %lld glasa"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "od %lld glasa"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "od %lld glasova"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "z. B. Gegrilltes Fleisch, Hartkäse" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. grilled meat, hard cheese"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "npr. meso sa roštilja, tvrdi sir"
-          }
-        }
-      }
-    },
-    "z. B. Raclette, Spaghetti Bolognese …" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. raclette, spaghetti Bolognese …"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "npr. raclette, špageti bolonjeze …"
-          }
-        }
-      }
-    },
-    "z. B. gibt's bei Denner für 12.90" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. available at Denner for 12.90"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "npr. ima u Denneru za 12,90"
-          }
-        }
-      }
-    },
-    "· vorläufig, erst eine Person" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "· preliminary, only one person so far"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "· privremeno, tek jedna osoba"
-          }
-        }
-      }
-    },
-    "Ändere den Filter oder lege einen neuen Wein an." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Change the filter or add a new wine."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Promeni filter ili dodaj novo vino."
-          }
-        }
-      }
-    },
-    "Änderungen am Bestand sehen beide Seiten." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Both sides see changes to the stock."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Promene zalihe vide obe strane."
-          }
-        }
-      }
-    },
-    "Änderungen gelten für alle, die den Wein künftig scannen. Wer ihn schon im Keller hat, behält seine Angaben." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Changes apply to everyone who scans the wine in future. Anyone who already has it in their cellar keeps their details."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Izmene važe za sve koji ubuduće skeniraju ovo vino. Ko ga već ima u podrumu, zadržava svoje podatke."
-          }
-        }
-      }
-    },
-    "Öffnet das Regal, um die Flaschen einzuräumen." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opens the rack so you can place the bottles."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otvara stalak da bi se flaše složile."
-          }
-        }
-      }
-    },
-    "Österreich" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Austria"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Austrija"
-          }
-        }
-      }
-    },
-    "Über dem Höhepunkt" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Past its peak"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prošao vrhunac"
-          }
-        }
-      }
-    },
-    "Über den Entscheid kommt eine Mitteilung, sofern du sie erlaubt hast." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You get a notification about the decision, if you have allowed them."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O odluci stiže obaveštenje, ako si ga dozvolio."
-          }
-        }
-      }
-    },
-    "Überspringen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preskoči"
-          }
-        }
-      }
-    },
-    "über 13,5 %" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "over 13.5 %"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iznad 13,5 %"
-          }
-        }
-      }
-    },
-    "„%@ – %@“ wird entfernt, auch auf den anderen Geräten." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@ – %@” will be removed, on the other devices as well."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%1$@ – %2$@“ se uklanja, i na drugim uređajima."
-          }
-        }
-      }
-    },
-    "„%@“ ist jetzt leer. Was soll damit passieren?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@” is now empty. What should happen to it?"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%@“ je sada prazno. Šta treba da se uradi s njim?"
-          }
-        }
-      }
-    },
-    "„%@“ liegt bereits in deinem Keller%@. Übernimmst du ihn trotzdem, steht er zweimal in der Liste." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@” is already in your cellar%@. If you adopt it anyway, it will be in the list twice."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%1$@“ već je u tvom podrumu%2$@. Ako ga ipak preuzmeš, stajaće dvaput na listi."
-          }
-        }
-      }
-    },
-    "„%@“ wird dauerhaft entfernt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@” will be removed permanently."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%@“ se trajno uklanja."
-          }
-        }
-      }
-    },
-    "„%@“ wird entfernt, auch auf den anderen Geräten. Die Flaschen bleiben im Keller, sie sind danach nur nicht mehr verortet." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@” will be removed, on the other devices as well. The bottles stay in the cellar, they are just no longer placed afterwards."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%@“ se uklanja, i na drugim uređajima. Flaše ostaju u podrumu, samo više nemaju određeno mesto."
-          }
-        }
-      }
-    },
-    "„%@“ wird mit Etikett, Bewertungen und Regalplatz entfernt – auch auf den anderen Geräten. Zum Aufbewahren lieber archivieren." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@” will be removed with its label, ratings and rack position – on the other devices as well. To keep it, archive it instead."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%@“ se uklanja sa etiketom, ocenama i mestom na stalku – i na drugim uređajima. Radije arhiviraj da ga sačuvaš."
-          }
-        }
-      }
-    },
-    "„Bestand erhöhen“ zählt deine Flaschen zum bestehenden Eintrag, statt einen zweiten anzulegen." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“Increase stock” adds your bottles to the existing entry instead of creating a second one."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„Povećaj zalihu“ dodaje tvoje flaše postojećem unosu umesto da napravi drugi."
-          }
-        }
-      }
-    },
-    "„Bis“ liegt vor „Ab“ – die Angabe wird nicht verwendet." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“To” comes before “From” – the range is not used."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„Do“ je pre „Od“ – podatak se ne koristi."
-          }
-        }
-      }
-    },
-    "🇨🇭" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "🇨🇭"
-          }
-        }
-      }
-    },
-    "🇮🇹" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "🇮🇹"
-          }
-        }
-      }
-    },
-    "🏆" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "🏆"
-          }
-        }
-      }
-    },
-    "Unten unter „Regal“ legst du dein Regal an – mit so vielen Ebenen und Fächern, wie es wirklich hat. Tippe auf einen Wein und wisch über die freien Fächer, um seine Flaschen einzuräumen. Später pulsiert auf der Detailseite das Fach, in dem er liegt." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Under “Rack” at the bottom you set up your rack – with as many levels and slots as it really has. Tap a wine and swipe across the free slots to place its bottles. Later, the slot it is in pulses on the detail page."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dole pod „Stalak“ praviš svoj stalak – sa onoliko nivoa i mesta koliko zaista ima. Dodirni vino i prevuci preko slobodnih mesta da složiš njegove flaše. Kasnije na stranici sa detaljima pulsira mesto na kom leži."
-          }
-        }
-      }
-    },
-    "Sag, was es zu essen gibt. Der Berater schlägt bis zu drei Flaschen aus deinem Bestand vor und sagt ehrlich, wie gut sie passen. Geht auch per Siri. Mit Gästen lasst ihr im Party-Modus abstimmen." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tell the app what is on the menu. The advisor suggests up to three bottles from your stock and tells you honestly how well they fit. Works with Siri too. With guests, you can vote in party mode."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reci šta ima za jelo. Savetnik predlaže do tri flaše iz tvoje zalihe i iskreno kaže koliko dobro odgovaraju. Radi i preko Siri. Sa gostima glasate u režimu žurke."
-          }
-        }
-      }
-    },
-    "In den Einstellungen (Zahnrad oben rechts im Keller) teilst du deinen Keller mit einer zweiten Apple-ID. Bestand, Regal und Bewertungen bleiben auf allen Geräten gleich – nimmt jemand eine Flasche, sehen es alle." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Settings (gear at the top right in the cellar) you share your cellar with a second Apple ID. Stock, rack and ratings stay the same on all devices – when someone takes a bottle, everyone sees it."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "U podešavanjima (zupčanik gore desno u podrumu) deliš podrum sa drugim Apple ID-jem. Zaliha, stalak i ocene ostaju isti na svim uređajima – ako neko uzme flašu, svi to vide."
-          }
-        }
-      }
-    },
-    "Filter" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filter"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filter"
-          }
-        }
-      }
-    },
-    "Filter, %lld aktiv" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filter, %lld active"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filter, aktivno: %lld"
-          }
-        }
-      }
-    },
-    "Filter zurücksetzen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reset filters"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poništi filtere"
-          }
-        }
-      }
-    },
-    "Flaschen, deren Trinkfenster dieses Jahr endet oder schon vorbei ist." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bottles whose drinking window ends this year or is already over."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flaše čiji period za pijenje ističe ove godine ili je već prošao."
-          }
-        }
-      }
-    },
-    "Statt des Bestands erscheinen die archivierten Weine." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Instead of the stock, the archived wines appear."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umesto zalihe prikazuju se arhivirana vina."
-          }
-        }
-      }
-    },
-    "Etikett fotografieren" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photograph label"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotografiši etiketu"
-          }
-        }
-      }
-    },
-    "Ohne Foto erfassen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add without photo"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unesi bez fotografije"
-          }
-        }
-      }
-    },
-    "Ein Foto aus der Mediathek nehmen oder einen Wein ganz ohne Foto erfassen." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take a photo from the library or add a wine without any photo."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uzmi fotografiju iz biblioteke ili unesi vino sasvim bez fotografije."
-          }
-        }
-      }
-    },
-    "Gemeinsam abstimmen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vote together"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Glasajte zajedno"
-          }
-        }
-      }
-    },
-    "Die Gäste wählen, welche Flasche heute aufgeht. Das iPhone geht von Hand zu Hand." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guests choose which bottle gets opened today. The iPhone goes from hand to hand."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gosti biraju koja se flaša danas otvara. iPhone ide iz ruke u ruku."
-          }
-        }
-      }
-    },
-    "Party starten" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start party"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pokreni žurku"
-          }
-        }
-      }
-    },
-    "Historie" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "History"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Istorija"
-          }
-        }
-      }
-    },
-    "Kamera unten lange drücken" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long-press the camera at the bottom"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dugo pritisni kameru dole"
-          }
-        }
-      }
-    },
-    "Weitere Wege" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "More ways"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drugi načini"
-          }
-        }
-      }
-    },
-    "Party abbrechen?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel the party?"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otkazati žurku?"
-          }
-        }
-      }
-    },
-    "Party abbrechen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel party"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otkaži žurku"
-          }
-        }
-      }
-    },
-    "Weiter einrichten" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep setting up"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nastavi postavljanje"
-          }
-        }
-      }
-    },
-    "Die gewählten Flaschen und die erfassten Gäste gehen verloren." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The chosen bottles and the guests you added will be lost."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Izabrane flaše i uneti gosti se gube."
-          }
-        }
-      }
-    },
-    "Strichcode" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Barcode"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bar kod"
-          }
-        }
-      }
-    },
-    "Ziffern unter dem Strichcode" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digits under the barcode"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cifre ispod bar koda"
-          }
-        }
-      }
-    },
-    "Kein gültiger Strichcode: 13 oder 8 Ziffern, und die letzte muss stimmen. So wird er nicht gespeichert." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not a valid barcode: 13 or 8 digits, and the last one has to be right. It will not be saved like this."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nevažeći bar kod: 13 ili 8 cifara, a poslednja mora da se slaže. Ovako se ne čuva."
-          }
-        }
-      }
-    },
-    "Wird beim Scannen von der Rückseite gelesen und hilft, den Wein im gemeinsamen Katalog wiederzufinden." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Read from the back label when you scan and helps find the wine again in the shared catalog."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Čita se pri skeniranju sa zadnje strane i pomaže da se vino pronađe u zajedničkom katalogu."
-          }
-        }
-      }
-    },
-    "Mehrere durch Komma trennen, zum Beispiel für verschiedene Flaschengrössen. Der Jahrgang entscheidet weiter, welcher Eintrag gemeint ist." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Separate several with commas, for example for different bottle sizes. The vintage still decides which entry is meant."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Više njih odvoji zarezom, na primer za različite veličine flaša. Berba i dalje odlučuje koji se unos misli."
-          }
-        }
-      }
-    },
-    "Ziffern, durch Komma getrennt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digits, separated by commas"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cifre, odvojene zarezom"
-          }
-        }
-      }
-    },
-    "Ein Code besteht die Prüfziffer nicht und wird nicht gespeichert." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A code fails the check digit and is not saved."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jedan kod ne prolazi kontrolnu cifru i neće biti sačuvan."
-          }
-        }
-      }
-    },
-    "Bringt nur einen neuen Strichcode für den bestehenden Eintrag mit. Aufnehmen fügt ihn hinzu und ändert sonst nichts." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only brings a new barcode for the existing entry. Accept adds it and changes nothing else."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Donosi samo novi bar kod za postojeći unos. Prihvatanje ga dodaje i ništa drugo ne menja."
-          }
-        }
-      }
-    },
-    "Admin-Rechte prüfen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check admin rights"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Proveri administratorska prava"
-          }
-        }
-      }
-    },
-    "Admin-Rechte" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Admin rights"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Administratorska prava"
-          }
-        }
-      }
-    },
-    "Die Rolle „Admin“ wirkt in dieser Umgebung: Du darfst in den Katalog schreiben und Vorschläge entscheiden." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The “Admin” role works in this environment: You may write to the catalog and decide on suggestions."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uloga „Admin“ važi u ovom okruženju: smeš da upisuješ u katalog i odlučuješ o predlozima."
-          }
-        }
-      }
-    },
-    "Dafür fehlt die Berechtigung. Die Rolle „Admin“ ist dieser Apple-ID in dieser Umgebung nicht zugewiesen – in der CloudKit-Konsole beim eigenen Benutzer eintragen." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The permission is missing. The “Admin” role is not assigned to this Apple ID in this environment – enter it for your own user in the CloudKit console."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Za to nedostaje dozvola. Uloga „Admin“ nije dodeljena ovom Apple ID-ju u ovom okruženju – upiši je u CloudKit konzoli kod sopstvenog korisnika."
-          }
-        }
-      }
-    },
-    "Foto aus dem Katalog" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photo from the catalog"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotografija iz kataloga"
-          }
-        }
-      }
-    },
-    "Wird als Vorderseite verwendet." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Used as the front label."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Koristi se kao prednja strana."
-          }
-        }
-      }
-    },
-    "Vielleicht besser als dein Foto." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maybe better than your photo."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Možda bolja od tvoje fotografije."
-          }
-        }
-      }
-    },
-    "Verwenden" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Koristi"
-          }
-        }
-      }
-    },
-    "Mein Foto" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My photo"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moja fotografija"
-          }
-        }
-      }
-    },
-    "Im gemeinsamen Katalog gefunden" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Found in the shared catalog"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronađeno u zajedničkom katalogu"
-          }
-        }
-      }
-    },
-    "Das ist mein Wein" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "That is my wine"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To je moje vino"
-          }
-        }
-      }
-    },
-    "Anderer Wein" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Different wine"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drugo vino"
-          }
-        }
-      }
-    },
-    "Bei „Das ist mein Wein“ werden fehlende Angaben ergänzt. Deine eigenen bleiben." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "With “That is my wine”, missing details are filled in. Your own stay."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kod „To je moje vino“ dopunjuju se podaci koji nedostaju. Tvoji ostaju."
-          }
-        }
-      }
-    },
-    "Foto" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photo"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotografija"
-          }
-        }
-      }
-    },
-    "Ergänzt den bestehenden Eintrag um: %@. Aufnehmen fügt das hinzu und ändert sonst nichts." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adds to the existing entry: %@. Accept adds this and changes nothing else."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopunjuje postojeći unos: %@. Prihvatanje to dodaje i ništa drugo ne menja."
-          }
-        }
-      }
-    },
-    "Die Zahl nennt die Weine dieses Landes in der Liste." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The number shows the wines of this country in the list."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Broj pokazuje koliko vina te zemlje ima na listi."
           }
         }
       }

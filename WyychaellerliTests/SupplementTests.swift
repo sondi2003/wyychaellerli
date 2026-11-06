@@ -111,3 +111,33 @@ struct SupplementTests {
         #expect(sure.catalogMatch != nil)
     }
 }
+
+/// Wann der Zuschnitt eines Katalogfotos gilt – und wann das ganze Foto bleibt.
+@Suite("Katalogfoto: Etikett zuschneiden")
+struct CatalogLabelCropDecisionTests {
+
+    @Test("Ein Zuschnitt in üblicher Grösse wird übernommen")
+    func accepted() {
+        #expect(CatalogLabelCrop.accepts(strategy: .contour, rotation: 0, areaShare: 0.21))
+        #expect(CatalogLabelCrop.accepts(strategy: .textBounds, rotation: 0, areaShare: 0.30))
+        #expect(CatalogLabelCrop.accepts(strategy: .document, rotation: 0, areaShare: 0.5))
+    }
+
+    @Test("Ohne gefundenes Etikett bleibt das ganze Foto")
+    func fullImageStays() {
+        #expect(!CatalogLabelCrop.accepts(strategy: .fullImage, rotation: 0, areaShare: 0.2))
+    }
+
+    @Test("Deckt der Zuschnitt fast das ganze Bild, war es kein Zuschnitt")
+    func tooLarge() {
+        #expect(!CatalogLabelCrop.accepts(strategy: .contour, rotation: 0, areaShare: 0.51))
+        #expect(!CatalogLabelCrop.accepts(strategy: .textBounds, rotation: 0, areaShare: 0.9))
+    }
+
+    @Test("Musste gedreht werden, ist das Ergebnis verdächtig")
+    func rotated() {
+        // Katalogfotos stehen aufrecht. Eine Drehung heisst: Die Erkennung hat etwas anderes gelesen.
+        #expect(!CatalogLabelCrop.accepts(strategy: .contour, rotation: 90, areaShare: 0.2))
+        #expect(!CatalogLabelCrop.accepts(strategy: .contour, rotation: 180, areaShare: 0.2))
+    }
+}

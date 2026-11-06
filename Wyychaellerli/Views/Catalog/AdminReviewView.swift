@@ -44,7 +44,7 @@ struct AdminReviewView: View {
                 }
             }
         }
-        .navigationTitle("Vorschläge prüfen")
+        .appTitle(tr("Vorschläge prüfen"))
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
             if isLoading { ProgressView() }

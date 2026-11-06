@@ -79,7 +79,7 @@ struct WineRackSheet: View {
                     )
                 }
             }
-            .navigationTitle(mode.title)
+            .appTitle(mode.title)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 // Beim Entnehmen dorthin springen, wo die Flasche wirklich liegt.

@@ -334,7 +334,7 @@ struct CatalogIllustration: View {
                 .background(Color.accentColor.opacity(0.12), in: Capsule())
             }
         }
-        .task(id: catalog.directory.count) {
+        .task(id: catalog.directoryVersion) {
             let entries = catalog.directory.entries
             let locale = AppLanguage.current.locale
             overview = await Task.detached { CatalogOverview(entries: entries, locale: locale) }.value

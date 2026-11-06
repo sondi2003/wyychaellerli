@@ -59,7 +59,7 @@ struct CatalogManagerView: View {
                 }
             }
         }
-        .navigationTitle("Katalog verwalten")
+        .appTitle(tr("Katalog verwalten"))
         .navigationBarTitleDisplayMode(.inline)
         // Ohne Systemleiste setzt iOS 26 die Suche sonst nach unten unter die eigene Leiste.
         .searchable(text: $filter.text, placement: .navigationBarDrawer(displayMode: .always),

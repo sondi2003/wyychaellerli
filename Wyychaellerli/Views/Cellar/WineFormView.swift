@@ -68,11 +68,15 @@ struct WineFormView: View {
                                 Label("Etikett scannen", systemImage: "text.viewfinder")
                             }
                         }
-                        labelPhotoRow(
-                            title: tr("Vorderseite"),
-                            data: viewModel.labelImageData,
-                            remove: { viewModel.labelImageData = nil }
-                        )
+                        // Steht das Katalogfoto als Vorderseite, zeigt die Katalogzeile darunter es
+                        // schon (samt „Entfernen“) – dieselbe Aufnahme zweimal wäre nur Lärm.
+                        if viewModel.catalogImageData == nil || viewModel.labelImageData != viewModel.catalogImageData {
+                            labelPhotoRow(
+                                title: tr("Vorderseite"),
+                                data: viewModel.labelImageData,
+                                remove: { viewModel.labelImageData = nil }
+                            )
+                        }
                         labelPhotoRow(
                             title: tr("Rückseite"),
                             data: viewModel.backLabelImageData,
@@ -296,7 +300,7 @@ struct WineFormView: View {
                         .focused($focusedField, equals: .notes)
                 }
             }
-            .navigationTitle(viewModel.mode.title)
+            .appTitle(viewModel.mode.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -402,7 +406,11 @@ struct WineFormView: View {
     /// Holt das eine Katalogfoto des bestätigten Weins – nur im Speicher. Dauerhaft liegt es
     /// erst am Wein, wenn der Nutzer es verwendet und den Wein sichert.
     private func loadCatalogImage(for entry: CatalogWine) async {
-        let data = await catalog.catalogImage(entry.id)
+        let whole = await catalog.catalogImage(entry.id)
+        // Das Katalogfoto zeigt die ganze Flasche; im Keller soll nur das Etikett stehen.
+        // Gelingt der Zuschnitt nicht sicher, bleibt die ganze Flasche.
+        let data: Data?
+        if let whole { data = await CatalogLabelCrop.croppedLabel(from: whole) ?? whole } else { data = nil }
         guard viewModel.catalogMatch?.id == entry.id else { return }
         viewModel.catalogImageData = data
         viewModel.adoptCatalogImageIfFree()

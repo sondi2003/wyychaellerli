@@ -74,7 +74,7 @@ struct LabelScanView: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Etikett scannen")
+            .appTitle(tr("Etikett scannen"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

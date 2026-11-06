@@ -42,7 +42,7 @@ struct SlotFillerView: View {
                     .searchable(text: $searchText, prompt: "Name, Rebsorte, Region")
                 }
             }
-            .navigationTitle("Fach \(position.label)")
+            .appTitle(tr("Fach \(position.label)"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -74,7 +74,7 @@ struct WineShareSheet: View {
                          : "Es werden nur Etikett und Text verschickt.")
                 }
             }
-            .navigationTitle("Wein empfehlen")
+            .appTitle(tr("Wein empfehlen"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

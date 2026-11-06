@@ -65,7 +65,7 @@ struct PartyView: View {
         HStack {
             Label("Party", systemImage: "party.popper.fill")
                 .font(.headline)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Brand.accent)
             Spacer()
             // Grünes Schild = das Gerät kann nicht verlassen werden.
             if guidedAccess.isActive {
@@ -196,7 +196,7 @@ struct PartyHandoverView: View {
 
             Image(systemName: "hand.wave.fill")
                 .font(.system(size: 54))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Brand.accent)
 
             if let guest = model.state.currentGuest {
                 VStack(spacing: 8) {

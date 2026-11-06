@@ -65,7 +65,7 @@ struct RackView: View {
                     }
                 }
             }
-            .navigationTitle(rack?.name ?? tr("Regal"))
+            .appTitle(rack?.name ?? tr("Regal"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 // Als Reiter gibt es nichts zu schliessen.

@@ -15,8 +15,9 @@ struct AdvisorView: View {
     @FocusState private var dishFieldFocused: Bool
     /// Abbuchen mit demselben Ablauf wie in der Kellerliste (Fach, letzte Flasche, Bewerten).
     @State private var consumer = BottleConsumer()
-    @State private var isShowingPartyHistory = false
-    @State private var isMissingDeviceLock = false
+    @State private var isShowingParty = false
+    /// Das Blatt meldet „starten“, gestartet wird erst nach dem Schliessen (siehe `PartyHubView`).
+    @State private var shouldStartParty = false
 
     private var wines: [Wine] { Array(fetchedWines) }
 
@@ -61,15 +62,26 @@ struct AdvisorView: View {
                         resultSection(response)
                     }
 
-                    partyCard
                 }
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Wein-Berater")
+            .appTitle(tr("Wein-Berater"))
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ProviderStatusBadge(settings: settings, local: localAI) { openSettings() }
+                // Links, wie die Statistik im Keller: Party und ihre Historie in einer eigenen Ansicht.
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        isShowingParty = true
+                    } label: {
+                        Image(systemName: "party.popper")
+                    }
+                    .accessibilityLabel("Party")
+                }
+                if AdvisorSourceToggle.isAvailable(hasExternalKey: settings.activeProvider != nil,
+                                                   hasLocalModel: localAI.primary != nil) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        AdvisorSourceToggle(settings: settings, local: localAI)
+                    }
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -78,74 +90,15 @@ struct AdvisorView: View {
             .navigationDestination(for: Wine.self) { wine in
                 WineDetailView(wine: wine)
             }
-            .sheet(isPresented: $isShowingPartyHistory) {
-                PartyHistoryView()
-            }
-            .alert("Gerät ohne Sperre", isPresented: $isMissingDeviceLock) {
-                Button("Verstanden", role: .cancel) { }
-            } message: {
-                Text("Der Party-Modus lässt sich nur mit Face ID, Touch ID oder Gerätecode wieder verlassen. Richte in den iPhone-Einstellungen unter „Face ID & Code“ eine Sperre ein.")
+            .sheet(isPresented: $isShowingParty, onDismiss: {
+                if shouldStartParty {
+                    shouldStartParty = false
+                    party.start()
+                }
+            }) {
+                PartyHubView(onStart: { shouldStartParty = true })
             }
         }
-    }
-
-    // MARK: Party
-
-    /// Die zweite Antwort auf „Welche Flasche öffnen wir?“: nicht nach dem Essen, sondern
-    /// nach Stimmen. Deshalb hier und nicht mehr im Menü der Kellerliste, wo sie zwei
-    /// Ebenen tief zwischen Filtern lag.
-    private var partyCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label {
-                Text("Gemeinsam abstimmen")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-            } icon: {
-                Image(systemName: "party.popper.fill")
-                    .foregroundStyle(Brand.rose)
-            }
-            Text("Die Gäste wählen, welche Flasche heute aufgeht. Das iPhone geht von Hand zu Hand.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.8))
-                .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 10) {
-                Button {
-                    // Ohne Gerätesperre kein Party-Modus – sonst käme man nicht heraus.
-                    if PartyLock.isAvailable {
-                        party.start()
-                    } else {
-                        isMissingDeviceLock = true
-                    }
-                } label: {
-                    Label("Party starten", systemImage: "party.popper")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(Brand.burgundy)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 11)
-                        .background(Capsule().fill(.white))
-                }
-                .buttonStyle(.plain)
-                Button {
-                    isShowingPartyHistory = true
-                } label: {
-                    Label("Historie", systemImage: "trophy")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 11)
-                        .background(Capsule().strokeBorder(Brand.rose.opacity(0.8), lineWidth: 1.5))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .strokeBorder(Brand.rose.opacity(0.7), lineWidth: 1.5)
-        )
-        .padding(.top, 8)
     }
 
     // MARK: Eingabe
@@ -527,39 +480,6 @@ private struct LabelMatchCard: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .strokeBorder(Color.green.opacity(0.45), lineWidth: 1.5)
         }
-    }
-}
-
-// MARK: - Statusanzeige in der Toolbar
-
-/// Zeigt, wer gerade antwortet – Apple lokal, die externe KI oder keiner. Tippen führt in die Einstellungen.
-struct ProviderStatusBadge: View {
-    let settings: AISettings
-    let local: LocalAIStatus
-    let onTap: () -> Void
-
-    private var source: PairingSource? {
-        let localSource = local.primary.map(PairingSource.local)
-        let external = settings.activeProvider.map { PairingSource.external($0, model: settings.model(for: $0)) }
-        return settings.prefersExternal ? (external ?? localSource) : (localSource ?? external)
-    }
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 5) {
-                if let source {
-                    Image(systemName: source.symbolName)
-                    Text(source.displayName == local.primary?.displayName ? (local.primary?.shortName ?? source.displayName) : source.displayName)
-                } else {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                    Text("Keine KI")
-                }
-            }
-            .font(.subheadline.weight(.semibold))
-            .padding(.horizontal, 4)
-        }
-        .tint(source == nil ? .orange : .accentColor)
-        .accessibilityLabel(source.map { tr("Aktive Quelle: \($0.displayName)") } ?? tr("Keine KI eingerichtet"))
     }
 }
 

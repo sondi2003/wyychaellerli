@@ -50,11 +50,11 @@ struct PartyDrawView: View {
                         .padding(14)
                         .background(
                             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .fill(isLit ? Color.accentColor.opacity(0.22) : Color(.secondarySystemGroupedBackground))
+                                .fill(isLit ? Brand.accent.opacity(0.22) : Color(.secondarySystemGroupedBackground))
                         )
                         .overlay {
                             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(isLit ? Color.accentColor : Color.clear, lineWidth: 3)
+                                .strokeBorder(isLit ? Brand.accent : Color.clear, lineWidth: 3)
                         }
                         .scaleEffect(isLit && !reduceMotion ? 1.03 : 1)
                         .animation(.easeOut(duration: 0.12), value: isLit)
@@ -181,8 +181,8 @@ struct PartyPodiumView: View {
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)
-                    .background(Color.accentColor.opacity(0.15), in: Capsule())
-                    .foregroundStyle(Color.accentColor)
+                    .background(Brand.accent.opacity(0.15), in: Capsule())
+                    .foregroundStyle(Brand.accent)
             }
 
             // Jetzt muss jemand die Flasche holen – hier gehört das Fach hin, nicht

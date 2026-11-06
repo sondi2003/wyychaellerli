@@ -74,7 +74,7 @@ struct PartyCandidatesView: View {
                                 Spacer(minLength: 4)
                                 Image(systemName: model.isSelected(wine) ? "checkmark.circle.fill" : "circle")
                                     .font(.title3)
-                                    .foregroundStyle(model.isSelected(wine) ? Color.accentColor : Color.secondary.opacity(0.4))
+                                    .foregroundStyle(model.isSelected(wine) ? Brand.accent : Color.secondary.opacity(0.4))
                             }
                             // Ohne Form ist nur tippbar, was Pixel hat: Die leere Fläche
                             // zwischen Name und Kreis reagierte nicht.

@@ -44,7 +44,7 @@ struct PartyVotingView: View {
                     ForEach(0..<model.state.votesPerGuest, id: \.self) { index in
                         Image(systemName: index < model.state.currentVotes.count ? "circle.fill" : "circle")
                             .font(.footnote)
-                            .foregroundStyle(index < model.state.currentVotes.count ? Color.accentColor : Color.secondary.opacity(0.4))
+                            .foregroundStyle(index < model.state.currentVotes.count ? Brand.accent : Color.secondary.opacity(0.4))
                     }
                 }
                 Text(model.remainingVotes == 0
@@ -139,7 +139,7 @@ struct PartyWineCard: View {
 
                     Image(systemName: isChosen ? "checkmark.circle.fill" : "circle")
                         .font(.title2)
-                        .foregroundStyle(isChosen ? Color.accentColor : Color.secondary.opacity(0.35))
+                        .foregroundStyle(isChosen ? Brand.accent : Color.secondary.opacity(0.35))
                 }
 
                 if !wine.foodPairings.isEmpty {
@@ -163,7 +163,7 @@ struct PartyWineCard: View {
             .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(isChosen ? Color.accentColor : Color.clear, lineWidth: 2.5)
+                    .strokeBorder(isChosen ? Brand.accent : Color.clear, lineWidth: 2.5)
             }
             .opacity(canChoose || isChosen ? 1 : 0.55)
         }
