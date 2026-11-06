@@ -114,6 +114,31 @@ struct LabelThumbnail: View {
     }
 }
 
+extension View {
+
+    /// Legt den Namen der App („Wyychällerli“, Weinrot, im Dunkeln Rosé) unten über ein
+    /// **Flaschenfoto** – dorthin, wo das Wasserzeichen war und der Verlauf ausblendet
+    /// (`CatalogPhotoFade`). Etikettfotos bleiben unberührt. Eine Ebene über dem Bild, nicht
+    /// im Bild: Das gespeicherte Foto und alles, was geteilt wird, bleiben frei von Beschriftung.
+    @ViewBuilder
+    func bottleSignature(for image: UIImage) -> some View {
+        if CatalogPhotoFade.isBottle(width: Int(image.size.width), height: Int(image.size.height)) {
+            overlay(alignment: .bottom) {
+                Text(verbatim: "Wyychällerli")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(Brand.accent)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .padding(.bottom, 4)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+        } else {
+            self
+        }
+    }
+}
+
 /// Ein Foto in einem kleinen Rahmen – **Etikett füllt, Flasche steht ganz da**.
 ///
 /// Ein Etikettfoto (annähernd quadratisch bis hoch) füllt den Rahmen und wird beschnitten.

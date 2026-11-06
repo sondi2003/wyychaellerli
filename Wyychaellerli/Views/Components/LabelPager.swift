@@ -29,23 +29,15 @@ struct LabelPager: View {
                     Image(uiImage: page.image)
                         .resizable()
                         .scaledToFit()
+                        .bottleSignature(for: page.image)
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
-                        // Die Lupe sitzt auf dem Bild, nicht auf dem Rahmen – so ist klar,
-                        // dass sie zu diesem Foto gehört.
-                        .overlay(alignment: .bottomTrailing) {
-                            Button {
-                                isZooming = true
-                            } label: {
-                                Image(systemName: "magnifyingglass")
-                                    .font(.subheadline.weight(.semibold))
-                                    .padding(9)
-                                    .background(.ultraThinMaterial, in: Circle())
-                            }
-                            .buttonStyle(.plain)
-                            .padding(10)
-                            .accessibilityLabel("\(page.title) vergrössern")
-                        }
+                        // Wie in der Fotos-App: Ein Tipp aufs Bild öffnet es gross, keine sichtbare Lupe.
+                        // Die ganze Bildfläche ist Trefferfläche; Wischen blättert weiter zwischen den Seiten.
+                        .contentShape(Rectangle())
+                        .onTapGesture { isZooming = true }
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityHint(Text("Öffnet das Foto im Vollbild."))
                         // Rand, damit der Schatten nicht am Rahmen abgeschnitten wird.
                         .padding(.horizontal, 4)
                         .padding(.vertical, 10)

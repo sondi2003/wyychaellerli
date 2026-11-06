@@ -113,48 +113,41 @@ struct SupplementTests {
     }
 }
 
-/// Katalogfoto: Das Wasserzeichen „vivino“ unten wird abgeschnitten, die Flasche bleibt ganz.
-@Suite("Katalogfoto: Wasserzeichen abschneiden")
-struct CatalogLabelCropDecisionTests {
+/// Katalogfoto: Der untere Rand blendet aus, damit das Wasserzeichen verschwindet.
+@Suite("Katalogfoto: unten ausblenden")
+struct CatalogPhotoFadeTests {
 
-    @Test("Der Schnitt liegt knapp über dem Wasserzeichen")
-    func cutPosition() {
-        // Vision zählt von unten: Die Oberkante des Wasserzeichens liegt bei 5 % der Höhe, also
-        // bei 95 % von oben; mit 1,2 % Abstand bleiben 93,8 % stehen.
-        let kept = CatalogLabelCrop.keptShare(watermarkTop: 0.05)
-        #expect(abs(kept - 0.938) < 0.0001)
+    @Test("Oben bleibt alles deckend, unten ist nichts mehr da")
+    func ends() {
+        #expect(CatalogPhotoFade.opacity(at: 0) == 1)
+        #expect(CatalogPhotoFade.opacity(at: CatalogPhotoFade.fadeStart) == 1)
+        #expect(CatalogPhotoFade.opacity(at: CatalogPhotoFade.fadeEnd) == 0)
+        #expect(CatalogPhotoFade.opacity(at: 1) == 0)
     }
 
-    @Test("Die Wasserzeichen-Zeile wird auch bei Lesefehlern erkannt")
-    func watermarkRecognised() {
-        #expect(CatalogLabelCrop.isWatermark("vivino"))
-        #expect(CatalogLabelCrop.isWatermark("VIVINO"))
-        #expect(CatalogLabelCrop.isWatermark("\u{2016} vivino"))
-        #expect(CatalogLabelCrop.isWatermark("VIVI"))
-        #expect(CatalogLabelCrop.isWatermark("vivn"))
+    @Test("Der Verlauf fällt gleichmässig")
+    func monotone() {
+        var last = 1.0
+        for step in 0...100 {
+            let value = CatalogPhotoFade.opacity(at: Double(step) / 100)
+            #expect(value <= last + 1e-9)
+            last = value
+        }
     }
 
-    @Test("Worte vom Etikett sind kein Wasserzeichen")
-    func labelWordsAreNot() {
-        #expect(!CatalogLabelCrop.isWatermark("AGRELO"))
-        #expect(!CatalogLabelCrop.isWatermark("Cabernet Franc"))
-        #expect(!CatalogLabelCrop.isWatermark("Mendoza - Argentina"))
-        #expect(!CatalogLabelCrop.isWatermark("GRAN ENEMIGO"))
-        #expect(!CatalogLabelCrop.isWatermark("ab"))
+    @Test("Das Wasserzeichen (94–97 % der Höhe) liegt ganz im durchsichtigen Teil")
+    func coversWatermark() {
+        #expect(CatalogPhotoFade.opacity(at: 0.94) == 0)
+        #expect(CatalogPhotoFade.opacity(at: 0.95) == 0)
+        #expect(CatalogPhotoFade.opacity(at: 0.97) == 0)
     }
 
-    @Test("Ein schmaler Streifen unten wird abgeschnitten")
-    func accepted() {
-        #expect(CatalogLabelCrop.accepts(keptShare: 0.94))
-        #expect(CatalogLabelCrop.accepts(keptShare: 0.85))
-    }
-
-    @Test("Fiele fast nichts oder sehr viel weg, bleibt das Original")
-    func rejected() {
-        #expect(!CatalogLabelCrop.accepts(keptShare: 1))
-        #expect(!CatalogLabelCrop.accepts(keptShare: 0.999))
-        #expect(!CatalogLabelCrop.accepts(keptShare: 0.79))
-        #expect(!CatalogLabelCrop.accepts(keptShare: 0.4))
+    @Test("Nur schmale, hohe Fotos gelten als Flasche")
+    func bottleDetection() {
+        #expect(CatalogPhotoFade.isBottle(width: 163, height: 600))
+        #expect(CatalogPhotoFade.isBottle(width: 440, height: 1650))
+        #expect(!CatalogPhotoFade.isBottle(width: 226, height: 320))   // Etikettfoto
+        #expect(!CatalogPhotoFade.isBottle(width: 1200, height: 900))
     }
 }
 

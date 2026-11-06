@@ -1,9 +1,7 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
-    "" : {
-
-    },
+    "" : {},
     " (im Archiv)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -68,6 +66,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "· privremeno, tek jedna osoba"
+          }
+        }
+      }
+    },
+    "Öffnet das Foto im Vollbild." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the photo full screen."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvara fotografiju preko celog ekrana."
           }
         }
       }
