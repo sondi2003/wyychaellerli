@@ -149,6 +149,9 @@ struct AdaptiveLabelImage: View {
     let image: UIImage
     let width: CGFloat
     let height: CGFloat
+    /// Der Name der App unter einer Flasche (siehe `bottleSignature`). In sehr kleinen
+    /// Vorschauen (Kellerliste) bleibt er weg, im Formular steht er.
+    var showsSignature = false
 
     /// Schmaler als das gilt als Flasche.
     static let bottleAspectLimit: CGFloat = 0.55
@@ -161,6 +164,16 @@ struct AdaptiveLabelImage: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: width, height: height * 1.7)
+                .overlay(alignment: .bottom) {
+                    if showsSignature {
+                        Text(verbatim: "Wyychällerli")
+                            .font(.system(size: max(6, width * 0.13), weight: .medium))
+                            .foregroundStyle(Brand.accent)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .padding(.bottom, 2)
+                    }
+                }
                 .accessibilityHidden(true)
         } else {
             Image(uiImage: image)

@@ -1,3 +1,4 @@
+import AVFoundation
 import SwiftUI
 import UIKit
 
@@ -14,6 +15,7 @@ struct ZoomableImageView: UIViewRepresentable {
         let scrollView = ZoomScrollView()
         scrollView.delegate = context.coordinator
         scrollView.imageView.image = image
+        scrollView.showsSignature = CatalogPhotoFade.isCatalogBottle(image)
 
         let doubleTap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.doubleTapped(_:)))
         doubleTap.numberOfTapsRequired = 2
@@ -25,6 +27,7 @@ struct ZoomableImageView: UIViewRepresentable {
         if scrollView.imageView.image !== image {
             scrollView.imageView.image = image
             scrollView.zoomScale = 1
+            scrollView.showsSignature = CatalogPhotoFade.isCatalogBottle(image)
         }
     }
 
@@ -65,6 +68,17 @@ final class ZoomScrollView: UIScrollView {
     let imageView = UIImageView()
     private var laidOutSize: CGSize = .zero
 
+    /// Der Name der App unten auf einem Katalogfoto (wie auf der Detailseite). Er liegt **im**
+    /// gezoomten Bild und wächst beim Zoomen mit – wie ein Aufdruck.
+    private let signatureLabel = UILabel()
+    var showsSignature = false {
+        didSet {
+            signatureLabel.isHidden = !showsSignature
+            setNeedsLayout()
+            layoutSignature()
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         minimumZoomScale = 1
@@ -75,6 +89,10 @@ final class ZoomScrollView: UIScrollView {
         backgroundColor = .clear
         imageView.contentMode = .scaleAspectFit
         addSubview(imageView)
+        signatureLabel.text = "Wyychällerli"
+        signatureLabel.textColor = UIColor(Brand.accent)
+        signatureLabel.isHidden = true
+        imageView.addSubview(signatureLabel)
     }
 
     required init?(coder: NSCoder) { fatalError("nicht aus einem Storyboard") }
@@ -87,6 +105,18 @@ final class ZoomScrollView: UIScrollView {
         imageView.frame = CGRect(origin: .zero, size: bounds.size)
         contentSize = bounds.size
         centerImage()
+        layoutSignature()
+    }
+
+    /// Setzt den Namen auf rund 97 % der Höhe des **angezeigten Bildes** (nicht des Fensters:
+    /// Die Flasche ist schmaler als der Bildschirm).
+    private func layoutSignature() {
+        guard showsSignature, let image = imageView.image, image.size.height > 0,
+              imageView.bounds.width > 0 else { return }
+        let shown = AVMakeRect(aspectRatio: image.size, insideRect: imageView.bounds)
+        signatureLabel.font = .systemFont(ofSize: max(11, shown.height * 0.022), weight: .medium)
+        signatureLabel.sizeToFit()
+        signatureLabel.center = CGPoint(x: shown.midX, y: shown.minY + shown.height * 0.965)
     }
 
     /// Hält das Bild in der Mitte, solange es kleiner als der Bildschirm ist.

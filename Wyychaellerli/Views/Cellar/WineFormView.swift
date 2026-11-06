@@ -95,7 +95,7 @@ struct WineFormView: View {
                         if let data = viewModel.catalogImageData, let image = UIImage(data: data) {
                             let isUsed = viewModel.labelImageData == data
                             HStack(spacing: 12) {
-                                AdaptiveLabelImage(image: image, width: 56, height: 70)
+                                AdaptiveLabelImage(image: image, width: 56, height: 70, showsSignature: true)
                                     .labelLens(data, title: tr("Foto aus dem Katalog"), compact: true)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Foto aus dem Katalog")
@@ -559,7 +559,7 @@ struct WineFormView: View {
     private func labelPhotoRow(title: String, data: Data?, remove: @escaping () -> Void) -> some View {
         if let data, let image = UIImage(data: data) {
             HStack(spacing: 12) {
-                AdaptiveLabelImage(image: image, width: 56, height: 70)
+                AdaptiveLabelImage(image: image, width: 56, height: 70, showsSignature: true)
                     .labelLens(data, title: title, compact: true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
