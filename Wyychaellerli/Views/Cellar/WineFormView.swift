@@ -95,11 +95,7 @@ struct WineFormView: View {
                         if let data = viewModel.catalogImageData, let image = UIImage(data: data) {
                             let isUsed = viewModel.labelImageData == data
                             HStack(spacing: 12) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 56, height: 70)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                AdaptiveLabelImage(image: image, width: 56, height: 70)
                                     .labelLens(data, title: tr("Foto aus dem Katalog"), compact: true)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Foto aus dem Katalog")
@@ -131,8 +127,12 @@ struct WineFormView: View {
                 }
 
                 Section("Wein") {
+                    // Keine Autokorrektur: Weinnamen sind Eigennamen. Sie hielt eine Korrektur bis
+                    // zum Fokuswechsel zurück und änderte den Namen **nach** der Wahl eines
+                    // Katalogvorschlags – dann galt die Wahl als aufgehoben.
                     TextField("Name / Cuvée", text: $viewModel.name)
                         .focused($focusedField, equals: .name)
+                        .autocorrectionDisabled()
                         .textInputAutocapitalization(.words)
                         .submitLabel(.next)
                         .onSubmit { focusedField = .producer }
@@ -140,6 +140,7 @@ struct WineFormView: View {
 
                     TextField("Produzent / Weingut", text: $viewModel.producer)
                         .focused($focusedField, equals: .producer)
+                        .autocorrectionDisabled()
                         .textInputAutocapitalization(.words)
                         .submitLabel(.next)
                         .onSubmit { focusedField = .grape }
@@ -407,18 +408,24 @@ struct WineFormView: View {
     /// erst am Wein, wenn der Nutzer es verwendet und den Wein sichert.
     private func loadCatalogImage(for entry: CatalogWine) async {
         let whole = await catalog.catalogImage(entry.id)
-        // Das Katalogfoto zeigt die ganze Flasche; im Keller soll nur das Etikett stehen.
-        // Gelingt der Zuschnitt nicht sicher, bleibt die ganze Flasche.
+        // Das Katalogfoto trägt unten das Wasserzeichen „vivino“; darüber wird abgeschnitten.
+        // Wird es nicht gefunden, bleibt das Original.
         let data: Data?
-        if let whole { data = await CatalogLabelCrop.croppedLabel(from: whole) ?? whole } else { data = nil }
+        if let whole { data = await CatalogLabelCrop.cleaned(from: whole) ?? whole } else { data = nil }
         guard viewModel.catalogMatch?.id == entry.id else { return }
         viewModel.catalogImageData = data
         viewModel.adoptCatalogImageIfFree()
     }
 
     private func choose(_ entry: CatalogWine) {
-        viewModel.selectSuggestion(entry)
-        Task { await loadCatalogImage(for: entry) }
+        // Erst die Eingabe beenden: Eine noch schwebende Korrektur der Tastatur wird dabei
+        // festgeschrieben, **bevor** der Katalogname eingesetzt wird und nicht danach.
+        focusedField = nil
+        Task { @MainActor in
+            await Task.yield()
+            viewModel.selectSuggestion(entry)
+            await loadCatalogImage(for: entry)
+        }
     }
 
     /// Vorschläge aus dem Katalog, direkt unter dem Namensfeld.
@@ -552,11 +559,7 @@ struct WineFormView: View {
     private func labelPhotoRow(title: String, data: Data?, remove: @escaping () -> Void) -> some View {
         if let data, let image = UIImage(data: data) {
             HStack(spacing: 12) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 56, height: 70)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                AdaptiveLabelImage(image: image, width: 56, height: 70)
                     .labelLens(data, title: title, compact: true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)

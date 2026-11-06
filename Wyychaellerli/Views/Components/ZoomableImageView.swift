@@ -116,7 +116,10 @@ struct LabelZoomView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: pages.count > 1 ? .always : .never))
-            .background(Color.black)
+            // Folgt dem Farbschema der App (Einstellungen → Darstellung): hell im hellen Design,
+            // schwarz im dunklen. Früher fest schwarz – eine dunkle Flasche vor durchsichtigem
+            // Grund ging darin unter, und im hellen Design sprang man in ein schwarzes Fenster.
+            .background(Color(.systemBackground))
             .ignoresSafeArea(edges: .bottom)
             .navigationTitle(pages.indices.contains(selection) ? pages[selection].title : "")
             .navigationBarTitleDisplayMode(.inline)
@@ -126,7 +129,6 @@ struct LabelZoomView: View {
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 }

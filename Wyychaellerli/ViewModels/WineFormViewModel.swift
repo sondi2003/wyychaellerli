@@ -199,6 +199,9 @@ final class WineFormViewModel {
 
     /// Der Katalogeintrag stammt aus der Auswahl unter dem Namensfeld (nicht aus einem Scan).
     private var pickedFromSuggestions = false
+    private var pickedAt: Date?
+    /// So lange gilt eine Änderung am Namen nach der Wahl nicht als Absicht (Autokorrektur).
+    static let suggestionGrace: TimeInterval = 1.0
 
     /// Ändert der Nutzer den Namen, nachdem er einen Vorschlag gewählt hat, und es ist nicht
     /// mehr derselbe Wein, gilt die Wahl nicht mehr: Die Vorschläge erscheinen wieder, das
@@ -206,7 +209,14 @@ final class WineFormViewModel {
     func releaseSuggestionIfNameChanged() {
         guard pickedFromSuggestions, let match = catalogMatch,
               CatalogDirectory.fold(trimmedName) != CatalogDirectory.fold(match.name) else { return }
+        // Eine Sekunde Schonfrist nach der Wahl: Was die Tastatur gleich danach noch am Namen
+        // ändert, ist keine Entscheidung des Nutzers. Der Name wird dann zurückgesetzt.
+        if let picked = pickedAt, Date().timeIntervalSince(picked) < Self.suggestionGrace {
+            name = match.name
+            return
+        }
         pickedFromSuggestions = false
+        pickedAt = nil
         catalogMatch = nil
         if labelImageData != nil, labelImageData == catalogImageData {
             labelImageData = ownImageData
@@ -232,6 +242,7 @@ final class WineFormViewModel {
     /// aus dem Katalog, leere Felder werden ergänzt, Eigenes bleibt.
     func selectSuggestion(_ entry: CatalogWine) {
         pickedFromSuggestions = true
+        pickedAt = Date()
         name = entry.name
         if producer.isEmpty { producer = entry.producer }
         if Self.vintageRange.contains(entry.vintage) { vintage = entry.vintage }

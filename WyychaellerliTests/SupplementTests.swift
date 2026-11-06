@@ -1,3 +1,4 @@
+import UIKit
 import Foundation
 import Testing
 @testable import Wyychaellerli
@@ -112,32 +113,67 @@ struct SupplementTests {
     }
 }
 
-/// Wann der Zuschnitt eines Katalogfotos gilt – und wann das ganze Foto bleibt.
-@Suite("Katalogfoto: Etikett zuschneiden")
+/// Katalogfoto: Das Wasserzeichen „vivino“ unten wird abgeschnitten, die Flasche bleibt ganz.
+@Suite("Katalogfoto: Wasserzeichen abschneiden")
 struct CatalogLabelCropDecisionTests {
 
-    @Test("Ein Zuschnitt in üblicher Grösse wird übernommen")
+    @Test("Der Schnitt liegt knapp über dem Wasserzeichen")
+    func cutPosition() {
+        // Vision zählt von unten: Die Oberkante des Wasserzeichens liegt bei 5 % der Höhe, also
+        // bei 95 % von oben; mit 1,2 % Abstand bleiben 93,8 % stehen.
+        let kept = CatalogLabelCrop.keptShare(watermarkTop: 0.05)
+        #expect(abs(kept - 0.938) < 0.0001)
+    }
+
+    @Test("Die Wasserzeichen-Zeile wird auch bei Lesefehlern erkannt")
+    func watermarkRecognised() {
+        #expect(CatalogLabelCrop.isWatermark("vivino"))
+        #expect(CatalogLabelCrop.isWatermark("VIVINO"))
+        #expect(CatalogLabelCrop.isWatermark("\u{2016} vivino"))
+        #expect(CatalogLabelCrop.isWatermark("VIVI"))
+        #expect(CatalogLabelCrop.isWatermark("vivn"))
+    }
+
+    @Test("Worte vom Etikett sind kein Wasserzeichen")
+    func labelWordsAreNot() {
+        #expect(!CatalogLabelCrop.isWatermark("AGRELO"))
+        #expect(!CatalogLabelCrop.isWatermark("Cabernet Franc"))
+        #expect(!CatalogLabelCrop.isWatermark("Mendoza - Argentina"))
+        #expect(!CatalogLabelCrop.isWatermark("GRAN ENEMIGO"))
+        #expect(!CatalogLabelCrop.isWatermark("ab"))
+    }
+
+    @Test("Ein schmaler Streifen unten wird abgeschnitten")
     func accepted() {
-        #expect(CatalogLabelCrop.accepts(strategy: .contour, rotation: 0, areaShare: 0.21))
-        #expect(CatalogLabelCrop.accepts(strategy: .textBounds, rotation: 0, areaShare: 0.30))
-        #expect(CatalogLabelCrop.accepts(strategy: .document, rotation: 0, areaShare: 0.5))
+        #expect(CatalogLabelCrop.accepts(keptShare: 0.94))
+        #expect(CatalogLabelCrop.accepts(keptShare: 0.85))
     }
 
-    @Test("Ohne gefundenes Etikett bleibt das ganze Foto")
-    func fullImageStays() {
-        #expect(!CatalogLabelCrop.accepts(strategy: .fullImage, rotation: 0, areaShare: 0.2))
+    @Test("Fiele fast nichts oder sehr viel weg, bleibt das Original")
+    func rejected() {
+        #expect(!CatalogLabelCrop.accepts(keptShare: 1))
+        #expect(!CatalogLabelCrop.accepts(keptShare: 0.999))
+        #expect(!CatalogLabelCrop.accepts(keptShare: 0.79))
+        #expect(!CatalogLabelCrop.accepts(keptShare: 0.4))
+    }
+}
+
+@Suite("Miniatur: Etikett oder Flasche")
+struct AdaptiveLabelImageTests {
+
+    private func image(width: CGFloat, height: CGFloat) -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: width, height: height)).image { _ in }
     }
 
-    @Test("Deckt der Zuschnitt fast das ganze Bild, war es kein Zuschnitt")
-    func tooLarge() {
-        #expect(!CatalogLabelCrop.accepts(strategy: .contour, rotation: 0, areaShare: 0.51))
-        #expect(!CatalogLabelCrop.accepts(strategy: .textBounds, rotation: 0, areaShare: 0.9))
+    @Test("Ein schmales, hohes Foto gilt als Flasche")
+    func bottle() {
+        let view = AdaptiveLabelImage(image: image(width: 163, height: 470), width: 44, height: 55)
+        #expect(view.image.size.width / view.image.size.height < AdaptiveLabelImage.bottleAspectLimit)
     }
 
-    @Test("Musste gedreht werden, ist das Ergebnis verdächtig")
-    func rotated() {
-        // Katalogfotos stehen aufrecht. Eine Drehung heisst: Die Erkennung hat etwas anderes gelesen.
-        #expect(!CatalogLabelCrop.accepts(strategy: .contour, rotation: 90, areaShare: 0.2))
-        #expect(!CatalogLabelCrop.accepts(strategy: .contour, rotation: 180, areaShare: 0.2))
+    @Test("Ein Etikettfoto bleibt unter der Grenze nicht hängen")
+    func label() {
+        let size = image(width: 226, height: 320).size
+        #expect(size.width / size.height >= AdaptiveLabelImage.bottleAspectLimit)
     }
 }

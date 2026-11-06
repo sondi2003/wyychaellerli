@@ -100,25 +100,56 @@ extension Wine {
     }
 }
 
-/// Kleines Etikett-Vorschaubild für Listen und Cards; fällt auf das Typ-Icon zurück.
+/// Kleines Vorschaubild für Listen und Cards; fällt auf das Typ-Icon zurück.
 struct LabelThumbnail: View {
     let wine: Wine
     var size: CGFloat = 44
 
     var body: some View {
         if let image = wine.labelImage {
+            AdaptiveLabelImage(image: image, width: size, height: size * 1.25)
+        } else {
+            WineTypeIcon(type: wine.type, size: size)
+        }
+    }
+}
+
+/// Ein Foto in einem kleinen Rahmen – **Etikett füllt, Flasche steht ganz da**.
+///
+/// Ein Etikettfoto (annähernd quadratisch bis hoch) füllt den Rahmen und wird beschnitten.
+/// Ein Flaschenfoto aus dem Katalog ist schmal und hoch (Seitenverhältnis unter 0,55): Würde es
+/// gefüllt, bliebe vom Hals nur ein Ausschnitt in der Mitte. Es wird deshalb ganz gezeigt, in
+/// einem doppelt so hohen Rahmen, damit die Flasche nicht zum Strich schrumpft.
+struct AdaptiveLabelImage: View {
+    let image: UIImage
+    let width: CGFloat
+    let height: CGFloat
+
+    /// Schmaler als das gilt als Flasche.
+    static let bottleAspectLimit: CGFloat = 0.55
+
+    private var isBottle: Bool {
+        image.size.height > 0 && image.size.width / image.size.height < Self.bottleAspectLimit
+    }
+
+    var body: some View {
+        if isBottle {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: width, height: height * 1.7)
+                .accessibilityHidden(true)
+        } else {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: size, height: size * 1.25)
+                .frame(width: width, height: height)
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5)
                 )
                 .accessibilityHidden(true)
-        } else {
-            WineTypeIcon(type: wine.type, size: size)
         }
     }
 }

@@ -133,7 +133,7 @@ struct CatalogDirectoryTests {
 
     @MainActor
     @Test("Name nach der Wahl geändert: Die Wahl gilt nicht mehr, ergänzte Felder bleiben")
-    func editingNameReleasesChoice() {
+    func editingNameReleasesChoice() async throws {
         let model = WineFormViewModel(mode: .add)
         let chosen = CatalogWine(
             id: "wine_x", name: "Con Brio", producer: "Cantina Zeni", vintage: 2019, grape: "Merlot",
@@ -142,6 +142,8 @@ struct CatalogDirectoryTests {
         model.selectSuggestion(chosen)
         model.releaseSuggestionIfNameChanged()
         #expect(model.catalogMatch != nil)
+        // Nach der Schonfrist (Autokorrektur) zählt eine Änderung als Absicht.
+        try await Task.sleep(for: .seconds(WineFormViewModel.suggestionGrace + 0.2))
         model.name = "Con Brioso"
         model.releaseSuggestionIfNameChanged()
         #expect(model.catalogMatch == nil)
@@ -210,5 +212,37 @@ struct CatalogImageAdoptionTests {
         #expect(model.labelImageData == nil)
         model.toggleCatalogImage()
         #expect(model.labelImageData == catalogPhoto)
+    }
+}
+
+@Suite("Katalogwahl und Autokorrektur")
+struct SuggestionAutocorrectTests {
+
+    private func entry() -> CatalogWine {
+        CatalogWine(id: "demo", name: "Con Brio", producer: "Cantina Zeni", vintage: 2019, grape: "Merlot",
+                    region: "Tessin", country: "Schweiz", typeRaw: "red", alcoholPercent: 13.5, source: "")
+    }
+
+    @MainActor
+    @Test("Ändert die Tastatur den Namen gleich nach der Wahl, wird er zurückgesetzt und die Wahl bleibt")
+    func graceAfterPick() {
+        let model = WineFormViewModel(mode: .add)
+        model.selectSuggestion(entry())
+        model.name = "Con Brie"                      // Autokorrektur
+        model.releaseSuggestionIfNameChanged()
+        #expect(model.name == "Con Brio")
+        #expect(model.catalogMatch != nil)
+    }
+
+    @MainActor
+    @Test("Ein echtes Umschreiben nach der Schonfrist hebt die Wahl auf")
+    func editAfterGrace() async throws {
+        let model = WineFormViewModel(mode: .add)
+        model.selectSuggestion(entry())
+        try await Task.sleep(for: .seconds(WineFormViewModel.suggestionGrace + 0.2))
+        model.name = "Cicero"
+        model.releaseSuggestionIfNameChanged()
+        #expect(model.catalogMatch == nil)
+        #expect(model.name == "Cicero")
     }
 }
