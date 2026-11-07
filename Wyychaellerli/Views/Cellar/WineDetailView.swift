@@ -40,7 +40,6 @@ struct WineDetailView: View {
             .padding()
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle(wine.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

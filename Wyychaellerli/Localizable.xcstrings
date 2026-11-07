@@ -174,23 +174,6 @@
         }
       }
     },
-    "„Abgleichen“ holt die Treffer und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst. „Suchen“ öffnet die Suche im Browser, zum Vergleichen von Hand." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“Compare” fetches the results and sets them against the suggestion; only what you choose is taken over. “Search” opens the search in the browser, for comparing by hand."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„Uporedi“ preuzima rezultate i poredi ih sa predlogom; preuzima se samo ono što izabereš. „Traži“ otvara pretragu u pregledniku, za ručno poređenje."
-          }
-        }
-      }
-    },
     "„Bestand erhöhen“ zählt deine Flaschen zum bestehenden Eintrag, statt einen zweiten anzulegen." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3660,40 +3643,6 @@
         }
       }
     },
-    "Vivino-Foto: wird im Katalog gespeichert und ersetzt ein vorhandenes." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino photo: saved in the catalog, replacing an existing one."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino fotografija: čuva se u katalogu i zamenjuje postojeću."
-          }
-        }
-      }
-    },
-    "Vivino-Foto nicht verwenden" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do not use Vivino photo"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ne koristi Vivino fotografiju"
-          }
-        }
-      }
-    },
     "Wird beim Aufnehmen im Katalog gespeichert." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3728,23 +3677,6 @@
         }
       }
     },
-    "Vivino-Foto verwenden" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use Vivino photo"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Koristi Vivino fotografiju"
-          }
-        }
-      }
-    },
     "Das Foto konnte nicht geladen werden." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3762,23 +3694,6 @@
         }
       }
     },
-    "Jede Übernahme aus diesem Treffer nimmt das Vivino-Foto mit; es kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Every take-over from this result also takes the Vivino photo; it goes into the catalog, even if there is already one there or in the suggestion. Your photo in the cellar stays untouched."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Svako preuzimanje iz ovog rezultata preuzima i Vivino fotografiju; ona ide u katalog, čak i ako tamo ili u predlogu već postoji jedna. Tvoja fotografija u podrumu ostaje netaknuta."
-          }
-        }
-      }
-    },
     "Gesucht wurde nach:" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3792,6 +3707,295 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tražilo se:"
+          }
+        }
+      }
+    },
+    "Mit der Quelle abgleichen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare with the source"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uporedi sa izvorom"
+          }
+        }
+      }
+    },
+    "Der Abgleich mit der Quelle ist nicht eingerichtet. Adresse und Schlüssel stehen in den Einstellungen unter „Quellenabgleich“." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The comparison with the source is not set up. Address and key are in Settings under “Source comparison”."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje sa izvorom nije podešeno. Adresa i ključ su u podešavanjima pod „Poređenje sa izvorom“."
+          }
+        }
+      }
+    },
+    "Quellenabgleich" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source comparison"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje sa izvorom"
+          }
+        }
+      }
+    },
+    "Die Antwort des Servers war nicht lesbar. Läuft der Ablauf „Webhook Quellensuche“ in n8n, und ist er aktiv?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server’s reply was not readable. Is the “Webhook Quellensuche” flow in n8n running and active?"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odgovor servera nije čitljiv. Da li je tok „Webhook Quellensuche“ u n8n pokrenut i aktivan?"
+          }
+        }
+      }
+    },
+    "Die Produktionsadresse des Ablaufs „Webhook Quellensuche“ (https) und der Wert der Header-Auth-Zugangsdaten mit dem Namen „X-Admin-Token“. Der Schlüssel liegt in der Keychain dieses Geräts." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The production address of the “Webhook Quellensuche” flow (https) and the value of the Header Auth credentials named “X-Admin-Token”. The key is stored in this device’s keychain."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Produkciona adresa toka „Webhook Quellensuche“ (https) i vrednost Header Auth pristupnih podataka pod imenom „X-Admin-Token“. Ključ se čuva u Keychain-u ovog uređaja."
+          }
+        }
+      }
+    },
+    "Foto der Quelle: wird im Katalog gespeichert und ersetzt ein vorhandenes." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo from the source: saved in the catalog, replacing an existing one."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografija iz izvora: čuva se u katalogu i zamenjuje postojeću."
+          }
+        }
+      }
+    },
+    "Foto der Quelle nicht verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do not use photo from the source"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne koristi fotografiju iz izvora"
+          }
+        }
+      }
+    },
+    "Foto der Quelle verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use photo from the source"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi fotografiju iz izvora"
+          }
+        }
+      }
+    },
+    "Jede Übernahme aus diesem Treffer nimmt das Foto der Quelle mit; es kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every take-over from this result also takes the photo from the source; it goes into the catalog, even if there is already one there or in the suggestion. Your photo in the cellar stays untouched."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Svako preuzimanje iz ovog rezultata preuzima i fotografiju iz izvora; ona ide u katalog, čak i ako tamo ili u predlogu već postoji jedna. Tvoja fotografija u podrumu ostaje netaknuta."
+          }
+        }
+      }
+    },
+    "Suche in der Quelle …" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching the source …"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraga u izvoru …"
+          }
+        }
+      }
+    },
+    "Treffer der Quelle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Results from the source"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezultati iz izvora"
+          }
+        }
+      }
+    },
+    "Die Quelle kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The source does not know this wine under this name. Check the name and producer, or search in the browser."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izvor ne poznaje ovo vino pod ovim imenom. Proveri naziv i proizvođača ili traži u pregledniku."
+          }
+        }
+      }
+    },
+    "Quelle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izvor"
+          }
+        }
+      }
+    },
+    "keine Angabe in der Quelle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "not given in the source"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nema podatka u izvoru"
+          }
+        }
+      }
+    },
+    "https://…/webhook/quellensuche" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://…/webhook/quellensuche"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://…/webhook/quellensuche"
+          }
+        }
+      }
+    },
+    "Holt die Treffer der Quelle und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetches the results from the source and sets them against the suggestion; only what you choose is taken over."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preuzima rezultate iz izvora i poredi ih sa predlogom; preuzima se samo ono što izabereš."
+          }
+        }
+      }
+    },
+    "Passt keiner der Treffer, lässt sich die Suche im Browser ansehen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If none of the results fits, you can look at the search in the browser."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ako nijedan rezultat ne odgovara, pretragu možeš pogledati u pregledniku."
           }
         }
       }
@@ -3826,40 +4030,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ni za jednu flašu nisu zabeležene preporuke za jela sa etikete. Pri skeniranju se automatski preuzimaju ako stoje na etiketi."
-          }
-        }
-      }
-    },
-    "Bei Vivino abgleichen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compare with Vivino"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uporedi sa Vivinom"
-          }
-        }
-      }
-    },
-    "Bei Vivino suchen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search on Vivino"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pretraži na Vivinu"
           }
         }
       }
@@ -4900,23 +5070,6 @@
         }
       }
     },
-    "Der Vivino-Abgleich ist nicht eingerichtet. Adresse und Schlüssel stehen in den Einstellungen unter „Vivino-Abgleich“." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Vivino comparison is not set up. Address and key are in Settings under “Vivino comparison”."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poređenje sa Vivinom nije podešeno. Adresa i ključ su u podešavanjima pod „Poređenje sa Vivinom“."
-          }
-        }
-      }
-    },
     "Der Wein-Berater" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5100,23 +5253,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Odgovor provajdera je bio prazan."
-          }
-        }
-      }
-    },
-    "Die Antwort des Servers war nicht lesbar. Läuft der Ablauf „Webhook Vivino-Suche“ in n8n, und ist er aktiv?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The server’s reply was not readable. Is the “Webhook Vivino-Suche” flow in n8n running and active?"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odgovor servera nije čitljiv. Da li je tok „Webhook Vivino-Suche“ u n8n pokrenut i aktivan?"
           }
         }
       }
@@ -5387,23 +5523,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VI dvaput nije dala upotrebljivu preporuku (rezervisana mesta ili nepoznata vina). Pokušaj ponovo ili preciznije opiši jelo."
-          }
-        }
-      }
-    },
-    "Die Produktionsadresse des Ablaufs „Webhook Vivino-Suche“ (https) und der Wert der Header-Auth-Zugangsdaten mit dem Namen „X-Admin-Token“. Der Schlüssel liegt in der Keychain dieses Geräts." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The production address of the “Webhook Vivino-Suche” flow (https) and the value of the Header Auth credentials named “X-Admin-Token”. The key is stored in this device’s keychain."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produkciona adresa toka „Webhook Vivino-Suche“ (https) i vrednost Header Auth pristupnih podataka pod imenom „X-Admin-Token“. Ključ se čuva u Keychain-u ovog uređaja."
           }
         }
       }
@@ -7670,9 +7789,6 @@
         }
       }
     },
-    "https://…/webhook/vivino-suche" : {
-
-    },
     "Ich bin's, los geht's" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8380,23 +8496,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bez podatka"
-          }
-        }
-      }
-    },
-    "keine Angabe bei Vivino" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "not given on Vivino"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nema podatka na Vivinu"
           }
         }
       }
@@ -11315,23 +11414,6 @@
         }
       }
     },
-    "Suche bei Vivino …" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Searching Vivino …"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pretraga na Vivinu …"
-          }
-        }
-      }
-    },
     "Südafrika" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11713,23 +11795,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upiši svoje ime u podešavanjima da bi se videlo od koga je ocena."
-          }
-        }
-      }
-    },
-    "Treffer bei Vivino" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Results on Vivino"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rezultati na Vivinu"
           }
         }
       }
@@ -12131,57 +12196,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Možda bolja od tvoje fotografije."
-          }
-        }
-      }
-    },
-    "Vivino" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino"
-          }
-        }
-      }
-    },
-    "Vivino kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino does not know this wine under this name. Check the name and producer, or search in the browser."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino ne poznaje ovo vino pod ovim imenom. Proveri naziv i proizvođača ili traži u pregledniku."
-          }
-        }
-      }
-    },
-    "Vivino-Abgleich" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vivino comparison"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poređenje sa Vivinom"
           }
         }
       }

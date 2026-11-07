@@ -4,7 +4,7 @@ import UIKit
 // MARK: - Markenfarben
 
 /// Das Erscheinungsbild der App: tiefes Weinrot, Rosé als Rahmen- und Akzentton,
-/// Grün nur für die Hauptaktion. Angelehnt an Vivino, aber nicht deckungsgleich.
+/// Grün nur für die Hauptaktion. Angelehnt an bekannte Wein-Apps, aber nicht deckungsgleich.
 /// Jede feste Farbe steht hier und hat eine Dunkelvariante (siehe `Color.adaptive`).
 enum Brand {
     /// Akzent der ganzen App (Knöpfe, gewählte Reiter, Chips). Wird an der Wurzel als `tint` gesetzt,

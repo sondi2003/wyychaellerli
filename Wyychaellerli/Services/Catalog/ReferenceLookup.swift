@@ -1,21 +1,22 @@
 import Foundation
 import UIKit
 
-/// Abgleich eines Vorschlags mit Vivino – nur für den Admin, und nie automatisch.
+/// Abgleich eines Vorschlags mit einer Referenzquelle – nur für den Admin, und nie automatisch.
 ///
-/// Die App spricht **nicht** selbst mit Vivino: Die Schnittstelle sperrt Programme, die sich
+/// Die App spricht **nicht** selbst mit der Quelle: Deren Schnittstelle sperrt Programme, die sich
 /// nicht wie ein Browser ausgeben (ehrlicher Absender → 403). Die Abfrage läuft deshalb über
-/// den n8n-Strang „Webhook Vivino-Suche“ auf dem eigenen Server (`Docs/n8n-vivino-import.json`),
-/// der die Treffer schon im Katalogformat zurückgibt. Adresse und Zugangsschlüssel trägt der
-/// Admin in den Einstellungen ein; der Schlüssel liegt in der Keychain, nicht im Programm.
+/// den n8n-Strang „Webhook Quellensuche“ auf dem eigenen Server (`Docs/n8n-katalog-import.json`),
+/// der die Treffer schon im Katalogformat zurückgibt, samt Adresse der Suche im Browser. Adresse
+/// und Zugangsschlüssel trägt der Admin in den Einstellungen ein; der Schlüssel liegt in der
+/// Keychain, nicht im Programm. Der Name der Quelle steht bewusst nirgends in der App.
 ///
 /// Das Ergebnis ist ein **Angebot**: Es wird nie von selbst übernommen. Der Admin wählt einen
 /// Treffer, sieht die Gegenüberstellung und übernimmt Feld für Feld.
 
 // MARK: - Treffer
 
-/// Ein Wein (ein Jahrgang) bei Vivino, schon in unseren Feldern.
-struct VivinoCandidate: Sendable, Equatable, Identifiable, Decodable {
+/// Ein Wein (ein Jahrgang) in der Quelle, schon in unseren Feldern.
+struct ReferenceCandidate: Sendable, Equatable, Identifiable, Decodable {
     var vid: String
     var name: String
     var producer: String
@@ -28,7 +29,7 @@ struct VivinoCandidate: Sendable, Equatable, Identifiable, Decodable {
     var foodPairings: [String]
     var rating: Double?
     var ratingsCount: Int
-    /// Adresse des Flaschenfotos bei Vivino (https) oder leer.
+    /// Adresse des Flaschenfotos in der Quelle (https) oder leer.
     var imageURL: String
 
     var id: String { vid }
@@ -50,7 +51,7 @@ struct VivinoCandidate: Sendable, Equatable, Identifiable, Decodable {
         self.imageURL = imageURL
     }
 
-    /// Tolerant gelesen: Eine Änderung bei Vivino oder im Ablauf darf nicht zum Absturz
+    /// Tolerant gelesen: Eine Änderung in der Quelle oder im Ablauf darf nicht zum Absturz
     /// führen, fehlende Felder sind einfach leer.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -80,22 +81,22 @@ struct VivinoCandidate: Sendable, Equatable, Identifiable, Decodable {
     }
 }
 
-struct RankedVivinoCandidate: Equatable, Identifiable {
-    let candidate: VivinoCandidate
+struct RankedReferenceCandidate: Equatable, Identifiable {
+    let candidate: ReferenceCandidate
     let score: Double
     var id: String { candidate.id }
 }
 
 // MARK: - Suchwörter und Rangfolge
 
-enum VivinoRanker {
+enum ReferenceRanker {
 
     /// Ab dieser Übereinstimmung gilt ein Treffer als Vorschlag.
     static let minimumScore = 0.5
     /// Wie viele Treffer zur Auswahl stehen.
     static let maximumResults = 5
 
-    /// Die Suchformen, in der Reihenfolge, in der sie versucht werden. Vivino verhält sich je
+    /// Die Suchformen, in der Reihenfolge, in der sie versucht werden. Die Quelle verhält sich je
     /// nach Wortlaut verschieden: Eine Wortgruppe wird oft als Ganzes gesucht („Villa Antinori“
     /// findet 10 Weine), liefert aber manchmal alles Mögliche („Antinori Villa Antinori“ 204);
     /// ein einzelnes Wort („antinori“) liefert den ganzen Produzenten, nach Bewertung sortiert,
@@ -129,13 +130,13 @@ enum VivinoRanker {
     static let goodScore = 0.8
 
     /// Bewertet die Treffer gegen den Vorschlag und liefert die besten zuerst.
-    static func rank(_ candidates: [VivinoCandidate], for entry: CatalogWine) -> [RankedVivinoCandidate] {
+    static func rank(_ candidates: [ReferenceCandidate], for entry: CatalogWine) -> [RankedReferenceCandidate] {
         let ours = words(entry.producer + " " + entry.name)
         guard !ours.isEmpty else { return [] }
         var seen = Set<String>()
         return candidates
             .filter { seen.insert($0.vid).inserted }
-            .map { RankedVivinoCandidate(candidate: $0, score: score($0, ours: ours, vintage: entry.vintage)) }
+            .map { RankedReferenceCandidate(candidate: $0, score: score($0, ours: ours, vintage: entry.vintage)) }
             .filter { $0.score >= minimumScore }
             .sorted {
                 if $0.score != $1.score { return $0.score > $1.score }
@@ -148,7 +149,7 @@ enum VivinoRanker {
     /// Anteil der eigenen Wörter, die der Treffer enthält (zu 60 %), und umgekehrt (zu 40 %);
     /// dazu der Jahrgang (nur bei bereits passendem Namen): gleich +0,25, abweichend −0,1. Ein anderer Jahrgang bleibt ein
     /// möglicher Treffer – der Jahrgang auf dem Etikett kann falsch gelesen sein.
-    static func score(_ candidate: VivinoCandidate, ours: [String], vintage: Int) -> Double {
+    static func score(_ candidate: ReferenceCandidate, ours: [String], vintage: Int) -> Double {
         let theirs = words(candidate.producer + " " + candidate.name)
         guard !theirs.isEmpty else { return 0 }
         let shared = Double(ours.filter { word in theirs.contains { same(word, $0) } }.count)
@@ -182,7 +183,7 @@ enum VivinoRanker {
 // MARK: - Gegenüberstellung
 
 /// Die Felder, die sich vergleichen und übernehmen lassen.
-enum VivinoField: CaseIterable, Identifiable {
+enum ReferenceField: CaseIterable, Identifiable {
     case producer, name, vintage, type, grape, region, country, food
 
     var id: Self { self }
@@ -214,8 +215,8 @@ enum VivinoField: CaseIterable, Identifiable {
         }
     }
 
-    /// Wert bei Vivino, als Text.
-    func vivino(_ candidate: VivinoCandidate) -> String {
+    /// Wert in der Quelle, als Text.
+    func reference(_ candidate: ReferenceCandidate) -> String {
         switch self {
         case .producer: candidate.producer
         case .name: candidate.name
@@ -228,7 +229,7 @@ enum VivinoField: CaseIterable, Identifiable {
         }
     }
 
-    func apply(_ candidate: VivinoCandidate, to entry: inout CatalogWine) {
+    func apply(_ candidate: ReferenceCandidate, to entry: inout CatalogWine) {
         switch self {
         case .producer: entry.producer = candidate.producer
         case .name: entry.name = candidate.name
@@ -246,47 +247,47 @@ enum VivinoField: CaseIterable, Identifiable {
     }
 }
 
-struct VivinoComparisonRow: Equatable, Identifiable {
+struct ReferenceComparisonRow: Equatable, Identifiable {
     enum State: Equatable {
         /// Beide gleich.
         case same
         /// Beide haben etwas, aber Verschiedenes.
         case different
-        /// Nur Vivino kennt den Wert – eine Ergänzung.
+        /// Nur die Quelle kennt den Wert – eine Ergänzung.
         case fillable
-        /// Vivino kennt den Wert nicht; der Vorschlag bleibt.
-        case vivinoEmpty
+        /// Die Quelle kennt den Wert nicht; der Vorschlag bleibt.
+        case referenceEmpty
     }
 
-    let field: VivinoField
+    let field: ReferenceField
     let current: String
-    let vivino: String
+    let reference: String
     let state: State
-    var id: VivinoField { field }
+    var id: ReferenceField { field }
 }
 
-enum VivinoComparison {
+enum ReferenceComparison {
 
-    static func rows(entry: CatalogWine, candidate: VivinoCandidate) -> [VivinoComparisonRow] {
-        VivinoField.allCases.map { field in
+    static func rows(entry: CatalogWine, candidate: ReferenceCandidate) -> [ReferenceComparisonRow] {
+        ReferenceField.allCases.map { field in
             let current = field.current(entry)
-            let vivino = field.vivino(candidate)
-            let state: VivinoComparisonRow.State
-            if vivino.isEmpty {
-                state = .vivinoEmpty
+            let reference = field.reference(candidate)
+            let state: ReferenceComparisonRow.State
+            if reference.isEmpty {
+                state = .referenceEmpty
             } else if current.isEmpty {
                 state = .fillable
-            } else if DuplicateFinder.normalized(current) == DuplicateFinder.normalized(vivino) {
+            } else if DuplicateFinder.normalized(current) == DuplicateFinder.normalized(reference) {
                 state = .same
             } else {
                 state = .different
             }
-            return VivinoComparisonRow(field: field, current: current, vivino: vivino, state: state)
+            return ReferenceComparisonRow(field: field, current: current, reference: reference, state: state)
         }
     }
 
     /// Übernimmt alle Felder mit dem angegebenen Zustand.
-    static func apply(_ candidate: VivinoCandidate, to entry: CatalogWine, states: Set<VivinoComparisonRow.State>) -> CatalogWine {
+    static func apply(_ candidate: ReferenceCandidate, to entry: CatalogWine, states: Set<ReferenceComparisonRow.State>) -> CatalogWine {
         var result = entry
         for row in rows(entry: entry, candidate: candidate) where states.contains(row.state) {
             row.field.apply(candidate, to: &result)
@@ -299,10 +300,10 @@ enum VivinoComparison {
 
 /// Adresse des Webhooks und Zugangsschlüssel. Die Adresse ist unkritisch (UserDefaults),
 /// der Schlüssel liegt in der Keychain.
-enum VivinoLookupSettings {
+enum ReferenceLookupSettings {
 
-    static let urlKey = "vivino.lookup.url"
-    static let tokenAccount = "vivino.lookup.token"
+    static let urlKey = "reference.lookup.url"
+    static let tokenAccount = "reference.lookup.token"
 
     static var urlString: String {
         get { UserDefaults.standard.string(forKey: urlKey) ?? "" }
@@ -322,7 +323,7 @@ enum VivinoLookupSettings {
     static var isConfigured: Bool { endpoint != nil && !token.isEmpty }
 }
 
-enum VivinoLookupError: LocalizedError, Equatable {
+enum ReferenceLookupError: LocalizedError, Equatable {
     case notConfigured
     case server(String)
     case unreadable
@@ -331,23 +332,37 @@ enum VivinoLookupError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .notConfigured:
-            tr("Der Vivino-Abgleich ist nicht eingerichtet. Adresse und Schlüssel stehen in den Einstellungen unter „Vivino-Abgleich“.")
+            tr("Der Abgleich mit der Quelle ist nicht eingerichtet. Adresse und Schlüssel stehen in den Einstellungen unter „Quellenabgleich“.")
         case .server(let message):
             message
         case .unreadable:
-            tr("Die Antwort des Servers war nicht lesbar. Läuft der Ablauf „Webhook Vivino-Suche“ in n8n, und ist er aktiv?")
+            tr("Die Antwort des Servers war nicht lesbar. Läuft der Ablauf „Webhook Quellensuche“ in n8n, und ist er aktiv?")
         case .transport:
             tr("Der Server ist nicht erreichbar.")
         }
     }
 }
 
-enum VivinoLookup {
+enum ReferenceLookup {
 
     private struct Response: Decodable {
         var ok: Bool
         var meldung: String?
-        var candidates: [VivinoCandidate]?
+        var searchURL: String?
+        var candidates: [ReferenceCandidate]?
+    }
+
+    /// Was eine Abfrage liefert: die Treffer und die Adresse derselben Suche im Browser.
+    struct Reply: Equatable {
+        var candidates: [ReferenceCandidate]
+        var searchURL: URL?
+    }
+
+    /// Die besten Treffer, bewertet, samt Adresse der Suche im Browser (vom Server, damit die
+    /// App den Namen der Quelle nicht kennen muss).
+    struct Result: Equatable {
+        var ranked: [RankedReferenceCandidate]
+        var searchURL: URL?
     }
 
     /// Der Fehlertext zu einem HTTP-Code, mit der Meldung von n8n (`{"message": …}`), damit sich
@@ -368,25 +383,26 @@ enum VivinoLookup {
     }
 
     /// Antwort des Ablaufs lesen – getrennt von der Abfrage, damit sie ohne Netz testbar ist.
-    static func parse(_ data: Data) throws -> [VivinoCandidate] {
+    static func parse(_ data: Data) throws -> Reply {
         guard let response = try? JSONDecoder().decode(Response.self, from: data) else {
-            throw VivinoLookupError.unreadable
+            throw ReferenceLookupError.unreadable
         }
         guard response.ok else {
-            throw VivinoLookupError.server(response.meldung ?? tr("Der Abgleich ist fehlgeschlagen."))
+            throw ReferenceLookupError.server(response.meldung ?? tr("Der Abgleich ist fehlgeschlagen."))
         }
-        return response.candidates ?? []
+        let link = response.searchURL.flatMap(URL.init(string:)).flatMap { $0.scheme == "https" ? $0 : nil }
+        return Reply(candidates: response.candidates ?? [], searchURL: link)
     }
 
     /// Sucht mit einem Wort. Der Ablauf bremst selbst (30 Abfragen pro Stunde).
-    static func search(term: String) async throws -> [VivinoCandidate] {
-        guard let url = VivinoLookupSettings.endpoint, !VivinoLookupSettings.token.isEmpty else {
-            throw VivinoLookupError.notConfigured
+    static func search(term: String) async throws -> Reply {
+        guard let url = ReferenceLookupSettings.endpoint, !ReferenceLookupSettings.token.isEmpty else {
+            throw ReferenceLookupError.notConfigured
         }
         var request = URLRequest(url: url, timeoutInterval: 45)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(VivinoLookupSettings.token, forHTTPHeaderField: "X-Admin-Token")
+        request.setValue(ReferenceLookupSettings.token, forHTTPHeaderField: "X-Admin-Token")
         request.httpBody = try JSONEncoder().encode(["term": term])
 
         let data: Data
@@ -396,20 +412,19 @@ enum VivinoLookup {
             data = body
             status = (response as? HTTPURLResponse)?.statusCode ?? 0
         } catch {
-            throw VivinoLookupError.transport
+            throw ReferenceLookupError.transport
         }
         if status != 200 {
-            throw VivinoLookupError.server(describe(status: status, body: data))
+            throw ReferenceLookupError.server(describe(status: status, body: data))
         }
         return try parse(data)
     }
 
-    /// Lädt das Flaschenfoto. Nur vom Bilderserver von Vivino über https und höchstens 5 MB;
-    /// alles andere liefert `nil`. Die Adresse stammt aus der Antwort des eigenen Servers, wird
-    /// aber trotzdem geprüft.
-    static func image(for candidate: VivinoCandidate) async -> Data? {
-        guard let url = URL(string: candidate.imageURL), url.scheme == "https",
-              let host = url.host, host == "images.vivino.com" else { return nil }
+    /// Lädt das Flaschenfoto. Nur über https, höchstens 5 MB und nur, wenn es sich als Bild
+    /// lesen lässt; alles andere liefert `nil`. Die Adresse stammt aus der Antwort des eigenen,
+    /// durch den Schlüssel geschützten Servers.
+    static func image(for candidate: ReferenceCandidate) async -> Data? {
+        guard let url = URL(string: candidate.imageURL), url.scheme == "https", url.host != nil else { return nil }
         guard let (data, response) = try? await URLSession.shared.data(from: url),
               (response as? HTTPURLResponse)?.statusCode == 200,
               data.count > 1000, data.count < 5_000_000,
@@ -420,20 +435,23 @@ enum VivinoLookup {
     /// Versucht die Suchformen nacheinander und führt alle Treffer zusammen; sobald der beste
     /// gut genug ist, wird nicht weiter gefragt (jede Abfrage kostet einen Platz in der
     /// Stundenbremse des Ablaufs).
-    static func find(for entry: CatalogWine) async throws -> [RankedVivinoCandidate] {
+    static func find(for entry: CatalogWine) async throws -> Result {
         var lastError: Error?
-        var all: [VivinoCandidate] = []
-        var best: [RankedVivinoCandidate] = []
-        for term in VivinoRanker.searchTerms(for: entry) {
+        var all: [ReferenceCandidate] = []
+        var best: [RankedReferenceCandidate] = []
+        var link: URL?
+        for term in ReferenceRanker.searchTerms(for: entry) {
             do {
-                all += try await search(term: term)
-                best = VivinoRanker.rank(all, for: entry)
-                if let top = best.first, top.score >= VivinoRanker.goodScore { return best }
+                let reply = try await search(term: term)
+                all += reply.candidates
+                if link == nil { link = reply.searchURL }
+                best = ReferenceRanker.rank(all, for: entry)
+                if let top = best.first, top.score >= ReferenceRanker.goodScore { break }
             } catch {
                 lastError = error
             }
         }
-        if best.isEmpty, let lastError { throw lastError }
-        return best
+        if best.isEmpty, link == nil, let lastError { throw lastError }
+        return Result(ranked: best, searchURL: link)
     }
 }

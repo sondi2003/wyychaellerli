@@ -68,12 +68,12 @@ struct CatalogSettingsSection: View {
                     Label("Katalog verwalten", systemImage: "books.vertical")
                 }
                 NavigationLink {
-                    VivinoSettingsView()
+                    ReferenceSettingsView()
                 } label: {
                     HStack {
-                        Label("Vivino-Abgleich", systemImage: "arrow.left.arrow.right")
+                        Label("Quellenabgleich", systemImage: "arrow.left.arrow.right")
                         Spacer()
-                        Text(VivinoLookupSettings.isConfigured ? tr("Eingerichtet") : tr("Nicht eingerichtet"))
+                        Text(ReferenceLookupSettings.isConfigured ? tr("Eingerichtet") : tr("Nicht eingerichtet"))
                             .foregroundStyle(.secondary)
                     }
                 }

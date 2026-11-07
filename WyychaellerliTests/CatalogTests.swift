@@ -205,7 +205,7 @@ struct CatalogPairingTests {
 
     private func entry(food: [String]) -> CatalogWine {
         CatalogWine(id: "x", name: "Barolo", producer: "Rocca", vintage: 2020, grape: "", region: "",
-                    country: "", typeRaw: "red", alcoholPercent: 0, source: "vivino", foodPairings: food)
+                    country: "", typeRaw: "red", alcoholPercent: 0, source: "import", foodPairings: food)
     }
 
     @Test("Ein Vorschlag mit Speisen ergänzt einen Eintrag ohne sie")
@@ -229,7 +229,7 @@ struct CatalogPairingTests {
         #expect(groups == [.meat, .cheese, .fish])
     }
 
-    @Test("Die Vivino-Begriffe des Imports treffen ihre Gruppe")
+    @Test("Die Speisebegriffe des Imports treffen ihre Gruppe")
     func importTermsMatch() {
         let terms: [(String, PairingCategory)] = [
             ("Rindfleisch", .meat), ("Kalbfleisch", .meat), ("Lamm", .meat), ("Schweinefleisch", .meat),
@@ -244,34 +244,8 @@ struct CatalogPairingTests {
     }
 }
 
-@Suite("Katalog: Vivino-Suche")
-struct VivinoSearchTests {
-
-    private func entry(producer: String, name: String, vintage: Int) -> CatalogWine {
-        CatalogWine(id: "x", name: name, producer: producer, vintage: vintage, grape: "", region: "",
-                    country: "", typeRaw: "red", alcoholPercent: 0, source: "nutzer")
-    }
-
-    @Test("Die Suche trägt Produzent, Name und Jahrgang, sauber kodiert")
-    func queryContainsAllParts() throws {
-        let url = try #require(AdminSubmissionEditor.vivinoSearchURL(
-            for: entry(producer: " Château Müller ", name: "Cuvée Rouge", vintage: 2019)))
-        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
-        #expect(url.host == "www.vivino.com")
-        #expect(items?.first?.value == "Château Müller Cuvée Rouge 2019")
-    }
-
-    @Test("Ohne Jahrgang kein Jahr, ohne Angaben keine Suche")
-    func omitsMissingParts() throws {
-        let url = try #require(AdminSubmissionEditor.vivinoSearchURL(
-            for: entry(producer: "", name: "Barolo", vintage: 0)))
-        #expect(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first?.value == "Barolo")
-        #expect(AdminSubmissionEditor.vivinoSearchURL(for: entry(producer: "", name: " ", vintage: 0)) == nil)
-    }
-}
-
-@Suite("Katalog: Vivino-Abgleich")
-struct VivinoLookupTests {
+@Suite("Katalog: Quellenabgleich")
+struct ReferenceLookupTests {
 
     private func entry(producer: String = "Donatsch", name: String = "Unique Pinot Noir", vintage: Int = 2021) -> CatalogWine {
         CatalogWine(id: "x", name: name, producer: producer, vintage: vintage, grape: "", region: "",
@@ -279,17 +253,17 @@ struct VivinoLookupTests {
     }
 
     private func candidate(_ vid: String, _ producer: String, _ name: String, _ vintage: Int,
-                           grape: String = "", count: Int = 10) -> VivinoCandidate {
-        VivinoCandidate(vid: vid, name: name, producer: producer, vintage: vintage, region: "Malanser",
+                           grape: String = "", count: Int = 10) -> ReferenceCandidate {
+        ReferenceCandidate(vid: vid, name: name, producer: producer, vintage: vintage, region: "Malanser",
                         country: "Schweiz", typeRaw: "red", grape: grape, foodPairings: [], rating: 4.2, ratingsCount: count)
     }
 
     @Test("Suchformen: Name als Wortgruppe, Produzent plus Name, dann Einzelwörter")
     func searchTerms() {
-        #expect(VivinoRanker.searchTerms(for: entry()) == ["Unique Pinot Noir", "Donatsch Unique Pinot Noir", "donatsch", "unique"])
-        #expect(VivinoRanker.searchTerms(for: entry(producer: "", name: "Barolo")) == ["barolo"])
+        #expect(ReferenceRanker.searchTerms(for: entry()) == ["Unique Pinot Noir", "Donatsch Unique Pinot Noir", "donatsch", "unique"])
+        #expect(ReferenceRanker.searchTerms(for: entry(producer: "", name: "Barolo")) == ["barolo"])
         // Der Fall, der bei der Einzelwort-Suche durchfiel: 101 Weine von Antinori, der gesuchte weit hinten.
-        let terms = VivinoRanker.searchTerms(for: entry(producer: "Marchesi Antinori", name: "Villa Antinori 2025"))
+        let terms = ReferenceRanker.searchTerms(for: entry(producer: "Marchesi Antinori", name: "Villa Antinori 2025"))
         #expect(terms.first == "Villa Antinori")
         #expect(terms.contains("Marchesi Antinori Villa Antinori"))
     }
@@ -301,7 +275,7 @@ struct VivinoLookupTests {
             candidate("2", "Antinori", "Villa Antinori Toscana Bianco", 2025, count: 542),
             candidate("3", "Antinori", "Villa Antinori Toscana Bianco", 2024, count: 2131)
         ]
-        let ranked = VivinoRanker.rank(list, for: entry(producer: "Marchesi Antinori", name: "Villa Antinori Bianco", vintage: 2025))
+        let ranked = ReferenceRanker.rank(list, for: entry(producer: "Marchesi Antinori", name: "Villa Antinori Bianco", vintage: 2025))
         #expect(ranked.first?.candidate.vid == "2")
     }
 
@@ -313,7 +287,7 @@ struct VivinoLookupTests {
             candidate("3", "Peter Michael", "Le Caprice Pinot Noir", 2021),
             candidate("4", "Donatsch", "Passion Pinot Noir", 2021)
         ]
-        let ranked = VivinoRanker.rank(list, for: entry())
+        let ranked = ReferenceRanker.rank(list, for: entry())
         #expect(ranked.first?.candidate.vid == "2")
         #expect(ranked.map(\.candidate.vid).contains("1"))
         #expect(!ranked.map(\.candidate.vid).contains("3"))
@@ -321,7 +295,7 @@ struct VivinoLookupTests {
 
     @Test("Ein Tippfehler im Namen findet den Treffer trotzdem")
     func typoStillMatches() {
-        let ranked = VivinoRanker.rank([candidate("1", "Donatsch", "Unique Pinot Noir", 2021)],
+        let ranked = ReferenceRanker.rank([candidate("1", "Donatsch", "Unique Pinot Noir", 2021)],
                                        for: entry(producer: "Donatch", name: "Uniqe Pinot Noir"))
         #expect(ranked.count == 1)
     }
@@ -331,12 +305,12 @@ struct VivinoLookupTests {
         var mine = entry()
         mine.region = "Graubünden"
         let theirs = candidate("1", "Donatsch", "Unique Pinot Noir", 2021, grape: "Pinot Noir")
-        let rows = Dictionary(uniqueKeysWithValues: VivinoComparison.rows(entry: mine, candidate: theirs).map { ($0.field, $0.state) })
+        let rows = Dictionary(uniqueKeysWithValues: ReferenceComparison.rows(entry: mine, candidate: theirs).map { ($0.field, $0.state) })
         #expect(rows[.producer] == .same)
         #expect(rows[.vintage] == .same)
         #expect(rows[.grape] == .fillable)
         #expect(rows[.region] == .different)
-        #expect(rows[.food] == .vivinoEmpty)
+        #expect(rows[.food] == .referenceEmpty)
     }
 
     @Test("Leere Felder füllen lässt Abweichendes stehen")
@@ -344,22 +318,28 @@ struct VivinoLookupTests {
         var mine = entry()
         mine.region = "Graubünden"
         let theirs = candidate("1", "Donatsch", "Unique Pinot Noir", 2021, grape: "Pinot Noir")
-        let result = VivinoComparison.apply(theirs, to: mine, states: [.fillable])
+        let result = ReferenceComparison.apply(theirs, to: mine, states: [.fillable])
         #expect(result.grape == "Pinot Noir")
         #expect(result.region == "Graubünden")
-        let all = VivinoComparison.apply(theirs, to: mine, states: [.fillable, .different])
+        let all = ReferenceComparison.apply(theirs, to: mine, states: [.fillable, .different])
         #expect(all.region == "Malanser")
     }
 
     @Test("Die Antwort des Ablaufs wird gelesen, Fehler und Lücken sind kein Absturz")
     func parsing() throws {
         let good = Data(#"{"ok":true,"candidates":[{"vid":"7","name":"X","producer":"Y","vintage":2020}]}"#.utf8)
-        let list = try VivinoLookup.parse(good)
-        #expect(list.count == 1)
-        #expect(list[0].grape.isEmpty && list[0].foodPairings.isEmpty)
-        #expect(throws: VivinoLookupError.server("Zu viele")) {
-            try VivinoLookup.parse(Data(#"{"ok":false,"meldung":"Zu viele"}"#.utf8))
+        let reply = try ReferenceLookup.parse(good)
+        #expect(reply.candidates.count == 1)
+        #expect(reply.candidates[0].grape.isEmpty && reply.candidates[0].foodPairings.isEmpty)
+        #expect(reply.searchURL == nil)
+        // Die Adresse der Suche im Browser kommt vom Server; nur https wird angenommen.
+        let withLink = Data(#"{"ok":true,"searchURL":"https://example.org/s?q=x","candidates":[]}"#.utf8)
+        #expect(try ReferenceLookup.parse(withLink).searchURL?.host == "example.org")
+        let insecure = Data(#"{"ok":true,"searchURL":"http://example.org/s?q=x","candidates":[]}"#.utf8)
+        #expect(try ReferenceLookup.parse(insecure).searchURL == nil)
+        #expect(throws: ReferenceLookupError.server("Zu viele")) {
+            try ReferenceLookup.parse(Data(#"{"ok":false,"meldung":"Zu viele"}"#.utf8))
         }
-        #expect(throws: VivinoLookupError.unreadable) { try VivinoLookup.parse(Data("<html>".utf8)) }
+        #expect(throws: ReferenceLookupError.unreadable) { try ReferenceLookup.parse(Data("<html>".utf8)) }
     }
 }

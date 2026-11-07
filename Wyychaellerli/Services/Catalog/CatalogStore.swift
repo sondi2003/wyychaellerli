@@ -300,7 +300,7 @@ final class CatalogStore: Sendable {
             record["foodPairings"] = entry.foodPairings
         }
         let imageFile = try labelImageData.map(Self.temporaryFile)
-        // Ein vorhandenes Foto bleibt, ausser der Admin hat ausdrücklich ein anderes gewählt (Vivino).
+        // Ein vorhandenes Foto bleibt, ausser der Admin hat ausdrücklich ein anderes gewählt (Foto der Quelle).
         if let imageFile, record["image"] == nil || replacingImage { record["image"] = CKAsset(fileURL: imageFile) }
         defer { if let imageFile { try? FileManager.default.removeItem(at: imageFile) } }
 

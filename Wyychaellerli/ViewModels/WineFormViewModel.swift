@@ -329,7 +329,7 @@ final class WineFormViewModel {
         if foodPairings.trimmingCharacters(in: .whitespaces).isEmpty, !entry.foodPairings.isEmpty {
             foodPairings = entry.foodPairings.joined(separator: ", ")
         }
-        // Ein Eintrag ohne Weinart (etwa ein Dessertwein bei Vivino) ändert nichts.
+        // Ein Eintrag ohne Weinart (etwa ein Dessertwein in der Quelle) ändert nichts.
         if let wineType = entry.wineType {
             type = wineType
             typeNeedsReview = false

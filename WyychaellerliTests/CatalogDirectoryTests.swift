@@ -8,7 +8,7 @@ struct CatalogDirectoryTests {
     private func wine(_ name: String, _ producer: String = "", _ vintage: Int = 2020, id: String? = nil) -> CatalogWine {
         CatalogWine(
             id: id ?? "wine_\(name)_\(producer)_\(vintage)", name: name, producer: producer, vintage: vintage,
-            grape: "", region: "", country: "", typeRaw: "red", alcoholPercent: 0, source: "vivino"
+            grape: "", region: "", country: "", typeRaw: "red", alcoholPercent: 0, source: "import"
         )
     }
 
@@ -120,7 +120,7 @@ struct CatalogDirectoryTests {
         model.producer = "Mein Weingut"
         let chosen = CatalogWine(
             id: "wine_x", name: "Con Brio", producer: "Cantina Zeni", vintage: 2019, grape: "Merlot",
-            region: "Tessin", country: "Schweiz", typeRaw: "red", alcoholPercent: 13, source: "vivino"
+            region: "Tessin", country: "Schweiz", typeRaw: "red", alcoholPercent: 13, source: "import"
         )
         model.selectSuggestion(chosen)
         #expect(model.name == "Con Brio")
@@ -137,7 +137,7 @@ struct CatalogDirectoryTests {
         let model = WineFormViewModel(mode: .add)
         let chosen = CatalogWine(
             id: "wine_x", name: "Con Brio", producer: "Cantina Zeni", vintage: 2019, grape: "Merlot",
-            region: "", country: "", typeRaw: "red", alcoholPercent: 0, source: "vivino"
+            region: "", country: "", typeRaw: "red", alcoholPercent: 0, source: "import"
         )
         model.selectSuggestion(chosen)
         model.releaseSuggestionIfNameChanged()

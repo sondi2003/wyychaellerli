@@ -103,7 +103,7 @@ final class CatalogCenter {
         if ProcessInfo.processInfo.environment["CATALOG_DEMO"] == "1" {
             func demo(_ name: String, _ producer: String, _ vintage: Int, _ region: String) -> CatalogWine {
                 CatalogWine(id: "demo_\(name)_\(vintage)", name: name, producer: producer, vintage: vintage, grape: "Merlot",
-                            region: region, country: "Schweiz", typeRaw: "red", alcoholPercent: 13.5, source: "vivino")
+                            region: region, country: "Schweiz", typeRaw: "red", alcoholPercent: 13.5, source: "import")
             }
             directory = CatalogDirectory(entries: [
                 demo("Con Brio", "Cantina Zeni", 2018, "Tessin"), demo("Con Brio", "Cantina Zeni", 2019, "Tessin"),
@@ -332,7 +332,7 @@ final class CatalogCenter {
     }
 
     /// Nimmt alle Vorschläge einer Gruppe als einen Eintrag auf.
-    /// - `photo`: ein vom Admin gewähltes Foto (Vivino); es ersetzt ein vorhandenes im Katalog.
+    /// - `photo`: ein vom Admin gewähltes Foto (aus der Quelle); es ersetzt ein vorhandenes im Katalog.
     func accept(_ group: [CatalogSubmission], as entry: CatalogWine, photo: Data? = nil) async throws {
         let image = photo ?? group.lazy.compactMap(\.labelImageData).first
         try await store.accept(group.map(\.id), as: entry, labelImageData: image, replacingImage: photo != nil)

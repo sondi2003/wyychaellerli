@@ -408,7 +408,7 @@ struct WineFormView: View {
     /// erst am Wein, wenn der Nutzer es verwendet und den Wein sichert.
     private func loadCatalogImage(for entry: CatalogWine) async {
         let whole = await catalog.catalogImage(entry.id)
-        // Das Katalogfoto trägt unten das Wasserzeichen „vivino“; ein Verlauf blendet die
+        // Das Katalogfoto trägt unten ein Wasserzeichen der Quelle; ein Verlauf blendet die
         // Flasche dort aus. Kein Flaschenfoto, bleibt das Original.
         let data: Data?
         if let whole { data = CatalogPhotoFade.faded(from: whole) ?? whole } else { data = nil }

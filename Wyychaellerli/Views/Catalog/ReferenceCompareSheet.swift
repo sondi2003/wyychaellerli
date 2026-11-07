@@ -1,11 +1,11 @@
 import SwiftUI
 
-/// Vivino-Abgleich für den Admin: Treffer wählen, Gegenüberstellung ansehen, Felder
+/// Abgleich mit der Referenzquelle für den Admin: Treffer wählen, Gegenüberstellung ansehen, Felder
 /// übernehmen. Übernommen wird **nur ins Formular** – gespeichert wird erst mit „Aufnehmen“.
-struct VivinoCompareSheet: View {
+struct ReferenceCompareSheet: View {
 
     @Binding var entry: CatalogWine
-    /// Das gewählte Vivino-Foto; `AdminSubmissionEditor` speichert es beim Aufnehmen.
+    /// Das gewählte Foto der Quelle; `AdminSubmissionEditor` speichert es beim Aufnehmen.
     @Binding var photo: Data?
     /// Das Foto des Vorschlags, zum Vergleichen.
     var currentPhoto: Data?
@@ -14,7 +14,7 @@ struct VivinoCompareSheet: View {
     private enum Phase {
         case loading
         case failed(String)
-        case results([RankedVivinoCandidate])
+        case results(ReferenceLookup.Result)
     }
 
     @State private var phase = Phase.loading
@@ -26,7 +26,7 @@ struct VivinoCompareSheet: View {
                 case .loading:
                     VStack(spacing: 12) {
                         ProgressView()
-                        Text("Suche bei Vivino …")
+                        Text("Suche in der Quelle …")
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -39,53 +39,62 @@ struct VivinoCompareSheet: View {
                         Button("Nochmals versuchen") { Task { await load() } }
                             .buttonStyle(.brand(.outline))
                     }
-                case .results(let list) where list.isEmpty:
+                case .results(let result) where result.ranked.isEmpty:
                     ContentUnavailableView {
                         Label("Kein passender Treffer", systemImage: "magnifyingglass")
                     } description: {
-                        Text("Vivino kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser.")
-                        + Text(verbatim: "\n\n" + tr("Gesucht wurde nach:") + " " + VivinoRanker.searchTerms(for: entry).map { "„\($0)“" }.joined(separator: ", "))
+                        Text("Die Quelle kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser.")
+                        + Text(verbatim: "\n\n" + tr("Gesucht wurde nach:") + " " + ReferenceRanker.searchTerms(for: entry).map { "„\($0)“" }.joined(separator: ", "))
                     } actions: {
-                        if let url = AdminSubmissionEditor.vivinoSearchURL(for: entry) {
+                        if let url = result.searchURL {
                             Link("Im Browser suchen", destination: url)
                         }
                     }
-                case .results(let list):
-                    resultList(list)
+                case .results(let result):
+                    resultList(result)
                 }
             }
-            .appTitle(tr("Vivino-Abgleich"))
+            .appTitle(tr("Quellenabgleich"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Fertig") { dismiss() }
                 }
             }
-            .navigationDestination(for: VivinoCandidate.self) { candidate in
-                VivinoComparisonView(candidate: candidate, entry: $entry, photo: $photo, currentPhoto: currentPhoto)
+            .navigationDestination(for: ReferenceCandidate.self) { candidate in
+                ReferenceComparisonView(candidate: candidate, entry: $entry, photo: $photo, currentPhoto: currentPhoto)
             }
         }
         .presentationDetents([.large])
         .task { await load() }
     }
 
-    private func resultList(_ list: [RankedVivinoCandidate]) -> some View {
+    private func resultList(_ result: ReferenceLookup.Result) -> some View {
         List {
             Section {
-                ForEach(list) { item in
+                ForEach(result.ranked) { item in
                     NavigationLink(value: item.candidate) {
                         row(item)
                     }
                 }
             } header: {
-                Text("Treffer bei Vivino")
+                Text("Treffer der Quelle")
             } footer: {
                 Text("Der beste Treffer steht oben. Nichts wird übernommen, bevor du es in der Gegenüberstellung wählst.")
+            }
+            if let url = result.searchURL {
+                Section {
+                    Link(destination: url) {
+                        Label("Im Browser suchen", systemImage: "magnifyingglass")
+                    }
+                } footer: {
+                    Text("Passt keiner der Treffer, lässt sich die Suche im Browser ansehen.")
+                }
             }
         }
     }
 
-    private func row(_ item: RankedVivinoCandidate) -> some View {
+    private func row(_ item: RankedReferenceCandidate) -> some View {
         let c = item.candidate
         return VStack(alignment: .leading, spacing: 3) {
             Text(verbatim: c.title)
@@ -111,21 +120,21 @@ struct VivinoCompareSheet: View {
     private func load() async {
         phase = .loading
         do {
-            phase = .results(try await VivinoLookup.find(for: entry))
+            phase = .results(try await ReferenceLookup.find(for: entry))
         } catch {
             phase = .failed(error.localizedDescription)
         }
     }
 }
 
-extension VivinoCandidate: Hashable {
+extension ReferenceCandidate: Hashable {
     func hash(into hasher: inout Hasher) { hasher.combine(vid) }
 }
 
-/// Links der Vorschlag, rechts Vivino; pro abweichende Zeile ein „Übernehmen“.
-private struct VivinoComparisonView: View {
+/// Links der Vorschlag, rechts die Quelle; pro abweichende Zeile ein „Übernehmen“.
+private struct ReferenceComparisonView: View {
 
-    let candidate: VivinoCandidate
+    let candidate: ReferenceCandidate
     @Binding var entry: CatalogWine
     @Binding var photo: Data?
     var currentPhoto: Data?
@@ -135,8 +144,8 @@ private struct VivinoComparisonView: View {
     /// Der Admin hat das Foto ausdrücklich abgewählt: Dann nimmt auch „Übernehmen“ es nicht mit.
     @State private var photoDeclined = false
 
-    private var rows: [VivinoComparisonRow] {
-        VivinoComparison.rows(entry: entry, candidate: candidate)
+    private var rows: [ReferenceComparisonRow] {
+        ReferenceComparison.rows(entry: entry, candidate: candidate)
     }
 
     var body: some View {
@@ -157,7 +166,7 @@ private struct VivinoComparisonView: View {
 
             Section {
                 Button {
-                    entry = VivinoComparison.apply(candidate, to: entry, states: [.fillable])
+                    entry = ReferenceComparison.apply(candidate, to: entry, states: [.fillable])
                     takePhoto()
                 } label: {
                     Text("Leere Felder füllen")
@@ -170,7 +179,7 @@ private struct VivinoComparisonView: View {
 
             Section {
                 Button {
-                    entry = VivinoComparison.apply(candidate, to: entry, states: [.fillable, .different])
+                    entry = ReferenceComparison.apply(candidate, to: entry, states: [.fillable, .different])
                     takePhoto()
                 } label: {
                     Text("Alle Abweichungen übernehmen")
@@ -188,7 +197,7 @@ private struct VivinoComparisonView: View {
     }
 
     /// Jede Übernahme aus diesem Treffer nimmt auch sein Foto mit, sofern es geladen ist und
-    /// nicht abgewählt wurde: Das Vivino-Foto soll im Katalog stehen, auch wenn schon ein
+    /// nicht abgewählt wurde: Das Foto der Quelle soll im Katalog stehen, auch wenn schon ein
     /// eigenes da ist. Vorher gab es dafür nur einen eigenen Knopf, und „Übernehmen“ liess das
     /// Foto liegen – der Katalog behielt das des Einreichers.
     private func takePhoto() {
@@ -196,12 +205,12 @@ private struct VivinoComparisonView: View {
         photo = preview
     }
 
-    /// Foto des Vorschlags links, Vivino rechts; „Verwenden“ merkt das Vivino-Foto vor.
+    /// Foto des Vorschlags links, der Quelle rechts; „Verwenden“ merkt das Foto der Quelle vor.
     private var photoSection: some View {
         Section {
             HStack(alignment: .top, spacing: 12) {
                 photoColumn(title: tr("Vorschlag"), data: currentPhoto)
-                photoColumn(title: tr("Vivino"), data: preview)
+                photoColumn(title: tr("Quelle"), data: preview)
             }
             if photo != nil, photo == preview {
                 Label("Wird beim Aufnehmen im Katalog gespeichert.", systemImage: "checkmark.circle")
@@ -215,7 +224,7 @@ private struct VivinoComparisonView: View {
                     photoDeclined = false
                     photo = preview
                 } label: {
-                    Text("Vivino-Foto verwenden")
+                    Text("Foto der Quelle verwenden")
                 }
                 .disabled(preview == nil)
             }
@@ -227,11 +236,11 @@ private struct VivinoComparisonView: View {
         } header: {
             Text("Foto")
         } footer: {
-            Text("Jede Übernahme aus diesem Treffer nimmt das Vivino-Foto mit; es kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt.")
+            Text("Jede Übernahme aus diesem Treffer nimmt das Foto der Quelle mit; es kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt.")
         }
         .task(id: candidate.id) {
             isLoadingPhoto = true
-            preview = await VivinoLookup.image(for: candidate)
+            preview = await ReferenceLookup.image(for: candidate)
             photoFailed = preview == nil
             isLoadingPhoto = false
         }
@@ -250,7 +259,7 @@ private struct VivinoComparisonView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             } else {
                 Group {
-                    if isLoadingPhoto && title == tr("Vivino") { ProgressView() } else { Text(verbatim: "–").foregroundStyle(.secondary) }
+                    if isLoadingPhoto && title == tr("Quelle") { ProgressView() } else { Text(verbatim: "–").foregroundStyle(.secondary) }
                 }
                 .frame(maxWidth: .infinity, minHeight: 80)
             }
@@ -258,7 +267,7 @@ private struct VivinoComparisonView: View {
         .frame(maxWidth: .infinity)
     }
 
-    private func comparisonRow(_ row: VivinoComparisonRow) -> some View {
+    private func comparisonRow(_ row: ReferenceComparisonRow) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(verbatim: row.field.title)
@@ -269,7 +278,7 @@ private struct VivinoComparisonView: View {
             }
             HStack(alignment: .top, spacing: 12) {
                 column(title: tr("Vorschlag"), value: row.current)
-                column(title: tr("Vivino"), value: row.vivino)
+                column(title: tr("Quelle"), value: row.reference)
             }
             if row.state == .different || row.state == .fillable {
                 Button {
@@ -298,7 +307,7 @@ private struct VivinoComparisonView: View {
     }
 
     @ViewBuilder
-    private func stateBadge(_ state: VivinoComparisonRow.State) -> some View {
+    private func stateBadge(_ state: ReferenceComparisonRow.State) -> some View {
         switch state {
         case .same:
             Label("gleich", systemImage: "checkmark")
@@ -312,8 +321,8 @@ private struct VivinoComparisonView: View {
             Label("fehlt im Vorschlag", systemImage: "plus.circle")
                 .font(.caption)
                 .foregroundStyle(Brand.accent)
-        case .vivinoEmpty:
-            Text("keine Angabe bei Vivino")
+        case .referenceEmpty:
+            Text("keine Angabe in der Quelle")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -321,17 +330,17 @@ private struct VivinoComparisonView: View {
 }
 
 /// Adresse des Webhooks und Zugangsschlüssel (nur Admin).
-struct VivinoSettingsView: View {
+struct ReferenceSettingsView: View {
 
-    @State private var url = VivinoLookupSettings.urlString
-    @State private var token = VivinoLookupSettings.token
+    @State private var url = ReferenceLookupSettings.urlString
+    @State private var token = ReferenceLookupSettings.token
     @State private var isTesting = false
     @State private var testResult: String?
 
     var body: some View {
         Form {
             Section {
-                TextField("https://…/webhook/vivino-suche", text: $url)
+                TextField("https://…/webhook/quellensuche", text: $url)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .keyboardType(.URL)
@@ -341,7 +350,7 @@ struct VivinoSettingsView: View {
             } header: {
                 Text("Webhook in n8n")
             } footer: {
-                Text("Die Produktionsadresse des Ablaufs „Webhook Vivino-Suche“ (https) und der Wert der Header-Auth-Zugangsdaten mit dem Namen „X-Admin-Token“. Der Schlüssel liegt in der Keychain dieses Geräts.")
+                Text("Die Produktionsadresse des Ablaufs „Webhook Quellensuche“ (https) und der Wert der Header-Auth-Zugangsdaten mit dem Namen „X-Admin-Token“. Der Schlüssel liegt in der Keychain dieses Geräts.")
             }
             Section {
                 Button {
@@ -355,7 +364,7 @@ struct VivinoSettingsView: View {
                         }
                     }
                 }
-                .disabled(isTesting || !VivinoLookupSettings.isConfigured)
+                .disabled(isTesting || !ReferenceLookupSettings.isConfigured)
                 if let testResult {
                     Text(verbatim: testResult)
                         .font(.footnote)
@@ -364,17 +373,17 @@ struct VivinoSettingsView: View {
             } footer: {
                 Text("Die Eingaben werden sofort gespeichert. Der Test sucht einmal nach „Donatsch“.")
             }
-            if VivinoLookupSettings.endpoint == nil, !url.isEmpty {
+            if ReferenceLookupSettings.endpoint == nil, !url.isEmpty {
                 Section {
                     Label("Die Adresse muss mit https:// beginnen.", systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.orange)
                 }
             }
         }
-        .appTitle(tr("Vivino-Abgleich"))
+        .appTitle(tr("Quellenabgleich"))
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: url) { _, value in VivinoLookupSettings.urlString = value }
-        .onChange(of: token) { _, value in VivinoLookupSettings.token = value }
+        .onChange(of: url) { _, value in ReferenceLookupSettings.urlString = value }
+        .onChange(of: token) { _, value in ReferenceLookupSettings.token = value }
     }
 
     private func test() async {
@@ -382,7 +391,7 @@ struct VivinoSettingsView: View {
         testResult = nil
         defer { isTesting = false }
         do {
-            let list = try await VivinoLookup.search(term: "Donatsch")
+            let list = try await ReferenceLookup.search(term: "Donatsch").candidates
             testResult = tr("Verbindung steht (Testsuche: \(list.count) Treffer).")
         } catch {
             testResult = error.localizedDescription
@@ -391,7 +400,7 @@ struct VivinoSettingsView: View {
 }
 
 #Preview {
-    VivinoCompareSheet(entry: .constant(CatalogWine(
+    ReferenceCompareSheet(entry: .constant(CatalogWine(
         id: "x", name: "Unique Pinot Noir", producer: "Donatsch", vintage: 2021, grape: "", region: "",
         country: "", typeRaw: "red", alcoholPercent: 0, source: "nutzer")), photo: .constant(nil))
 }

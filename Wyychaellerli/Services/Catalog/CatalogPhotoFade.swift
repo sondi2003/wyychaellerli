@@ -7,7 +7,7 @@ import UniformTypeIdentifiers
 /// Lässt ein Katalogfoto unten **sanft ausblenden**, damit das Wasserzeichen verschwindet.
 ///
 /// Die Fotos im Katalog zeigen die ganze Flasche; unten steht – oft auf dem Flaschenfuss –
-/// das „vivino“-Logo, bei allen Fotos an fast derselben Stelle (rund 94–97 % der Höhe). Ein
+/// das Wasserzeichen der Quelle, bei allen Fotos an fast derselben Stelle (rund 94–97 % der Höhe). Ein
 /// Verlauf in die Durchsichtigkeit deckt es ab, ohne es suchen zu müssen: Die Flasche steht
 /// „im Nebel“, auf hellem wie auf dunklem Grund. Der erste Weg (Text erkennen und darüber
 /// abschneiden) scheiterte an gesperrter, heller Schrift auf Glas. Entschieden am 7.11.2026.

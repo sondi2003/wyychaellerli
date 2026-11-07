@@ -57,7 +57,7 @@ struct ScanFixTests {
         model.quantity = 3
 
         let entry = CatalogWine(id: "x", name: "Villa Antinori Bianco", producer: "Antinori", vintage: 2025, grape: "Trebbiano",
-                                region: "Toscana", country: "Italien", typeRaw: "white", alcoholPercent: 12.5, source: "vivino")
+                                region: "Toscana", country: "Italien", typeRaw: "white", alcoholPercent: 12.5, source: "import")
         model.adoptCatalogEntry(entry)
         #expect(model.type == .white)
         #expect(model.region == "Toscana")
