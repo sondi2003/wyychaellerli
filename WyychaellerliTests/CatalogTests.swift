@@ -269,3 +269,97 @@ struct VivinoSearchTests {
         #expect(AdminSubmissionEditor.vivinoSearchURL(for: entry(producer: "", name: " ", vintage: 0)) == nil)
     }
 }
+
+@Suite("Katalog: Vivino-Abgleich")
+struct VivinoLookupTests {
+
+    private func entry(producer: String = "Donatsch", name: String = "Unique Pinot Noir", vintage: Int = 2021) -> CatalogWine {
+        CatalogWine(id: "x", name: name, producer: producer, vintage: vintage, grape: "", region: "",
+                    country: "", typeRaw: "red", alcoholPercent: 0, source: "nutzer")
+    }
+
+    private func candidate(_ vid: String, _ producer: String, _ name: String, _ vintage: Int,
+                           grape: String = "", count: Int = 10) -> VivinoCandidate {
+        VivinoCandidate(vid: vid, name: name, producer: producer, vintage: vintage, region: "Malanser",
+                        country: "Schweiz", typeRaw: "red", grape: grape, foodPairings: [], rating: 4.2, ratingsCount: count)
+    }
+
+    @Test("Suchformen: Name als Wortgruppe, Produzent plus Name, dann Einzelwörter")
+    func searchTerms() {
+        #expect(VivinoRanker.searchTerms(for: entry()) == ["Unique Pinot Noir", "Donatsch Unique Pinot Noir", "donatsch", "unique"])
+        #expect(VivinoRanker.searchTerms(for: entry(producer: "", name: "Barolo")) == ["barolo"])
+        // Der Fall, der bei der Einzelwort-Suche durchfiel: 101 Weine von Antinori, der gesuchte weit hinten.
+        let terms = VivinoRanker.searchTerms(for: entry(producer: "Marchesi Antinori", name: "Villa Antinori 2025"))
+        #expect(terms.first == "Villa Antinori")
+        #expect(terms.contains("Marchesi Antinori Villa Antinori"))
+    }
+
+    @Test("Villa Antinori findet den Toscana Bianco 2025, nicht den Rosso anderer Jahrgänge zuerst")
+    func villaAntinoriRanking() {
+        let list = [
+            candidate("1", "Antinori", "Villa Antinori Rosso", 2023, count: 4636),
+            candidate("2", "Antinori", "Villa Antinori Toscana Bianco", 2025, count: 542),
+            candidate("3", "Antinori", "Villa Antinori Toscana Bianco", 2024, count: 2131)
+        ]
+        let ranked = VivinoRanker.rank(list, for: entry(producer: "Marchesi Antinori", name: "Villa Antinori Bianco", vintage: 2025))
+        #expect(ranked.first?.candidate.vid == "2")
+    }
+
+    @Test("Der gleiche Jahrgang steht vor dem anderen, Fremdes fällt heraus")
+    func rankingPrefersVintageAndDropsOthers() {
+        let list = [
+            candidate("1", "Donatsch", "Unique Pinot Noir", 2013, count: 195),
+            candidate("2", "Donatsch", "Unique Pinot Noir", 2021),
+            candidate("3", "Peter Michael", "Le Caprice Pinot Noir", 2021),
+            candidate("4", "Donatsch", "Passion Pinot Noir", 2021)
+        ]
+        let ranked = VivinoRanker.rank(list, for: entry())
+        #expect(ranked.first?.candidate.vid == "2")
+        #expect(ranked.map(\.candidate.vid).contains("1"))
+        #expect(!ranked.map(\.candidate.vid).contains("3"))
+    }
+
+    @Test("Ein Tippfehler im Namen findet den Treffer trotzdem")
+    func typoStillMatches() {
+        let ranked = VivinoRanker.rank([candidate("1", "Donatsch", "Unique Pinot Noir", 2021)],
+                                       for: entry(producer: "Donatch", name: "Uniqe Pinot Noir"))
+        #expect(ranked.count == 1)
+    }
+
+    @Test("Gegenüberstellung unterscheidet gleich, abweichend, fehlend und unbekannt")
+    func comparisonStates() {
+        var mine = entry()
+        mine.region = "Graubünden"
+        let theirs = candidate("1", "Donatsch", "Unique Pinot Noir", 2021, grape: "Pinot Noir")
+        let rows = Dictionary(uniqueKeysWithValues: VivinoComparison.rows(entry: mine, candidate: theirs).map { ($0.field, $0.state) })
+        #expect(rows[.producer] == .same)
+        #expect(rows[.vintage] == .same)
+        #expect(rows[.grape] == .fillable)
+        #expect(rows[.region] == .different)
+        #expect(rows[.food] == .vivinoEmpty)
+    }
+
+    @Test("Leere Felder füllen lässt Abweichendes stehen")
+    func fillOnlyEmpty() {
+        var mine = entry()
+        mine.region = "Graubünden"
+        let theirs = candidate("1", "Donatsch", "Unique Pinot Noir", 2021, grape: "Pinot Noir")
+        let result = VivinoComparison.apply(theirs, to: mine, states: [.fillable])
+        #expect(result.grape == "Pinot Noir")
+        #expect(result.region == "Graubünden")
+        let all = VivinoComparison.apply(theirs, to: mine, states: [.fillable, .different])
+        #expect(all.region == "Malanser")
+    }
+
+    @Test("Die Antwort des Ablaufs wird gelesen, Fehler und Lücken sind kein Absturz")
+    func parsing() throws {
+        let good = Data(#"{"ok":true,"candidates":[{"vid":"7","name":"X","producer":"Y","vintage":2020}]}"#.utf8)
+        let list = try VivinoLookup.parse(good)
+        #expect(list.count == 1)
+        #expect(list[0].grape.isEmpty && list[0].foodPairings.isEmpty)
+        #expect(throws: VivinoLookupError.server("Zu viele")) {
+            try VivinoLookup.parse(Data(#"{"ok":false,"meldung":"Zu viele"}"#.utf8))
+        }
+        #expect(throws: VivinoLookupError.unreadable) { try VivinoLookup.parse(Data("<html>".utf8)) }
+    }
+}

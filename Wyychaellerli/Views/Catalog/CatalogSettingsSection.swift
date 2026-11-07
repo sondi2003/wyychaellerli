@@ -67,6 +67,16 @@ struct CatalogSettingsSection: View {
                 } label: {
                     Label("Katalog verwalten", systemImage: "books.vertical")
                 }
+                NavigationLink {
+                    VivinoSettingsView()
+                } label: {
+                    HStack {
+                        Label("Vivino-Abgleich", systemImage: "arrow.left.arrow.right")
+                        Spacer()
+                        Text(VivinoLookupSettings.isConfigured ? tr("Eingerichtet") : tr("Nicht eingerichtet"))
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 // Dass dieser Bereich **sichtbar** ist, beweist nichts: Er hängt an einem
                 // Datensatz, den jeder lesen darf. Ob die Rolle „Admin“ wirkt, zeigt nur ein
                 // Schreibversuch.

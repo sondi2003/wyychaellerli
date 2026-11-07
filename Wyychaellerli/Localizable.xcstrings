@@ -1,7 +1,9 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
-    "" : {},
+    "" : {
+
+    },
     " (im Archiv)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -66,23 +68,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "· privremeno, tek jedna osoba"
-          }
-        }
-      }
-    },
-    "Öffnet das Foto im Vollbild." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opens the photo full screen."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otvara fotografiju preko celog ekrana."
           }
         }
       }
@@ -185,6 +170,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "„%@“ se uklanja sa etiketom, ocenama i mestom na stalku – i na drugim uređajima. Radije arhiviraj da ga sačuvaš."
+          }
+        }
+      }
+    },
+    "„Abgleichen“ holt die Treffer und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst. „Suchen“ öffnet die Suche im Browser, zum Vergleichen von Hand." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Compare” fetches the results and sets them against the suggestion; only what you choose is taken over. “Search” opens the search in the browser, for comparing by hand."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Uporedi“ preuzima rezultate i poredi ih sa predlogom; preuzima se samo ono što izabereš. „Traži“ otvara pretragu u pregledniku, za ručno poređenje."
           }
         }
       }
@@ -2320,6 +2322,23 @@
         }
       }
     },
+    "abweichend" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "differs"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "razlikuje se"
+          }
+        }
+      }
+    },
     "Admin-Rechte" : {
       "localizations" : {
         "en" : {
@@ -2471,6 +2490,23 @@
         }
       }
     },
+    "Alle Abweichungen übernehmen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take over all differences"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preuzmi sve razlike"
+          }
+        }
+      }
+    },
     "Alle Einträge löschen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2569,142 +2605,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sve berbe"
-          }
-        }
-      }
-    },
-    "Fleisch" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meat"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meso"
-          }
-        }
-      }
-    },
-    "Fisch und Meeresfrüchte" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fish and seafood"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riba i plodovi mora"
-          }
-        }
-      }
-    },
-    "Käse" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cheese"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sir"
-          }
-        }
-      }
-    },
-    "Gemüse und Vegetarisches" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vegetables and vegetarian"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Povrće i vegetarijansko"
-          }
-        }
-      }
-    },
-    "Pasta, Pizza und Reis" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pasta, pizza and rice"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testenina, pica i pirinač"
-          }
-        }
-      }
-    },
-    "Dessert und Süsses" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dessert and sweets"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desert i slatkiši"
-          }
-        }
-      }
-    },
-    "Apéro und Snacks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aperitif and snacks"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aperitiv i grickalice"
-          }
-        }
-      }
-    },
-    "Nach den Speiseempfehlungen der Weine, ersatzweise des Katalogs. Weine ohne Empfehlung erscheinen hier nicht." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Based on each wine's food pairings, or the catalog's if it has none. Wines without a pairing are not listed here."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prema preporukama za jelo uz vina, a ako ih nema, prema katalogu. Vina bez preporuke nisu ovde navedena."
           }
         }
       }
@@ -3062,6 +2962,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aperitiv"
+          }
+        }
+      }
+    },
+    "Apéro und Snacks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperitif and snacks"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperitiv i grickalice"
           }
         }
       }
@@ -3641,36 +3558,240 @@
         }
       }
     },
-    "Bei Vivino suchen" : {
+    "Der Server lehnt den Zugriff ab (%@). Stimmt der Schlüssel, und heisst der Header in den n8n-Zugangsdaten „X-Admin-Token“?" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Search on Vivino"
+            "value" : "The server refuses access (%@). Is the key correct, and is the header in the n8n credentials named “X-Admin-Token”?"
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pretraži na Vivinu"
+            "value" : "Server odbija pristup (%@). Da li je ključ ispravan i da li se header u n8n pristupnim podacima zove „X-Admin-Token“?"
           }
         }
       }
     },
-    "Öffnet die Suche im Browser, mit den Angaben von oben. Zum Vergleichen; nichts wird übernommen." : {
+    "Die Adresse wurde nicht gefunden (%@). Ist der Ablauf in n8n aktiv, und ist es die Produktionsadresse?" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opens the search in the browser with the details above. For comparison only; nothing is taken over."
+            "value" : "The address was not found (%@). Is the flow active in n8n, and is this the production address?"
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otvara pretragu u pregledniku sa podacima odozgo. Samo za poređenje; ništa se ne preuzima."
+            "value" : "Adresa nije pronađena (%@). Da li je tok u n8n aktivan i da li je ovo produkciona adresa?"
+          }
+        }
+      }
+    },
+    "Der Server antwortet mit einem Fehler (%@)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server replies with an error (%@)."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server odgovara greškom (%@)."
+          }
+        }
+      }
+    },
+    "Verbindung testen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test connection"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testiraj vezu"
+          }
+        }
+      }
+    },
+    "Die Eingaben werden sofort gespeichert. Der Test sucht einmal nach „Donatsch“." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entries are saved immediately. The test searches once for “Donatsch”."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unosi se čuvaju odmah. Test jednom traži „Donatsch“."
+          }
+        }
+      }
+    },
+    "Verbindung steht (Testsuche: %lld Treffer)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection works (test search: %lld results)."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veza radi (probna pretraga: %lld rezultata)."
+          }
+        }
+      }
+    },
+    "Vivino-Foto: wird im Katalog gespeichert und ersetzt ein vorhandenes." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino photo: saved in the catalog, replacing an existing one."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino fotografija: čuva se u katalogu i zamenjuje postojeću."
+          }
+        }
+      }
+    },
+    "Vivino-Foto nicht verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do not use Vivino photo"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne koristi Vivino fotografiju"
+          }
+        }
+      }
+    },
+    "Wird beim Aufnehmen im Katalog gespeichert." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Will be saved in the catalog when accepted."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Čuva se u katalogu pri prihvatanju."
+          }
+        }
+      }
+    },
+    "Nicht verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do not use"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne koristi"
+          }
+        }
+      }
+    },
+    "Vivino-Foto verwenden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Vivino photo"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koristi Vivino fotografiju"
+          }
+        }
+      }
+    },
+    "Das Foto konnte nicht geladen werden." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The photo could not be loaded."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotografija se nije mogla učitati."
+          }
+        }
+      }
+    },
+    "Das Vivino-Foto kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Vivino photo goes into the catalog, even if there is already one there or in the suggestion. Your photo in the cellar stays untouched."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino fotografija ide u katalog, čak i ako tamo ili u predlogu već postoji jedna. Tvoja fotografija u podrumu ostaje netaknuta."
+          }
+        }
+      }
+    },
+    "Gesucht wurde nach:" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searched for:"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tražilo se:"
           }
         }
       }
@@ -3705,6 +3826,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ni za jednu flašu nisu zabeležene preporuke za jela sa etikete. Pri skeniranju se automatski preuzimaju ako stoje na etiketi."
+          }
+        }
+      }
+    },
+    "Bei Vivino abgleichen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare with Vivino"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uporedi sa Vivinom"
+          }
+        }
+      }
+    },
+    "Bei Vivino suchen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search on Vivino"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraži na Vivinu"
           }
         }
       }
@@ -4405,6 +4560,23 @@
         }
       }
     },
+    "Der Abgleich ist fehlgeschlagen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The comparison failed."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje nije uspelo."
+          }
+        }
+      }
+    },
     "Der Anbieter hat mit HTTP %lld geantwortet: %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4469,6 +4641,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zaliha vina „%@“ se smanjuje za jedan."
+          }
+        }
+      }
+    },
+    "Der beste Treffer steht oben. Nichts wird übernommen, bevor du es in der Gegenüberstellung wählst." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The best match is at the top. Nothing is taken over until you choose it in the comparison."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najbolji rezultat je na vrhu. Ništa se ne preuzima dok to ne izabereš u poređenju."
           }
         }
       }
@@ -4677,6 +4866,23 @@
         }
       }
     },
+    "Der Server ist nicht erreichbar." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server cannot be reached."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server nije dostupan."
+          }
+        }
+      }
+    },
     "Der Text konnte keinem Feld zugeordnet werden. Du kannst die Angaben manuell eintragen." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4690,6 +4896,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekst nije mogao da se dodeli nijednom polju. Podatke možeš uneti ručno."
+          }
+        }
+      }
+    },
+    "Der Vivino-Abgleich ist nicht eingerichtet. Adresse und Schlüssel stehen in den Einstellungen unter „Vivino-Abgleich“." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Vivino comparison is not set up. Address and key are in Settings under “Vivino comparison”."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje sa Vivinom nije podešeno. Adresa i ključ su u podešavanjima pod „Poređenje sa Vivinom“."
           }
         }
       }
@@ -4762,6 +4985,23 @@
         }
       }
     },
+    "Dessert und Süsses" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dessert and sweets"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desert i slatkiši"
+          }
+        }
+      }
+    },
     "Details" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4792,6 +5032,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nemačka"
+          }
+        }
+      }
+    },
+    "Die Adresse muss mit https:// beginnen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The address must start with https://."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresa mora početi sa https://."
           }
         }
       }
@@ -4843,6 +5100,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Odgovor provajdera je bio prazan."
+          }
+        }
+      }
+    },
+    "Die Antwort des Servers war nicht lesbar. Läuft der Ablauf „Webhook Vivino-Suche“ in n8n, und ist er aktiv?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server’s reply was not readable. Is the “Webhook Vivino-Suche” flow in n8n running and active?"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odgovor servera nije čitljiv. Da li je tok „Webhook Vivino-Suche“ u n8n pokrenut i aktivan?"
           }
         }
       }
@@ -5113,6 +5387,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "VI dvaput nije dala upotrebljivu preporuku (rezervisana mesta ili nepoznata vina). Pokušaj ponovo ili preciznije opiši jelo."
+          }
+        }
+      }
+    },
+    "Die Produktionsadresse des Ablaufs „Webhook Vivino-Suche“ (https) und der Wert der Header-Auth-Zugangsdaten mit dem Namen „X-Admin-Token“. Der Schlüssel liegt in der Keychain dieses Geräts." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The production address of the “Webhook Vivino-Suche” flow (https) and the value of the Header Auth credentials named “X-Admin-Token”. The key is stored in this device’s keychain."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Produkciona adresa toka „Webhook Vivino-Suche“ (https) i vrednost Header Auth pristupnih podataka pod imenom „X-Admin-Token“. Ključ se čuva u Keychain-u ovog uređaja."
           }
         }
       }
@@ -5518,6 +5809,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uvod, strana %1$lld od %2$lld"
+          }
+        }
+      }
+    },
+    "Eingerichtet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set up"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podešeno"
           }
         }
       }
@@ -6263,6 +6571,23 @@
         }
       }
     },
+    "fehlt im Vorschlag" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "missing in suggestion"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nedostaje u predlogu"
+          }
+        }
+      }
+    },
     "Felder aus Etikett übernommen – Zuordnung via %@. Bitte kurz prüfen." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6362,6 +6687,23 @@
         }
       }
     },
+    "Fisch und Meeresfrüchte" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish and seafood"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riba i plodovi mora"
+          }
+        }
+      }
+    },
     "Flasche einräumen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6442,6 +6784,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Flaše čiji period za pijenje ističe ove godine ili je već prošao."
+          }
+        }
+      }
+    },
+    "Fleisch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meat"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meso"
           }
         }
       }
@@ -6667,6 +7026,23 @@
         }
       }
     },
+    "Gegenüberstellung" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comparison"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje"
+          }
+        }
+      }
+    },
     "Gegrillter Lachs" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6730,6 +7106,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zajednički katalog"
+          }
+        }
+      }
+    },
+    "Gemüse und Vegetarisches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vegetables and vegetarian"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povrće i vegetarijansko"
           }
         }
       }
@@ -6934,6 +7327,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Važi za celu aplikaciju, uključujući odgovore VI."
+          }
+        }
+      }
+    },
+    "gleich" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "same"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "isto"
           }
         }
       }
@@ -7260,6 +7670,9 @@
         }
       }
     },
+    "https://…/webhook/vivino-suche" : {
+
+    },
     "Ich bin's, los geht's" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7324,6 +7737,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "U arhivi"
+          }
+        }
+      }
+    },
+    "Im Browser suchen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search in browser"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traži u pregledniku"
           }
         }
       }
@@ -7683,6 +8113,23 @@
         }
       }
     },
+    "Käse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheese"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sir"
+          }
+        }
+      }
+    },
     "Käseplatte" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7713,6 +8160,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upravljaj katalogom"
+          }
+        }
+      }
+    },
+    "Kein Abgleich möglich" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comparison not possible"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje nije moguće"
           }
         }
       }
@@ -7852,6 +8316,23 @@
         }
       }
     },
+    "Kein passender Treffer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching result"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nema odgovarajućeg rezultata"
+          }
+        }
+      }
+    },
     "keine" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7899,6 +8380,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bez podatka"
+          }
+        }
+      }
+    },
+    "keine Angabe bei Vivino" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "not given on Vivino"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nema podatka na Vivinu"
           }
         }
       }
@@ -8277,6 +8775,40 @@
         }
       }
     },
+    "Kommagetrennt, auf Deutsch. Der Filter „Passt zu“ im Keller gruppiert danach." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comma-separated, in German. The “Goes with” filter in the cellar groups by it."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odvojeno zarezima, na nemačkom. Filter „Ide uz“ u podrumu grupiše po tome."
+          }
+        }
+      }
+    },
+    "Kommagetrennt. Wird beim Scannen und aus dem Katalog übernommen, auf Deutsch." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comma-separated. Taken over when you scan and from the catalog, in German."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odvojeno zarezima. Preuzima se pri skeniranju i iz kataloga, na nemačkom."
+          }
+        }
+      }
+    },
     "Korkig" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8477,6 +9009,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ostavi prazno za podrazumevane vrednosti. Za Siri se koristi brži model jer Siri ne čeka dugo."
+          }
+        }
+      }
+    },
+    "Leere Felder füllen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill empty fields"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popuni prazna polja"
           }
         }
       }
@@ -8871,6 +9420,23 @@
         }
       }
     },
+    "Nach den Speiseempfehlungen der Weine, ersatzweise des Katalogs. Weine ohne Empfehlung erscheinen hier nicht." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on each wine's food pairings, or the catalog's if it has none. Wines without a pairing are not listed here."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prema preporukama za jelo uz vina, a ako ih nema, prema katalogu. Vina bez preporuke nisu ovde navedena."
+          }
+        }
+      }
+    },
     "Name" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9071,6 +9637,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Novi Zeland"
+          }
+        }
+      }
+    },
+    "Nicht eingerichtet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not set up"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nije podešeno"
           }
         }
       }
@@ -9347,6 +9930,23 @@
         }
       }
     },
+    "Nochmals versuchen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokušaj ponovo"
+          }
+        }
+      }
+    },
     "Notiz" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9411,6 +10011,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Samo ono što je na redu"
+          }
+        }
+      }
+    },
+    "Öffnet das Foto im Vollbild." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the photo full screen."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvara fotografiju preko celog ekrana."
           }
         }
       }
@@ -9730,6 +10347,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Podudaranje: %@"
+          }
+        }
+      }
+    },
+    "Pasta, Pizza und Reis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pasta, pizza and rice"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testenina, pica i pirinač"
           }
         }
       }
@@ -10681,6 +11315,23 @@
         }
       }
     },
+    "Suche bei Vivino …" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching Vivino …"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraga na Vivinu …"
+          }
+        }
+      }
+    },
     "Südafrika" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11066,6 +11717,23 @@
         }
       }
     },
+    "Treffer bei Vivino" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Results on Vivino"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezultati na Vivinu"
+          }
+        }
+      }
+    },
     "Trinken" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11253,6 +11921,57 @@
         }
       }
     },
+    "Übernehmen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take over"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preuzmi"
+          }
+        }
+      }
+    },
+    "Übernommen wird ins Formular. Gespeichert wird erst mit „Aufnehmen“." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values are taken into the form. Nothing is saved until you tap “Accept”."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vrednosti se preuzimaju u obrazac. Čuva se tek sa „Prihvati“."
+          }
+        }
+      }
+    },
+    "Überschreibt auch Angaben, die du schon hast. Name, Produzent und Jahrgang bestimmen den Schlüssel des Eintrags." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also overwrites details you already have. Name, producer and vintage determine the entry’s key."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepisuje i podatke koje već imaš. Naziv, proizvođač i berba određuju ključ unosa."
+          }
+        }
+      }
+    },
     "Überspringen" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11412,6 +12131,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Možda bolja od tvoje fotografije."
+          }
+        }
+      }
+    },
+    "Vivino" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino"
+          }
+        }
+      }
+    },
+    "Vivino kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino does not know this wine under this name. Check the name and producer, or search in the browser."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino ne poznaje ovo vino pod ovim imenom. Proveri naziv i proizvođača ili traži u pregledniku."
+          }
+        }
+      }
+    },
+    "Vivino-Abgleich" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vivino comparison"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poređenje sa Vivinom"
           }
         }
       }
@@ -11583,6 +12353,23 @@
         }
       }
     },
+    "Vorschlag" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predlog"
+          }
+        }
+      }
+    },
     "Vorschlag ablehnen?" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11698,6 +12485,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Šta je bilo dobro?"
+          }
+        }
+      }
+    },
+    "Webhook in n8n" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webhook in n8n"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webhook u n8n"
           }
         }
       }
@@ -12421,57 +13225,6 @@
         }
       }
     },
-    "Kommagetrennt. Wird beim Scannen und aus dem Katalog übernommen, auf Deutsch." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comma-separated. Taken over when you scan and from the catalog, in German."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odvojeno zarezima. Preuzima se pri skeniranju i iz kataloga, na nemačkom."
-          }
-        }
-      }
-    },
-    "Kommagetrennt, auf Deutsch. Der Filter „Passt zu“ im Keller gruppiert danach." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comma-separated, in German. The “Goes with” filter in the cellar groups by it."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odvojeno zarezima, na nemačkom. Filter „Ide uz“ u podrumu grupiše po tome."
-          }
-        }
-      }
-    },
-    "z. B. Rindfleisch, Hartkäse" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. beef, hard cheese"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "npr. goveđe meso, tvrdi sir"
-          }
-        }
-      }
-    },
     "z. B. Gegrilltes Fleisch, Hartkäse" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12519,6 +13272,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "npr. raclette, špageti bolonjeze …"
+          }
+        }
+      }
+    },
+    "z. B. Rindfleisch, Hartkäse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. beef, hard cheese"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npr. goveđe meso, tvrdi sir"
           }
         }
       }
@@ -12755,6 +13525,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pristup"
+          }
+        }
+      }
+    },
+    "Zugangsschlüssel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access key"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pristupni ključ"
           }
         }
       }

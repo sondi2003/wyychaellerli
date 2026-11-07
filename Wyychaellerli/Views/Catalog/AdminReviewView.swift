@@ -169,6 +169,9 @@ struct AdminSubmissionEditor: View {
     @State private var isWorking = false
     @State private var isConfirmingReject = false
     @State private var errorMessage: String?
+    @State private var isShowingVivino = false
+    /// Foto von Vivino, das beim Aufnehmen im Katalog gespeichert wird (auch wenn schon eines da ist).
+    @State private var vivinoPhoto: Data?
 
     init(group: SubmissionGroup, onDecided: @escaping (SubmissionGroup) -> Void) {
         self.group = group
@@ -178,7 +181,7 @@ struct AdminSubmissionEditor: View {
 
     var body: some View {
         Form {
-            if let data = group.labelImageData, let image = UIImage(data: data) {
+            if let data = vivinoPhoto ?? group.labelImageData, let image = UIImage(data: data) {
                 Section {
                     Image(uiImage: image)
                         .resizable()
@@ -186,6 +189,12 @@ struct AdminSubmissionEditor: View {
                         .frame(maxWidth: .infinity, maxHeight: 200)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .labelLens(data)
+                    if vivinoPhoto != nil {
+                        Label("Vivino-Foto: wird im Katalog gespeichert und ersetzt ein vorhandenes.", systemImage: "photo.badge.checkmark")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Button("Vivino-Foto nicht verwenden", role: .destructive) { vivinoPhoto = nil }
+                    }
                 }
             }
 
@@ -208,11 +217,18 @@ struct AdminSubmissionEditor: View {
 
             if let url = Self.vivinoSearchURL(for: entry) {
                 Section {
+                    if VivinoLookupSettings.isConfigured {
+                        Button {
+                            isShowingVivino = true
+                        } label: {
+                            Label("Bei Vivino abgleichen", systemImage: "arrow.left.arrow.right")
+                        }
+                    }
                     Link(destination: url) {
                         Label("Bei Vivino suchen", systemImage: "magnifyingglass")
                     }
                 } footer: {
-                    Text("Öffnet die Suche im Browser, mit den Angaben von oben. Zum Vergleichen; nichts wird übernommen.")
+                    Text("„Abgleichen“ holt die Treffer und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst. „Suchen“ öffnet die Suche im Browser, zum Vergleichen von Hand.")
                 }
             }
 
@@ -243,6 +259,9 @@ struct AdminSubmissionEditor: View {
         } message: {
             Text("Wer den Wein vorgeschlagen hat, bekommt eine Mitteilung, dass er nicht aufgenommen wurde.")
         }
+        .sheet(isPresented: $isShowingVivino) {
+            VivinoCompareSheet(entry: $entry, photo: $vivinoPhoto, currentPhoto: group.labelImageData)
+        }
         .task {
             existing = await catalog.existingEntry(for: group.id)
             if existing != nil {
@@ -270,7 +289,7 @@ struct AdminSubmissionEditor: View {
     /// Vorhandenes ändert oder nichts Neues bringt.
     private var supplement: [String]? {
         guard let existing, var added = entry.additions(over: existing) else { return nil }
-        if group.labelImageData != nil, !existingHasImage { added.append(tr("Foto")) }
+        if (group.labelImageData != nil && !existingHasImage) || vivinoPhoto != nil { added.append(tr("Foto")) }
         return added.isEmpty ? nil : added
     }
 
@@ -327,7 +346,7 @@ struct AdminSubmissionEditor: View {
             final.sourceID = existing.sourceID
         }
         do {
-            try await catalog.accept(group.items, as: final)
+            try await catalog.accept(group.items, as: final, photo: vivinoPhoto)
             onDecided(group)
             dismiss()
         } catch {

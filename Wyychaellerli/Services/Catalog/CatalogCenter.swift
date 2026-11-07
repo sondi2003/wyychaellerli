@@ -139,6 +139,37 @@ final class CatalogCenter {
         }
     }
 
+    /// Führt die Liste auf dem Gerät nach, wenn der Admin selbst etwas ändert. Sonst fehlt ein
+    /// eben aufgenommener Wein bei den Vorschlägen, bis die Liste neu geladen wird (Start,
+    /// zehn Minuten Pause, zwölf Stunden) – so fehlte der Jahrgang 2024 neben dem 2022.
+    /// Andere Geräte holen ihn beim nächsten Neuladen. Ist die Liste noch nicht geladen, bleibt
+    /// alles, wie es ist: Eine Liste mit einem einzigen Wein dürfte die Datei nicht ersetzen.
+    ///
+    /// - `replace`: der Eintrag ersetzt den bisherigen (Bearbeiten); sonst ergänzt er ihn
+    ///   (Aufnehmen: Ein bestehender Eintrag behält seine Angaben und bekommt nur Lücken gefüllt).
+    private func applyLocally(adding entry: CatalogWine?, removing id: String? = nil, replace: Bool = false) {
+        guard !directory.isEmpty else { return }
+        var list = directory.entries
+        if let id { list.removeAll { $0.id == id } }
+        if let entry {
+            if let index = list.firstIndex(where: { $0.id == entry.id }) {
+                if replace {
+                    list[index] = entry
+                } else {
+                    var merged = list[index]
+                    merged.fillEmptyFields(from: entry)
+                    list[index] = merged
+                }
+            } else {
+                list.append(entry)
+            }
+        }
+        directory = CatalogDirectory(entries: list)
+        directoryVersion += 1
+        let snapshot = list
+        Task.detached { CatalogDirectoryStorage.save(snapshot) }
+    }
+
     /// Vorschläge beim Tippen – sofort, ohne Netz.
     func suggestions(for query: String, vintage: Int) -> [CatalogDirectory.Suggestion] {
         directory.suggestions(for: query, vintage: vintage)
@@ -301,10 +332,12 @@ final class CatalogCenter {
     }
 
     /// Nimmt alle Vorschläge einer Gruppe als einen Eintrag auf.
-    func accept(_ group: [CatalogSubmission], as entry: CatalogWine) async throws {
-        let image = group.lazy.compactMap(\.labelImageData).first
-        try await store.accept(group.map(\.id), as: entry, labelImageData: image)
+    /// - `photo`: ein vom Admin gewähltes Foto (Vivino); es ersetzt ein vorhandenes im Katalog.
+    func accept(_ group: [CatalogSubmission], as entry: CatalogWine, photo: Data? = nil) async throws {
+        let image = photo ?? group.lazy.compactMap(\.labelImageData).first
+        try await store.accept(group.map(\.id), as: entry, labelImageData: image, replacingImage: photo != nil)
         markDecided(group)
+        applyLocally(adding: entry)
     }
 
     func reject(_ group: [CatalogSubmission]) async throws {
@@ -336,11 +369,14 @@ final class CatalogCenter {
     }
 
     func saveCatalogWine(_ entry: CatalogWine, previousID: String, image: CatalogStore.ImageChange) async throws -> CatalogWine {
-        try await store.save(entry, previousID: previousID, image: image)
+        let saved = try await store.save(entry, previousID: previousID, image: image)
+        applyLocally(adding: saved, removing: previousID == saved.id ? nil : previousID, replace: true)
+        return saved
     }
 
     func deleteCatalogWine(_ id: String) async throws {
         try await store.deleteWine(id)
+        applyLocally(adding: nil, removing: id)
     }
 
     /// Wirkt die Rolle „Admin“ in dieser Umgebung? Wirft, wenn nicht.

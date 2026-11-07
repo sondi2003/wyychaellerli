@@ -272,7 +272,7 @@ final class CatalogStore: Sendable {
     /// Nimmt einen Vorschlag auf: schreibt den (allenfalls korrigierten) Eintrag in den
     /// Katalog und setzt **alle** offenen Vorschläge mit demselben Schlüssel auf
     /// „aufgenommen“, damit jeder Einreicher seine Mitteilung bekommt.
-    func accept(_ submissionIDs: [String], as entry: CatalogWine, labelImageData: Data?) async throws {
+    func accept(_ submissionIDs: [String], as entry: CatalogWine, labelImageData: Data?, replacingImage: Bool = false) async throws {
         let id = CKRecord.ID(recordName: entry.id)
         let record: CKRecord
         do {
@@ -300,7 +300,8 @@ final class CatalogStore: Sendable {
             record["foodPairings"] = entry.foodPairings
         }
         let imageFile = try labelImageData.map(Self.temporaryFile)
-        if let imageFile, record["image"] == nil { record["image"] = CKAsset(fileURL: imageFile) }
+        // Ein vorhandenes Foto bleibt, ausser der Admin hat ausdrücklich ein anderes gewählt (Vivino).
+        if let imageFile, record["image"] == nil || replacingImage { record["image"] = CKAsset(fileURL: imageFile) }
         defer { if let imageFile { try? FileManager.default.removeItem(at: imageFile) } }
 
         let decided = try await setStatus(.accepted, on: submissionIDs)
