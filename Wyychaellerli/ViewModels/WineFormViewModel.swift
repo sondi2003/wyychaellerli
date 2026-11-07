@@ -323,6 +323,10 @@ final class WineFormViewModel {
         if region.isEmpty { region = entry.region }
         if country.isEmpty { country = entry.country }
         if alcoholPercent == 0 { alcoholPercent = entry.alcoholPercent }
+        // Speisen aus dem Katalog nur, wenn das Etikett keine nennt.
+        if foodPairings.trimmingCharacters(in: .whitespaces).isEmpty, !entry.foodPairings.isEmpty {
+            foodPairings = entry.foodPairings.joined(separator: ", ")
+        }
         if typeNeedsReview, let wineType = entry.wineType {
             type = wineType
             typeNeedsReview = false

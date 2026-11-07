@@ -2556,6 +2556,159 @@
         }
       }
     },
+    "Alle Jahrgänge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All vintages"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sve berbe"
+          }
+        }
+      }
+    },
+    "Fleisch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meat"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meso"
+          }
+        }
+      }
+    },
+    "Fisch und Meeresfrüchte" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish and seafood"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riba i plodovi mora"
+          }
+        }
+      }
+    },
+    "Käse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheese"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sir"
+          }
+        }
+      }
+    },
+    "Gemüse und Vegetarisches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vegetables and vegetarian"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povrće i vegetarijansko"
+          }
+        }
+      }
+    },
+    "Pasta, Pizza und Reis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pasta, pizza and rice"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testenina, pica i pirinač"
+          }
+        }
+      }
+    },
+    "Dessert und Süsses" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dessert and sweets"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desert i slatkiši"
+          }
+        }
+      }
+    },
+    "Apéro und Snacks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperitif and snacks"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperitiv i grickalice"
+          }
+        }
+      }
+    },
+    "Nach den Speiseempfehlungen der Weine, ersatzweise des Katalogs. Weine ohne Empfehlung erscheinen hier nicht." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on each wine's food pairings, or the catalog's if it has none. Wines without a pairing are not listed here."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prema preporukama za jelo uz vina, a ako ih nema, prema katalogu. Vina bez preporuke nisu ovde navedena."
+          }
+        }
+      }
+    },
     "Alle Länder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3484,6 +3637,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Počinje sa „sk-ant-…“ – napravi na console.anthropic.com"
+          }
+        }
+      }
+    },
+    "Bei Vivino suchen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search on Vivino"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraži na Vivinu"
+          }
+        }
+      }
+    },
+    "Öffnet die Suche im Browser, mit den Angaben von oben. Zum Vergleichen; nichts wird übernommen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the search in the browser with the details above. For comparison only; nothing is taken over."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvara pretragu u pregledniku sa podacima odozgo. Samo za poređenje; ništa se ne preuzima."
           }
         }
       }
@@ -8090,23 +8277,6 @@
         }
       }
     },
-    "Kommagetrennt. Wird beim Scannen automatisch übernommen und ins Deutsche übersetzt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comma-separated. Adopted automatically when you scan and translated into English."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odvojeno zarezima. Pri skeniranju se automatski preuzima i prevodi na srpski."
-          }
-        }
-      }
-    },
     "Korkig" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9509,23 +9679,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dobro odgovara"
-          }
-        }
-      }
-    },
-    "Passt laut Etikett zu" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Goes with, according to the label"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prema etiketi ide uz"
           }
         }
       }
@@ -12264,6 +12417,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wyychällerli katalog"
+          }
+        }
+      }
+    },
+    "Kommagetrennt. Wird beim Scannen und aus dem Katalog übernommen, auf Deutsch." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comma-separated. Taken over when you scan and from the catalog, in German."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odvojeno zarezima. Preuzima se pri skeniranju i iz kataloga, na nemačkom."
+          }
+        }
+      }
+    },
+    "Kommagetrennt, auf Deutsch. Der Filter „Passt zu“ im Keller gruppiert danach." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comma-separated, in German. The “Goes with” filter in the cellar groups by it."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odvojeno zarezima, na nemačkom. Filter „Ide uz“ u podrumu grupiše po tome."
+          }
+        }
+      }
+    },
+    "z. B. Rindfleisch, Hartkäse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. beef, hard cheese"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "npr. goveđe meso, tvrdi sir"
           }
         }
       }

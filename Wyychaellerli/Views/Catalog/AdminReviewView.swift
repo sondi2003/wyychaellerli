@@ -206,6 +206,16 @@ struct AdminSubmissionEditor: View {
                 }
             }
 
+            if let url = Self.vivinoSearchURL(for: entry) {
+                Section {
+                    Link(destination: url) {
+                        Label("Bei Vivino suchen", systemImage: "magnifyingglass")
+                    }
+                } footer: {
+                    Text("Öffnet die Suche im Browser, mit den Angaben von oben. Zum Vergleichen; nichts wird übernommen.")
+                }
+            }
+
             CatalogFormFields(entry: $entry)
 
             if let errorMessage {
@@ -239,6 +249,21 @@ struct AdminSubmissionEditor: View {
                 existingHasImage = await catalog.catalogImage(group.id) != nil
             }
         }
+    }
+
+    /// Suche auf vivino.com mit Produzent, Name und Jahrgang der gerade bearbeiteten
+    /// Angaben. Nur ein Link in den Browser: kein Abruf aus der App, nichts wird übernommen.
+    static func vivinoSearchURL(for entry: CatalogWine) -> URL? {
+        var words = [entry.producer, entry.name]
+        if entry.vintage > 0 { words.append(String(entry.vintage)) }
+        let query = words
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        guard !query.isEmpty else { return nil }
+        var components = URLComponents(string: "https://www.vivino.com/search/wines")
+        components?.queryItems = [URLQueryItem(name: "q", value: query)]
+        return components?.url
     }
 
     /// Was dieser Vorschlag dem bestehenden Eintrag hinzufügt – `nil`, wenn er etwas

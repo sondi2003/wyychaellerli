@@ -38,12 +38,32 @@ struct CatalogFormFields: View {
         }
 
         Section {
+            TextField("z. B. Rindfleisch, Hartkäse", text: foodBinding, axis: .vertical)
+                .lineLimit(1...3)
+        } header: {
+            Text("Passt zu")
+        } footer: {
+            Text("Kommagetrennt, auf Deutsch. Der Filter „Passt zu“ im Keller gruppiert danach.")
+        }
+
+        Section {
             GtinField(gtins: $entry.gtins)
         } header: {
             Text("Strichcode")
         } footer: {
             Text("Mehrere durch Komma trennen, zum Beispiel für verschiedene Flaschengrössen. Der Jahrgang entscheidet weiter, welcher Eintrag gemeint ist.")
         }
+    }
+
+    private var foodBinding: Binding<String> {
+        Binding(
+            get: { entry.foodPairings.joined(separator: ", ") },
+            set: { text in
+                entry.foodPairings = text.components(separatedBy: ",")
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+            }
+        )
     }
 
     private func field(_ title: LocalizedStringKey, text: Binding<String>) -> some View {

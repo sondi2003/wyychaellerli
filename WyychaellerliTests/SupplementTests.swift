@@ -188,3 +188,53 @@ struct AdaptiveLabelImageTests {
         #expect(size.width / size.height >= AdaptiveLabelImage.bottleAspectLimit)
     }
 }
+
+@Suite("Geteiltes Bild mit Namen der App")
+struct SharedBrandingTests {
+
+    private func faded(_ name: String) throws -> UIImage {
+        let path = "/private/tmp/claude-501/-Users-richard-GitHub-wyychaellerli/0f527c51-90ec-407a-8859-4a38d1566c40/scratchpad/crop/\(name)"
+        let data = try #require(FileManager.default.contents(atPath: path))
+        let out = try #require(CatalogPhotoFade.faded(from: data))
+        let image = UIImage(data: out)
+        return try #require(image)
+    }
+
+    @Test("Ein Etikettfoto vom Scan bleibt unverändert")
+    func scanPhotoUntouched() {
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 400, height: 500)).image { _ in }
+        let jpeg = UIImage(data: image.jpegData(compressionQuality: 0.9)!)!
+        #expect(jpeg.brandedForSharing() === jpeg)
+    }
+
+    @Test("Eine Katalogflasche bekommt weissen Grund und den Namen, gleiche Grösse")
+    func bottleBranded() throws {
+        let source = UIGraphicsImageRenderer(size: CGSize(width: 300, height: 900)).image { context in
+            UIColor.black.setFill(); context.fill(CGRect(x: 0, y: 0, width: 300, height: 900))
+        }
+        let sourcePNG = try #require(source.pngData())
+        let png = try #require(CatalogPhotoFade.faded(from: sourcePNG))
+        let decoded = UIImage(data: png)
+        let bottle = try #require(decoded)
+        let branded = bottle.brandedForSharing()
+        #expect(branded.size == bottle.size)
+        #expect(branded !== bottle)
+        // Unten links (Verlauf) war durchsichtig, jetzt weiss und deckend.
+        let cg = try #require(branded.cgImage)
+        var pixel = [UInt8](repeating: 0, count: 4)
+        let context = try #require(CGContext(data: &pixel, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
+                                             space: CGColorSpaceCreateDeviceRGB(),
+                                             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.draw(cg, in: CGRect(x: -2, y: 0, width: cg.width, height: cg.height))
+        #expect(pixel[3] == 255)
+    }
+
+    @Test("Vorführung: geteilte Bilder zum Ansehen ablegen")
+    func writeSamples() throws {
+        for name in ["enemigo.png", "riomistico.png"] {
+            guard let image = try? faded(name) else { continue }
+            let out = "/private/tmp/claude-501/-Users-richard-GitHub-wyychaellerli/0f527c51-90ec-407a-8859-4a38d1566c40/scratchpad/crop/shared-\(name)"
+            try image.brandedForSharing().pngData()?.write(to: URL(fileURLWithPath: out))
+        }
+    }
+}

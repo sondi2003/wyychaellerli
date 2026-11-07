@@ -10,12 +10,14 @@ struct CatalogFilter: Equatable {
     var type: WineType?
     var country: String?
     var source: String?
+    /// Jahrgang; 0 = Einträge ohne Jahrgang.
+    var vintage: Int?
     /// Nur Einträge, bei denen etwas fehlt (Produzent, Jahrgang, Rebsorte, Region, Land).
     var onlyIncomplete = false
 
     var isActive: Bool {
         !text.trimmingCharacters(in: .whitespaces).isEmpty || type != nil || country != nil
-            || source != nil || onlyIncomplete
+            || vintage != nil || source != nil || onlyIncomplete
     }
 
     func apply(to entries: [CatalogWine]) -> [CatalogWine] {
@@ -26,6 +28,7 @@ struct CatalogFilter: Equatable {
             .filter { entry in
                 if let type, entry.typeRaw != type.rawValue { return false }
                 if let country, entry.country != country { return false }
+                if let vintage, entry.vintage != vintage { return false }
                 if let source, entry.source != source { return false }
                 if onlyIncomplete, !Self.isIncomplete(entry) { return false }
                 guard !words.isEmpty else { return true }
@@ -59,6 +62,14 @@ struct CatalogFilter: Equatable {
         return counts
             .map { (country: $0.key, count: $0.value) }
             .sorted { $0.country.localizedCaseInsensitiveCompare($1.country) == .orderedAscending }
+    }
+
+    /// Jahrgänge mit der Zahl ihrer Weine, neueste zuerst; 0 (ohne Jahrgang) steht zuletzt.
+    static func vintageCounts(in entries: [CatalogWine]) -> [(vintage: Int, count: Int)] {
+        let counts = Dictionary(grouping: entries.map(\.vintage), by: { $0 }).mapValues(\.count)
+        return counts
+            .map { (vintage: $0.key, count: $0.value) }
+            .sorted { ($0.vintage > 0 ? $0.vintage : -1) > ($1.vintage > 0 ? $1.vintage : -1) }
     }
 
     private static func fold(_ value: String) -> String {

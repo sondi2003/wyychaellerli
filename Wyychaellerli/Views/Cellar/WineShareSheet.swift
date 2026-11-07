@@ -99,7 +99,7 @@ struct WineShareSheet: View {
     private var preview: some View {
         HStack(alignment: .top, spacing: 14) {
             if let image = wine.labelImage {
-                Image(uiImage: image)
+                Image(uiImage: image.brandedForSharing())
                     .resizable()
                     .scaledToFill()
                     .frame(width: 64, height: 80)
@@ -121,7 +121,8 @@ struct WineShareSheet: View {
     private func shareItems() -> [Any] {
         var items: [Any] = [share.messageText]
         if let image = wine.labelImage {
-            items.append(image)
+            // Mit dem Namen der App unter der Flasche (nur Katalogfotos, siehe `brandedForSharing`).
+            items.append(image.brandedForSharing())
         }
         if includesData, let url = try? share.writeToTemporaryFile() {
             items.append(url)

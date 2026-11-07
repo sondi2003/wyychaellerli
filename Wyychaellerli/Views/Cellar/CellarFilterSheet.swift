@@ -11,6 +11,8 @@ struct CellarFilterSheet: View {
     @Bindable var viewModel: CellarViewModel
     /// Die Länder der Weine in der Liste, mit Weinzahl (`CellarViewModel.countryOptions`).
     var countries: [CellarViewModel.CountryOption] = []
+    /// Die Speisegruppen der Weine in der Liste, mit Weinzahl (`CellarViewModel.pairingOptions`).
+    var pairings: [(category: PairingCategory, count: Int)] = []
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -54,6 +56,29 @@ struct CellarFilterSheet: View {
                     Text("Alkoholgehalt")
                 } footer: {
                     Text(verbatim: Wine.Strength.allCases.map { "\($0.title) \($0.range)" }.joined(separator: " · "))
+                }
+
+                if !pairings.isEmpty {
+                    Section {
+                        chipRow {
+                            PillChip(title: tr("Alle"), isSelected: viewModel.pairingFilter == nil) {
+                                viewModel.pairingFilter = nil
+                            }
+                            ForEach(pairings, id: \.category) { item in
+                                PillChip(
+                                    title: "\(item.category.title) (\(item.count))",
+                                    symbol: item.category.symbolName,
+                                    isSelected: viewModel.pairingFilter == item.category
+                                ) {
+                                    viewModel.pairingFilter = item.category
+                                }
+                            }
+                        }
+                    } header: {
+                        Text("Passt zu")
+                    } footer: {
+                        Text("Nach den Speiseempfehlungen der Weine, ersatzweise des Katalogs. Weine ohne Empfehlung erscheinen hier nicht.")
+                    }
                 }
 
                 if !countries.isEmpty {

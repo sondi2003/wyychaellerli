@@ -290,9 +290,9 @@ struct WineFormView: View {
                     TextField("z. B. Gegrilltes Fleisch, Hartkäse", text: $viewModel.foodPairings, axis: .vertical)
                         .lineLimit(1...3)
                 } header: {
-                    Text("Passt laut Etikett zu")
+                    Text("Passt zu")
                 } footer: {
-                    Text("Kommagetrennt. Wird beim Scannen automatisch übernommen und ins Deutsche übersetzt.")
+                    Text("Kommagetrennt. Wird beim Scannen und aus dem Katalog übernommen, auf Deutsch.")
                 }
 
                 Section("Notizen") {

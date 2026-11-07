@@ -481,3 +481,35 @@ struct BrandHero: View {
         )
     }
 }
+
+
+// MARK: - Branding für geteilte Bilder
+
+extension UIImage {
+
+    /// Das Foto **fürs Teilen**: Eine Katalogflasche bekommt weissen Grund (der Verlauf ist
+    /// durchsichtig, Nachrichten zeigen ihn sonst auf beliebigem Grund) und unten den Namen der
+    /// App in Weinrot. Alles andere – Etikettfotos vom Scan – bleibt, wie es ist.
+    ///
+    /// Anders als auf dem Bildschirm (dort eine Ebene) muss der Name hier **ins Bild**, denn
+    /// Nachrichten und Mail bekommen nur Pixel.
+    func brandedForSharing() -> UIImage {
+        guard CatalogPhotoFade.isCatalogBottle(self), size.width > 0, size.height > 0 else { return self }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        format.opaque = true
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+            draw(in: CGRect(origin: .zero, size: size))
+            let text = "Wyychällerli" as NSString
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: max(11, size.height * 0.022), weight: .medium),
+                .foregroundColor: UIColor(Brand.accent).resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
+            ]
+            let textSize = text.size(withAttributes: attributes)
+            text.draw(at: CGPoint(x: (size.width - textSize.width) / 2,
+                                  y: size.height * 0.965 - textSize.height / 2), withAttributes: attributes)
+        }
+    }
+}

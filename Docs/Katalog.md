@@ -40,6 +40,7 @@ gezielt nach einzelnen Weinen.
 | sweetness, bottleSize | Double | für spätere Quellen, 0 = unbekannt |
 | barrique, bio, vegan | Int64 | 0/1 |
 | gtins | List<String> | Strichcodes (EAN-13/8) dieses Weins – **Queryable**. Suchmerkmal, kein Schlüssel: Derselbe Code kann über mehrere Jahrgänge gleich bleiben |
+| foodPairings | List<String> | Speisen, deutsch (seit 7.11.2026), aus dem Import (Vivino `style.food`); kein Index nötig. Vor dem ersten Produktionslauf des Imports „Deploy Schema Changes“ |
 | searchTokens | List<String> | normierte Wörter aus Produzent und Name – **Queryable** |
 | source | String | `nutzer` / `admin` / später z. B. `vinou` |
 | sourceID | String | Kennung bei der Quelle |

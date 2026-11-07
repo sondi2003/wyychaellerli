@@ -145,7 +145,7 @@ final class CatalogStore: Sendable {
     func allWines() async throws -> [CatalogWine] {
         let query = CKQuery(recordType: RecordType.wine, predicate: NSPredicate(value: true))
         let keys = ["name", "producer", "vintage", "grape", "region", "country", "typeRaw",
-                    "alcoholPercent", "source", "sourceID", "adminEdited", "gtins"]
+                    "alcoholPercent", "source", "sourceID", "adminEdited", "gtins", "foodPairings"]
         var collected: [CatalogWine] = []
         var (results, cursor) = try await database.records(matching: query, desiredKeys: keys, resultsLimit: 400)
         collected += results.compactMap { try? $0.1.get() }.map(Self.catalogWine)
@@ -226,6 +226,7 @@ final class CatalogStore: Sendable {
         record["adminEdited"] = Int64(1)
         // Hier gilt genau die Liste des Admins – er darf einen falschen Code auch entfernen.
         record["gtins"] = entry.gtins.isEmpty ? nil : entry.gtins
+        record["foodPairings"] = entry.foodPairings.isEmpty ? nil : entry.foodPairings
 
         switch image {
         case .keep: break
@@ -294,6 +295,10 @@ final class CatalogStore: Sendable {
         // Beim Aufnehmen kommen Strichcodes **dazu**, bestehende bleiben.
         let merged = Self.unique((record["gtins"] as? [String] ?? []) + entry.gtins)
         if !merged.isEmpty { record["gtins"] = merged }
+        // Speisen nur ergaenzen, wenn der Eintrag noch keine hat.
+        if (record["foodPairings"] as? [String] ?? []).isEmpty, !entry.foodPairings.isEmpty {
+            record["foodPairings"] = entry.foodPairings
+        }
         let imageFile = try labelImageData.map(Self.temporaryFile)
         if let imageFile, record["image"] == nil { record["image"] = CKAsset(fileURL: imageFile) }
         defer { if let imageFile { try? FileManager.default.removeItem(at: imageFile) } }
@@ -430,7 +435,8 @@ final class CatalogStore: Sendable {
             source: record["source"] as? String ?? "",
             sourceID: record["sourceID"] as? String ?? "",
             adminEdited: (record["adminEdited"] as? Int64 ?? 0) == 1,
-            gtins: record["gtins"] as? [String] ?? []
+            gtins: record["gtins"] as? [String] ?? [],
+            foodPairings: record["foodPairings"] as? [String] ?? []
         )
     }
 

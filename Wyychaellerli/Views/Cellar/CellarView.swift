@@ -10,6 +10,7 @@ struct CellarView: View {
 
     @Environment(\.managedObjectContext) private var context
     @Environment(\.openSettings) private var openSettings
+    @Environment(CatalogCenter.self) private var catalog
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: false)],
         animation: .default
@@ -64,10 +65,13 @@ struct CellarView: View {
                 CatalogStatisticsView()
             }
             .sheet(isPresented: $isShowingFilters) {
-                CellarFilterSheet(viewModel: viewModel, countries: viewModel.countryOptions(in: wines))
+                CellarFilterSheet(viewModel: viewModel, countries: viewModel.countryOptions(in: wines),
+                                  pairings: viewModel.pairingOptions(in: wines))
             }
             // Der Tipp zum langen Drücken auf den Scan-Knopf kommt erst mit dem ersten Wein.
             .task(id: wines.isEmpty) { ScanOptionsTip.hasWines = !wines.isEmpty }
+            // Katalogliste für den Filter „Passt zu“: Weine ohne eigene Empfehlung nehmen die des Katalogs.
+            .onChange(of: catalog.directoryVersion, initial: true) { viewModel.catalogDirectory = catalog.directory }
             // Fest unter dem Titel: Ohne Systemleiste setzt iOS 26 die Suche sonst nach unten,
             // wo sie unter der eigenen Leiste (`BrandTabBar`) verschwindet.
             .searchable(
@@ -245,6 +249,9 @@ struct CellarView: View {
                     RemovableChip(title: viewModel.countryOptions(in: wines).first { $0.key == key }?.label ?? key) {
                         viewModel.countryFilter = nil
                     }
+                }
+                if let pairing = viewModel.pairingFilter {
+                    RemovableChip(title: tr("Passt zu") + ": " + pairing.title) { viewModel.pairingFilter = nil }
                 }
                 if viewModel.showArchived {
                     RemovableChip(title: tr("Archiv")) { viewModel.showArchived = false }

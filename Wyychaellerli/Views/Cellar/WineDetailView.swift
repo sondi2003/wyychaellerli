@@ -326,7 +326,7 @@ struct WineDetailView: View {
     /// Nur sichtbar, wenn auf dem Etikett tatsächlich etwas dazu steht.
     private var pairingCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Passt laut Etikett zu", systemImage: "fork.knife")
+            Label("Passt zu", systemImage: "fork.knife")
                 .font(.headline)
             FlowLayout(spacing: 8) {
                 ForEach(wine.foodPairings, id: \.self) { pairing in

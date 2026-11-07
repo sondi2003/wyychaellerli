@@ -24,8 +24,11 @@ struct BrandTabBar: View {
         // Ohne Home-Indikator (iPhone SE) gibt es unten keinen Sicherheitsabstand –
         // die Beschriftung stiesse sonst an den Bildschirmrand.
         .padding(.bottom, hasHomeIndicator ? 2 : 8)
-        // Das Weinrot reicht bis unter den Home-Indikator.
-        .background(Brand.burgundy.ignoresSafeArea(edges: .bottom))
+        // Das Weinrot reicht bis unter den Home-Indikator und seitlich bis an den Rand: Auf
+        // dem iPhone Duo steht rechts (oder links) ein senkrechter Streifen mit Uhr und
+        // Knöpfen, die Leiste endete sonst davor und liess unten einen weissen Rest.
+        // Die Reiter selbst bleiben innerhalb des sicheren Bereichs.
+        .background(Brand.burgundy.ignoresSafeArea(edges: [.bottom, .horizontal]))
     }
 
     private var hasHomeIndicator: Bool {

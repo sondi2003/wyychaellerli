@@ -187,6 +187,9 @@ final class Wine: NSManagedObject, Identifiable {
         set { typeRaw = newValue.rawValue }
     }
 
+    /// Die Speisegruppen, in die die Empfehlungen fallen (Filter „Passt zu“).
+    var pairingCategories: Set<PairingCategory> { PairingCategory.categories(in: foodPairings) }
+
     /// Speiseempfehlungen laut Etikett, intern als eine Zeile pro Eintrag gespeichert.
     var foodPairings: [String] {
         get {

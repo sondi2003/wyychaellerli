@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Wyychaellerli
 
@@ -138,6 +139,17 @@ struct CatalogTests {
         #expect(CatalogFilter(text: "cicero 2022").apply(to: entries).map(\.vintage) == [2022])
     }
 
+    @Test("Jahrgang filtern, 0 heisst ohne Jahrgang, neueste zuerst gezählt")
+    func vintageFilter() {
+        let entries = [full("A", "X", 2023), full("B", "X", 2021), full("C", "X", 2023), full("D", "X", 0)]
+        #expect(CatalogFilter(vintage: 2023).apply(to: entries).map(\.name) == ["A", "C"])
+        #expect(CatalogFilter(vintage: 0).apply(to: entries).map(\.name) == ["D"])
+        #expect(CatalogFilter(vintage: 2021).isActive)
+        let counts = CatalogFilter.vintageCounts(in: entries)
+        #expect(counts.map(\.vintage) == [2023, 2021, 0])
+        #expect(counts.map(\.count) == [2, 1, 1])
+    }
+
     @Test("Weinart, Land und Herkunft filtern")
     func filters() {
         let entries = [
@@ -165,5 +177,95 @@ struct CatalogTests {
         let counts = CatalogFilter.countryCounts(in: entries)
         #expect(counts.map(\.country) == ["Italien", "Schweiz"])
         #expect(counts.map(\.count).reduce(0, +) == entries.filter { !$0.country.isEmpty }.count)
+    }
+}
+
+@Suite("Passt zu: Speisegruppen")
+struct PairingCategoryTests {
+
+    @Test("Freitext der Etiketten fällt in die richtigen Gruppen")
+    func groups() {
+        #expect(PairingCategory.categories(in: ["Gegrilltes Fleisch", "Lamm", "Hartkäse"]) == [.meat, .cheese])
+        #expect(PairingCategory.categories(in: ["Fisch und Meeresfrüchte"]) == [.fish])
+        #expect(PairingCategory.categories(in: ["Lasagne", "Gemüsegratin"]) == [.pasta, .vegetables])
+        #expect(PairingCategory.categories(in: ["Apéro", "Dessert"]) == [.aperitif, .dessert])
+    }
+
+    @Test("Kurze Stichwörter nur als ganzes Wort, Fruchtiges ist kein Dessert")
+    func guards() {
+        #expect(PairingCategory.categories(in: ["Ente"]) == [.meat])
+        #expect(PairingCategory.categories(in: ["Gegrilltes Gemüse"]) == [.vegetables])
+        #expect(PairingCategory.categories(in: ["Fruchtig und frisch"]).isEmpty)
+        #expect(PairingCategory.categories(in: []).isEmpty)
+    }
+}
+
+@Suite("Katalog: Speisen")
+struct CatalogPairingTests {
+
+    private func entry(food: [String]) -> CatalogWine {
+        CatalogWine(id: "x", name: "Barolo", producer: "Rocca", vintage: 2020, grape: "", region: "",
+                    country: "", typeRaw: "red", alcoholPercent: 0, source: "vivino", foodPairings: food)
+    }
+
+    @Test("Ein Vorschlag mit Speisen ergänzt einen Eintrag ohne sie")
+    func additionNamesPairings() {
+        let existing = entry(food: [])
+        let proposed = entry(food: ["Rindfleisch"])
+        #expect(proposed.additions(over: existing) == [tr("Passt zu")])
+    }
+
+    @Test("Vorhandene Speisen werden nie überschrieben")
+    func existingPairingsStay() {
+        #expect(entry(food: ["Käse"]).additions(over: entry(food: ["Rindfleisch"])) == nil)
+        var base = entry(food: ["Rindfleisch"])
+        base.fillEmptyFields(from: entry(food: ["Käse"]))
+        #expect(base.foodPairings == ["Rindfleisch"])
+    }
+
+    @Test("Katalogspeisen landen in den Gruppen des Filters")
+    func categoriesFromCatalog() {
+        let groups = PairingCategory.categories(in: ["Rindfleisch", "Hartkäse", "Meeresfrüchte"])
+        #expect(groups == [.meat, .cheese, .fish])
+    }
+
+    @Test("Die Vivino-Begriffe des Imports treffen ihre Gruppe")
+    func importTermsMatch() {
+        let terms: [(String, PairingCategory)] = [
+            ("Rindfleisch", .meat), ("Kalbfleisch", .meat), ("Lamm", .meat), ("Schweinefleisch", .meat),
+            ("Geflügel", .meat), ("Wild", .meat), ("Aufschnitt", .meat), ("Fisch", .fish), ("Meeresfrüchte", .fish),
+            ("Hartkäse", .cheese), ("Weichkäse", .cheese), ("Ziegenkäse", .cheese), ("Gemüse", .vegetables),
+            ("Pilze", .vegetables), ("Pasta", .pasta), ("Pizza", .pasta), ("Reis", .pasta),
+            ("Dessert", .dessert), ("Apéro", .aperitif)
+        ]
+        for (term, group) in terms {
+            #expect(PairingCategory.categories(in: [term]).contains(group), "\(term)")
+        }
+    }
+}
+
+@Suite("Katalog: Vivino-Suche")
+struct VivinoSearchTests {
+
+    private func entry(producer: String, name: String, vintage: Int) -> CatalogWine {
+        CatalogWine(id: "x", name: name, producer: producer, vintage: vintage, grape: "", region: "",
+                    country: "", typeRaw: "red", alcoholPercent: 0, source: "nutzer")
+    }
+
+    @Test("Die Suche trägt Produzent, Name und Jahrgang, sauber kodiert")
+    func queryContainsAllParts() throws {
+        let url = try #require(AdminSubmissionEditor.vivinoSearchURL(
+            for: entry(producer: " Château Müller ", name: "Cuvée Rouge", vintage: 2019)))
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+        #expect(url.host == "www.vivino.com")
+        #expect(items?.first?.value == "Château Müller Cuvée Rouge 2019")
+    }
+
+    @Test("Ohne Jahrgang kein Jahr, ohne Angaben keine Suche")
+    func omitsMissingParts() throws {
+        let url = try #require(AdminSubmissionEditor.vivinoSearchURL(
+            for: entry(producer: "", name: "Barolo", vintage: 0)))
+        #expect(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first?.value == "Barolo")
+        #expect(AdminSubmissionEditor.vivinoSearchURL(for: entry(producer: "", name: " ", vintage: 0)) == nil)
     }
 }

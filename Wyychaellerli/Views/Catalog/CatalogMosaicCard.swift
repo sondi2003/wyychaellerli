@@ -16,6 +16,7 @@ struct CatalogMosaicCard: View {
         Color(red: 0.63, green: 0.23, blue: 0.32), Color(red: 0.70, green: 0.29, blue: 0.38),
         Color(red: 0.76, green: 0.37, blue: 0.45), Color(red: 0.81, green: 0.46, blue: 0.52)
     ]
+    private static let othersBackground = Color(red: 0.98, green: 0.94, blue: 0.95)
     private static let darkText = Color(red: 0.30, green: 0.04, blue: 0.10)
 
     var body: some View {
@@ -72,7 +73,7 @@ struct CatalogMosaicCard: View {
     private func tileView(_ tile: CatalogMosaic.Tile, rank: Int) -> some View {
         switch tile.content {
         case .country(let country):
-            let isLight = rank >= 4
+            let isLight = rank >= 5  // gemessen: ab Rang 5 hat Dunkelrot mehr Kontrast als Weiss
             let shortSide = min(tile.rect.width, tile.rect.height)
             VStack(alignment: .leading, spacing: 0) {
                 if let flag = country.flag {
@@ -121,7 +122,9 @@ struct CatalogMosaicCard: View {
             .foregroundStyle(Self.darkText)
             .padding(.horizontal, 12)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Brand.blush, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            // Fester heller Grund: `Brand.blush` dunkelt im Dunkelmodus ab, der Text ist fest
+            // dunkelrot und ging darauf unter.
+            .background(Self.othersBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .padding(1.5)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(verbatim: rest.count == 1

@@ -24,6 +24,11 @@ final class CellarViewModel {
     /// Schlüssel des gewählten Landes (`Wine.countryKey`), `nil` = alle Länder. Weine ohne
     /// Landesangabe fallen bei gesetztem Filter heraus.
     var countryFilter: String?
+    /// Gewählte Speisegruppe („Passt zu“), `nil` = alle. Weine ohne Empfehlung fallen bei
+    /// gesetztem Filter heraus – sie als „passend“ zu zeigen, wäre geraten.
+    var pairingFilter: PairingCategory?
+    /// Die Katalogliste, aus der Weine ohne eigene Speiseempfehlung ihre Gruppen bekommen.
+    var catalogDirectory = CatalogDirectory.empty
 
     /// Ist im Filterblatt etwas eingeschaltet? Die Weinart zählt nicht dazu, die steht
     /// ohnehin sichtbar in der Chip-Reihe.
@@ -31,7 +36,7 @@ final class CellarViewModel {
 
     /// Für die Zahl am Filter-Chip.
     var activeFilterCount: Int {
-        [showArchived, showOnlyDrinkSoon, strengthFilter != nil, countryFilter != nil].filter { $0 }.count
+        [showArchived, showOnlyDrinkSoon, strengthFilter != nil, countryFilter != nil, pairingFilter != nil].filter { $0 }.count
     }
 
     /// „Filter zurücksetzen“ im Filterblatt. Die Weinart bleibt, wie sie ist.
@@ -40,6 +45,7 @@ final class CellarViewModel {
         showOnlyDrinkSoon = false
         strengthFilter = nil
         countryFilter = nil
+        pairingFilter = nil
     }
 
     /// Ein Land im Filterblatt: Schlüssel, Name, Flagge und Zahl der Weine.
@@ -68,6 +74,27 @@ final class CellarViewModel {
                 )
             }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    /// Die Speisegruppen der Weine in der Liste (Bestand oder Archiv) mit der Zahl ihrer Weine,
+    /// in fester Reihenfolge; Gruppen ohne Wein fehlen.
+    func pairingOptions(in wines: [Wine]) -> [(category: PairingCategory, count: Int)] {
+        let visible = wines.filter { $0.isArchived == showArchived }
+        let sets = visible.map(pairingCategories(of:))
+        return PairingCategory.allCases.compactMap { category in
+            let count = sets.filter { $0.contains(category) }.count
+            return count > 0 ? (category, count) : nil
+        }
+    }
+
+    /// Die Speisegruppen eines Weins: seine eigene Empfehlung, sonst die des Katalogs
+    /// (genauer Treffer über Produzent, Name und Jahrgang). Die eigene gilt immer mehr.
+    func pairingCategories(of wine: Wine) -> Set<PairingCategory> {
+        let own = wine.pairingCategories
+        guard own.isEmpty, wine.foodPairings.isEmpty else { return own }
+        guard let entry = catalogDirectory.entry(producer: wine.producer, name: wine.name, vintage: Int(wine.vintage))
+        else { return own }
+        return PairingCategory.categories(in: entry.foodPairings)
     }
 
     // MARK: Sheet- und Dialog-Zustand
@@ -101,6 +128,7 @@ final class CellarViewModel {
             if let typeFilter, wine.type != typeFilter { return false }
             if let strengthFilter, wine.strength != strengthFilter { return false }
             if let countryFilter, wine.countryKey != countryFilter { return false }
+            if let pairingFilter, !pairingCategories(of: wine).contains(pairingFilter) { return false }
             guard !query.isEmpty else { return true }
             return wine.name.lowercased().contains(query)
                 || wine.producer.lowercased().contains(query)

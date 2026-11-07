@@ -53,6 +53,8 @@ struct MySubmissionsView: View {
     }
 
     /// Etikett aus dem eigenen Keller – liegt schon auf dem Gerät, nichts wird geladen.
+    /// Ist der Wein gelöscht, holt `CatalogThumbnail` das Bild des aufgenommenen Eintrags
+    /// aus dem Katalog.
     /// Der Status steht unter dem Namen statt daneben, sonst drückt der Name ihn auf
     /// Breite null, und die Zeile wächst Buchstabe für Buchstabe in die Höhe.
     private func row(_ submission: CatalogSubmission) -> some View {
@@ -60,9 +62,7 @@ struct MySubmissionsView: View {
             if let wine = localWine(submission.wineUUID) {
                 LabelThumbnail(wine: wine, size: 44)
             } else {
-                Image(systemName: "wineglass")
-                    .frame(width: 44, height: 44)
-                    .foregroundStyle(.secondary)
+                CatalogThumbnail(submission: submission)
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(verbatim: submission.vintage > 0 ? "\(submission.name) \(String(submission.vintage))" : submission.name)
@@ -89,6 +89,32 @@ struct MySubmissionsView: View {
         request.predicate = NSPredicate(format: "uuid == %@", uuid as CVarArg)
         request.fetchLimit = 1
         return try? context.fetch(request).first
+    }
+}
+
+/// Etikett eines Vorschlags, dessen Wein nicht mehr im Keller liegt. Ein aufgenommener
+/// Vorschlag steht im Katalog und trägt dort das Foto – es wird erst jetzt geladen, für
+/// die Zeile, und nur im Speicher gehalten. Alles andere bleibt das Weinglas.
+private struct CatalogThumbnail: View {
+    let submission: CatalogSubmission
+    @Environment(CatalogCenter.self) private var catalog
+    @State private var image: UIImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                AdaptiveLabelImage(image: image, width: 44, height: 55)
+            } else {
+                Image(systemName: "wineglass")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(width: 44, height: 44)
+        .task(id: submission.id) {
+            guard submission.status == .accepted, !submission.catalogKey.isEmpty,
+                  let data = await catalog.catalogImage(submission.catalogKey) else { return }
+            image = UIImage(data: data)
+        }
     }
 }
 

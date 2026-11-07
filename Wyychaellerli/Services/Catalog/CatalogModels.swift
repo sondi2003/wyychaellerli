@@ -24,6 +24,9 @@ struct CatalogWine: Sendable, Equatable, Identifiable, Codable {
     /// Bekannte Strichcodes (EAN-13/8) dieses Weins. Eine Liste, weil derselbe Wein oft
     /// mehrere trägt (Flaschengrössen, Verpackungen). Suchmerkmal, kein Schlüssel.
     var gtins: [String] = []
+    /// Speisen, zu denen der Wein passt (deutsch, kurze Begriffe). Kommen vor allem aus dem
+    /// Import; ein Etikett belegt sie nicht. Leer = nicht bekannt.
+    var foodPairings: [String] = []
 
     var wineType: WineType? { WineType(rawValue: typeRaw) }
 
@@ -46,6 +49,10 @@ struct CatalogWine: Sendable, Equatable, Identifiable, Codable {
             guard existing.alcoholPercent == 0 else { return nil }
             added.append(tr("Alkohol"))
         }
+        if foodPairings != existing.foodPairings {
+            guard existing.foodPairings.isEmpty else { return nil }
+            added.append(tr("Passt zu"))
+        }
         guard existing.gtins.allSatisfy(gtins.contains) else { return nil }
         if !gtins.allSatisfy(existing.gtins.contains) { added.append(tr("Strichcode")) }
         return added
@@ -58,6 +65,7 @@ struct CatalogWine: Sendable, Equatable, Identifiable, Codable {
         if region.isEmpty { region = other.region }
         if country.isEmpty { country = other.country }
         if alcoholPercent == 0 { alcoholPercent = other.alcoholPercent }
+        if foodPairings.isEmpty { foodPairings = other.foodPairings }
     }
 
     var candidate: DuplicateFinder.Candidate {

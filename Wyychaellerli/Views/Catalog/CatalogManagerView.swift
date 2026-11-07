@@ -99,6 +99,17 @@ struct CatalogManagerView: View {
                         menuChip(filter.country.map(Self.countryLabel) ?? tr("Land"), isActive: filter.country != nil)
                     }
                     Menu {
+                        Button("\(tr("Alle Jahrgänge")) (\(entries.count))") { filter.vintage = nil }
+                        ForEach(CatalogFilter.vintageCounts(in: entries), id: \.vintage) { item in
+                            Button("\(item.vintage > 0 ? String(item.vintage) : tr("Ohne Jahrgang")) (\(item.count))") {
+                                filter.vintage = item.vintage
+                            }
+                        }
+                    } label: {
+                        menuChip(filter.vintage.map { $0 > 0 ? String($0) : tr("Ohne Jahrgang") } ?? tr("Jahrgang"),
+                                 isActive: filter.vintage != nil)
+                    }
+                    Menu {
                         Button(tr("Alle Herkünfte")) { filter.source = nil }
                         Button(tr("Aus Vorschlägen")) { filter.source = "nutzer" }
                         Button(tr("Von dir angepasst")) { filter.source = "admin" }

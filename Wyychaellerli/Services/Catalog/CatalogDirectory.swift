@@ -16,6 +16,7 @@ struct CatalogDirectory: Sendable {
     }
 
     private let rows: [Row]
+    private let byKey: [String: CatalogWine]
 
     var count: Int { rows.count }
     var isEmpty: Bool { rows.isEmpty }
@@ -24,6 +25,7 @@ struct CatalogDirectory: Sendable {
     static let empty = CatalogDirectory(entries: [])
 
     init(entries: [CatalogWine]) {
+        byKey = Dictionary(entries.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         rows = entries.map { entry in
             Row(
                 entry: entry,
@@ -32,6 +34,12 @@ struct CatalogDirectory: Sendable {
                 name: Self.fold(entry.name)
             )
         }
+    }
+
+    /// Der Eintrag zu Produzent, Name und Jahrgang, über denselben Schlüssel wie der Katalog.
+    /// Nur der genaue Treffer – ein abweichend geschriebener Name findet nichts.
+    func entry(producer: String, name: String, vintage: Int) -> CatalogWine? {
+        byKey[CatalogKey.make(producer: producer, name: name, vintage: vintage)]
     }
 
     // MARK: Vorschläge

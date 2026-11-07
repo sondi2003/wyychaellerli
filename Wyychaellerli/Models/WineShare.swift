@@ -75,7 +75,11 @@ struct WineShare: Codable, Equatable, Sendable, Identifiable {
     }
 
     private static func shrink(_ image: UIImage) -> Data? {
-        image.resizedForRecognition(maxDimension: 1000).jpegData(compressionQuality: 0.7)
+        let small = image.resizedForRecognition(maxDimension: 1000)
+        // Eine Katalogflasche trägt Durchsichtigkeit (Verlauf unten); als JPEG würde sie schwarz.
+        // Hier **ohne** Namen der App: Die Datei ist für die App des Empfängers, die ihn selbst setzt.
+        if CatalogPhotoFade.isCatalogBottle(small) { return small.pngData() }
+        return small.jpegData(compressionQuality: 0.7)
     }
 
     // MARK: Darstellung
