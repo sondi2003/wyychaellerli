@@ -243,13 +243,10 @@ final class WineFormViewModel {
     func selectSuggestion(_ entry: CatalogWine) {
         pickedFromSuggestions = true
         pickedAt = Date()
-        name = entry.name
-        if producer.isEmpty { producer = entry.producer }
-        if Self.vintageRange.contains(entry.vintage) { vintage = entry.vintage }
         catalogCandidate = nil
         declinedCatalogID = nil
         suggestions = []
-        fillGaps(from: entry)
+        adoptCatalogEntry(entry)
     }
 
     /// Was beim Sichern an den Katalog geht, je nach Antwort des Nutzers.
@@ -272,7 +269,7 @@ final class WineFormViewModel {
         let code = validBarcode
         if !code.isEmpty, entry.gtins.contains(code), vintage == 0 || entry.vintage == vintage {
             catalogCandidate = nil
-            fillGaps(from: entry)
+            adoptCatalogEntry(entry)
         } else {
             catalogCandidate = entry
         }
@@ -281,7 +278,7 @@ final class WineFormViewModel {
     func confirmCatalogCandidate() {
         guard let entry = catalogCandidate else { return }
         catalogCandidate = nil
-        fillGaps(from: entry)
+        adoptCatalogEntry(entry)
     }
 
     func declineCatalogCandidate() {
@@ -313,21 +310,27 @@ final class WineFormViewModel {
         }
     }
 
-    /// Ergänzt aus dem gemeinsamen Katalog, was der Scan nicht gefunden hat. Überschreibt
-    /// nie etwas: Das Etikett in der Hand gilt mehr als der Katalog.
-    func fillGaps(from entry: CatalogWine) {
+    /// Übernimmt einen bestätigten Katalogeintrag. Wer „Das ist mein Wein“ sagt (oder den Wein
+    /// aus den Vorschlägen wählt), sagt damit: Der Katalogeintrag ist dieser Wein – dann gilt
+    /// er, und die Angaben vom Scan weichen ihm. Der Scan liest Etiketten, der Katalog ist
+    /// geprüft: Weisswein als „Rotwein“ erkannt, „Chianti“ statt „Toscana“, ein Name ohne Akzent.
+    /// Leere Katalogfelder ändern nichts. Eigene Angaben zur Flasche (Notizen, Bestand, Fotos,
+    /// Strichcode) bleiben ohnehin, und die Speisen des Etiketts (belegt, „laut Etikett“) gehen
+    /// vor, solange es welche nennt.
+    func adoptCatalogEntry(_ entry: CatalogWine) {
         catalogMatch = entry
-        if producer.isEmpty { producer = entry.producer }
-        if vintage == 0, Self.vintageRange.contains(entry.vintage) { vintage = entry.vintage }
-        if grape.isEmpty { grape = entry.grape }
-        if region.isEmpty { region = entry.region }
-        if country.isEmpty { country = entry.country }
-        if alcoholPercent == 0 { alcoholPercent = entry.alcoholPercent }
-        // Speisen aus dem Katalog nur, wenn das Etikett keine nennt.
+        if !entry.name.isEmpty { name = entry.name }
+        if !entry.producer.isEmpty { producer = entry.producer }
+        if Self.vintageRange.contains(entry.vintage) { vintage = entry.vintage }
+        if !entry.grape.isEmpty { grape = entry.grape }
+        if !entry.region.isEmpty { region = entry.region }
+        if !entry.country.isEmpty { country = entry.country }
+        if entry.alcoholPercent > 0 { alcoholPercent = entry.alcoholPercent }
         if foodPairings.trimmingCharacters(in: .whitespaces).isEmpty, !entry.foodPairings.isEmpty {
             foodPairings = entry.foodPairings.joined(separator: ", ")
         }
-        if typeNeedsReview, let wineType = entry.wineType {
+        // Ein Eintrag ohne Weinart (etwa ein Dessertwein bei Vivino) ändert nichts.
+        if let wineType = entry.wineType {
             type = wineType
             typeNeedsReview = false
         }

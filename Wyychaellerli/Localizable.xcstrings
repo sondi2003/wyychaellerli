@@ -3762,19 +3762,19 @@
         }
       }
     },
-    "Das Vivino-Foto kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt." : {
+    "Jede Übernahme aus diesem Treffer nimmt das Vivino-Foto mit; es kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt." : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The Vivino photo goes into the catalog, even if there is already one there or in the suggestion. Your photo in the cellar stays untouched."
+            "value" : "Every take-over from this result also takes the Vivino photo; it goes into the catalog, even if there is already one there or in the suggestion. Your photo in the cellar stays untouched."
           }
         },
         "sr-Latn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vivino fotografija ide u katalog, čak i ako tamo ili u predlogu već postoji jedna. Tvoja fotografija u podrumu ostaje netaknuta."
+            "value" : "Svako preuzimanje iz ovog rezultata preuzima i Vivino fotografiju; ona ide u katalog, čak i ako tamo ili u predlogu već postoji jedna. Tvoja fotografija u podrumu ostaje netaknuta."
           }
         }
       }

@@ -45,6 +45,45 @@ struct ScanFixTests {
 
     // MARK: Weinart
 
+    @Test("Ein bestätigter Katalogeintrag gilt: Weinart, Region und Name folgen ihm, Leeres ändert nichts")
+    func confirmedCatalogEntryWins() {
+        let model = WineFormViewModel(mode: .add)
+        var extraction = WineLabelExtraction()
+        extraction.name = "Villa Antinori"
+        extraction.region = "Chianti"
+        extraction.type = "red"          // vom Scan falsch gelesen
+        model.apply(LabelScanResult(extraction: extraction, recognizedText: "", source: .heuristic, labelImageData: nil, backLabelImageData: nil))
+        model.notes = "Geschenk von Anna"
+        model.quantity = 3
+
+        let entry = CatalogWine(id: "x", name: "Villa Antinori Bianco", producer: "Antinori", vintage: 2025, grape: "Trebbiano",
+                                region: "Toscana", country: "Italien", typeRaw: "white", alcoholPercent: 12.5, source: "vivino")
+        model.adoptCatalogEntry(entry)
+        #expect(model.type == .white)
+        #expect(model.region == "Toscana")
+        #expect(model.name == "Villa Antinori Bianco")
+        #expect(model.producer == "Antinori")
+        #expect(model.vintage == 2025)
+        #expect(model.grape == "Trebbiano")
+        #expect(model.alcoholPercent == 12.5)
+        // Was nur diese Flasche betrifft, bleibt.
+        #expect(model.notes == "Geschenk von Anna")
+        #expect(model.quantity == 3)
+
+        // Leere Katalogfelder und eine fehlende Weinart lassen das Bisherige stehen.
+        var sparse = entry
+        sparse.region = ""
+        sparse.typeRaw = ""
+        sparse.alcoholPercent = 0
+        model.type = .rose
+        model.region = "Eigene Region"
+        model.alcoholPercent = 13
+        model.adoptCatalogEntry(sparse)
+        #expect(model.type == .rose)
+        #expect(model.region == "Eigene Region")
+        #expect(model.alcoholPercent == 13)
+    }
+
     @Test("Erkennt der Scan die Weinart nicht, wird das sichtbar")
     func unknownTypeNeedsReview() {
         let model = WineFormViewModel(mode: .add)

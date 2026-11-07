@@ -113,7 +113,7 @@ struct CatalogDirectoryTests {
     }
 
     @MainActor
-    @Test("Ein Vorschlag wählen übernimmt Name, Jahrgang und Lücken – Eigenes bleibt")
+    @Test("Einen Vorschlag wählen übernimmt den Katalogeintrag, auch über Eigenes")
     func selectingSuggestion() {
         let model = WineFormViewModel(mode: .add)
         model.name = "Brio"
@@ -125,7 +125,7 @@ struct CatalogDirectoryTests {
         model.selectSuggestion(chosen)
         #expect(model.name == "Con Brio")
         #expect(model.vintage == 2019)
-        #expect(model.producer == "Mein Weingut")
+        #expect(model.producer == "Cantina Zeni")
         #expect(model.grape == "Merlot")
         #expect(model.catalogMatch?.id == "wine_x")
         #expect(model.suggestions.isEmpty)

@@ -132,6 +132,8 @@ private struct VivinoComparisonView: View {
     @State private var isLoadingPhoto = false
     @State private var photoFailed = false
     @State private var preview: Data?
+    /// Der Admin hat das Foto ausdrücklich abgewählt: Dann nimmt auch „Übernehmen“ es nicht mit.
+    @State private var photoDeclined = false
 
     private var rows: [VivinoComparisonRow] {
         VivinoComparison.rows(entry: entry, candidate: candidate)
@@ -156,6 +158,7 @@ private struct VivinoComparisonView: View {
             Section {
                 Button {
                     entry = VivinoComparison.apply(candidate, to: entry, states: [.fillable])
+                    takePhoto()
                 } label: {
                     Text("Leere Felder füllen")
                 }
@@ -168,6 +171,7 @@ private struct VivinoComparisonView: View {
             Section {
                 Button {
                     entry = VivinoComparison.apply(candidate, to: entry, states: [.fillable, .different])
+                    takePhoto()
                 } label: {
                     Text("Alle Abweichungen übernehmen")
                 }
@@ -183,6 +187,15 @@ private struct VivinoComparisonView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    /// Jede Übernahme aus diesem Treffer nimmt auch sein Foto mit, sofern es geladen ist und
+    /// nicht abgewählt wurde: Das Vivino-Foto soll im Katalog stehen, auch wenn schon ein
+    /// eigenes da ist. Vorher gab es dafür nur einen eigenen Knopf, und „Übernehmen“ liess das
+    /// Foto liegen – der Katalog behielt das des Einreichers.
+    private func takePhoto() {
+        guard !photoDeclined, let preview else { return }
+        photo = preview
+    }
+
     /// Foto des Vorschlags links, Vivino rechts; „Verwenden“ merkt das Vivino-Foto vor.
     private var photoSection: some View {
         Section {
@@ -193,9 +206,13 @@ private struct VivinoComparisonView: View {
             if photo != nil, photo == preview {
                 Label("Wird beim Aufnehmen im Katalog gespeichert.", systemImage: "checkmark.circle")
                     .foregroundStyle(.green)
-                Button("Nicht verwenden", role: .destructive) { photo = nil }
+                Button("Nicht verwenden", role: .destructive) {
+                    photo = nil
+                    photoDeclined = true
+                }
             } else {
                 Button {
+                    photoDeclined = false
                     photo = preview
                 } label: {
                     Text("Vivino-Foto verwenden")
@@ -210,7 +227,7 @@ private struct VivinoComparisonView: View {
         } header: {
             Text("Foto")
         } footer: {
-            Text("Das Vivino-Foto kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt.")
+            Text("Jede Übernahme aus diesem Treffer nimmt das Vivino-Foto mit; es kommt in den Katalog, auch wenn dort oder im Vorschlag schon eines ist. Dein Foto im Keller bleibt unberührt.")
         }
         .task(id: candidate.id) {
             isLoadingPhoto = true
@@ -259,6 +276,7 @@ private struct VivinoComparisonView: View {
                     var updated = entry
                     row.field.apply(candidate, to: &updated)
                     entry = updated
+                    takePhoto()
                 } label: {
                     Text("Übernehmen")
                 }
