@@ -23523,6 +23523,296 @@
           }
         }
       }
+    },
+    "Selbst suchen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search yourself"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chercher soi-même"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca da solo"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraži sam"
+          }
+        }
+      }
+    },
+    "Passt keiner der Treffer, suche mit einem eigenen Begriff oder sieh dir die Suche im Browser an." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If none of the results fit, search with your own term or look at the search in the browser."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si aucun résultat ne convient, cherche avec ton propre terme ou consulte la recherche dans le navigateur."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se nessun risultato corrisponde, cerca con un termine tuo o guarda la ricerca nel browser."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ako nijedan rezultat ne odgovara, pretraži sopstvenim pojmom ili pogledaj pretragu u pregledniku."
+          }
+        }
+      }
+    },
+    "Adresse der Browser-Suche eintragen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter browser search address"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir l’adresse de la recherche dans le navigateur"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci l’indirizzo della ricerca nel browser"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unesi adresu pretrage u pregledniku"
+          }
+        }
+      }
+    },
+    "Eigener Suchbegriff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your own search term"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terme de recherche personnel"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termine di ricerca personale"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sopstveni pojam za pretragu"
+          }
+        }
+      }
+    },
+    "Suchen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chercher"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traži"
+          }
+        }
+      }
+    },
+    "Die Quelle liefert dazu nichts. Versuche es im Browser." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The source returns nothing for this. Try the browser."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La source ne renvoie rien. Essaie dans le navigateur."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fonte non restituisce nulla. Prova nel browser."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izvor za to ne vraća ništa. Pokušaj u pregledniku."
+          }
+        }
+      }
+    },
+    "Suche im Browser" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Browser search"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche dans le navigateur"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricerca nel browser"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pretraga u pregledniku"
+          }
+        }
+      }
+    },
+    "„Abgleichen“ holt die Treffer der Quelle und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst. „Im Browser suchen“ öffnet dieselbe Suche zum Vergleichen von Hand." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Compare” fetches the results from the source and sets them against the suggestion; only what you choose is taken over. “Search in browser” opens the same search for comparing by hand."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« Comparer » récupère les résultats de la source et les met en regard de la suggestion ; seul ce que tu choisis est repris. « Chercher dans le navigateur » ouvre la même recherche pour comparer à la main."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«Confronta» recupera i risultati della fonte e li affianca alla proposta; viene preso solo ciò che scegli. «Cerca nel browser» apre la stessa ricerca per confrontare a mano."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Uporedi“ preuzima rezultate iz izvora i stavlja ih naspram predloga; preuzima se samo ono što izabereš. „Pretraži u pregledniku“ otvara istu pretragu za ručno poređenje."
+          }
+        }
+      }
+    },
+    "https://…/search?q={q}" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://…/search?q={q}"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://…/search?q={q}"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://…/search?q={q}"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://…/search?q={q}"
+          }
+        }
+      }
+    },
+    "„{q}“ steht für den Suchbegriff. Vorgegeben ist die Suche der Quelle; hier lässt sich die Adresse ändern." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“{q}” stands for the search term. The source’s search is preset; you can change the address here."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« {q} » représente le terme recherché. La recherche de la source est préréglée ; tu peux modifier l’adresse ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«{q}» sta per il termine di ricerca. È preimpostata la ricerca della fonte; qui puoi modificare l’indirizzo."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„{q}“ označava pojam za pretragu. Unapred je podešena pretraga izvora; ovde možeš promeniti adresu."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

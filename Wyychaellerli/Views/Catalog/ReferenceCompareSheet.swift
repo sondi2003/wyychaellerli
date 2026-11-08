@@ -18,6 +18,10 @@ struct ReferenceCompareSheet: View {
     }
 
     @State private var phase = Phase.loading
+    /// Freie Suche: Wenn die automatischen Suchformen nichts finden, tippt der Admin selbst.
+    @State private var manualTerm = ""
+    @State private var isSearchingManually = false
+    @State private var manualError: String?
 
     var body: some View {
         NavigationStack {
@@ -36,8 +40,11 @@ struct ReferenceCompareSheet: View {
                     } description: {
                         Text(verbatim: message)
                     } actions: {
-                        Button("Nochmals versuchen") { Task { await load() } }
-                            .buttonStyle(.brand(.outline))
+                        VStack(spacing: 12) {
+                            Button("Nochmals versuchen") { Task { await load() } }
+                                .buttonStyle(.brand(.outline))
+                            browserLink
+                        }
                     }
                 case .results(let result) where result.ranked.isEmpty:
                     ContentUnavailableView {
@@ -46,9 +53,11 @@ struct ReferenceCompareSheet: View {
                         Text("Die Quelle kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser.")
                         + Text(verbatim: "\n\n" + tr("Gesucht wurde nach:") + " " + ReferenceRanker.searchTerms(for: entry).map { "„\($0)“" }.joined(separator: ", "))
                     } actions: {
-                        if let url = result.searchURL {
-                            Link("Im Browser suchen", destination: url)
+                        VStack(spacing: 12) {
+                            manualSearchField
+                            browserLink
                         }
+                        .padding(.horizontal)
                     }
                 case .results(let result):
                     resultList(result)
@@ -82,15 +91,85 @@ struct ReferenceCompareSheet: View {
             } footer: {
                 Text("Der beste Treffer steht oben. Nichts wird übernommen, bevor du es in der Gegenüberstellung wählst.")
             }
-            if let url = result.searchURL {
-                Section {
-                    Link(destination: url) {
-                        Label("Im Browser suchen", systemImage: "magnifyingglass")
+            Section {
+                manualSearchField
+                browserLink
+            } header: {
+                Text("Selbst suchen")
+            } footer: {
+                Text("Passt keiner der Treffer, suche mit einem eigenen Begriff oder sieh dir die Suche im Browser an.")
+            }
+        }
+    }
+
+    /// Adresse der Suche im Browser: die vom Ablauf gemeldete, sonst die gemerkte aus den
+    /// Einstellungen. Unabhängig davon, ob die Abfrage über den Webhook gerade etwas lieferte.
+    private var browserURL: URL? {
+        let term = manualTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+        return ReferenceLookupSettings.browserURL(for: term.isEmpty ? ReferenceLookupSettings.browserTerm(for: entry) : term)
+    }
+
+    @ViewBuilder private var browserLink: some View {
+        if let url = browserURL {
+            Link(destination: url) {
+                Label("Im Browser suchen", systemImage: "safari")
+            }
+        } else {
+            NavigationLink {
+                ReferenceSettingsView()
+            } label: {
+                Label("Adresse der Browser-Suche eintragen", systemImage: "safari")
+            }
+        }
+    }
+
+    private var manualSearchField: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                TextField("Eigener Suchbegriff", text: $manualTerm)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .submitLabel(.search)
+                    .onSubmit { Task { await searchManually() } }
+                if isSearchingManually {
+                    ProgressView()
+                } else {
+                    Button {
+                        Task { await searchManually() }
+                    } label: {
+                        Image(systemName: "magnifyingglass")
                     }
-                } footer: {
-                    Text("Passt keiner der Treffer, lässt sich die Suche im Browser ansehen.")
+                    .disabled(manualTerm.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .accessibilityLabel(tr("Suchen"))
                 }
             }
+            if let manualError {
+                Text(verbatim: manualError)
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+            }
+        }
+    }
+
+    /// Sucht mit dem eigenen Begriff über den Webhook und zeigt **alles**, was die Quelle
+    /// liefert (nach Übereinstimmung geordnet, bis zu zwanzig), nicht nur Treffer, die dem
+    /// Vorschlag gleichen.
+    private func searchManually() async {
+        let term = manualTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !term.isEmpty else { return }
+        isSearchingManually = true
+        manualError = nil
+        defer { isSearchingManually = false }
+        do {
+            let reply = try await ReferenceLookup.search(term: term)
+            let ranked = ReferenceRanker.rank(reply.candidates, for: entry, minimum: 0, limit: 20)
+            if ranked.isEmpty {
+                manualError = tr("Die Quelle liefert dazu nichts. Versuche es im Browser.")
+            } else {
+                phase = .results(ReferenceLookup.Result(ranked: ranked, searchURL: reply.searchURL))
+            }
+        } catch {
+            manualError = error.localizedDescription
         }
     }
 
@@ -334,6 +413,7 @@ struct ReferenceSettingsView: View {
 
     @State private var url = ReferenceLookupSettings.urlString
     @State private var token = ReferenceLookupSettings.token
+    @State private var browserURL = ReferenceLookupSettings.browserSearchString
     @State private var isTesting = false
     @State private var testResult: String?
 
@@ -351,6 +431,16 @@ struct ReferenceSettingsView: View {
                 Text("Webhook in n8n")
             } footer: {
                 Text("Die Produktionsadresse des Ablaufs „Webhook Quellensuche“ (https) und der Wert der Header-Auth-Zugangsdaten mit dem Namen „X-Admin-Token“. Der Schlüssel liegt in der Keychain dieses Geräts.")
+            }
+            Section {
+                TextField("https://…/search?q={q}", text: $browserURL)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
+            } header: {
+                Text("Suche im Browser")
+            } footer: {
+                Text("„{q}“ steht für den Suchbegriff. Vorgegeben ist die Suche der Quelle; hier lässt sich die Adresse ändern.")
             }
             Section {
                 Button {
@@ -384,6 +474,7 @@ struct ReferenceSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: url) { _, value in ReferenceLookupSettings.urlString = value }
         .onChange(of: token) { _, value in ReferenceLookupSettings.token = value }
+        .onChange(of: browserURL) { _, value in ReferenceLookupSettings.browserSearchString = value }
     }
 
     private func test() async {
@@ -392,6 +483,7 @@ struct ReferenceSettingsView: View {
         defer { isTesting = false }
         do {
             let list = try await ReferenceLookup.search(term: "Donatsch").candidates
+            browserURL = ReferenceLookupSettings.browserSearchString
             testResult = tr("Verbindung steht (Testsuche: \(list.count) Treffer).")
         } catch {
             testResult = error.localizedDescription

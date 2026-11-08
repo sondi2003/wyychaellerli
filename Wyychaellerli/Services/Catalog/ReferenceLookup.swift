@@ -130,19 +130,24 @@ enum ReferenceRanker {
     static let goodScore = 0.8
 
     /// Bewertet die Treffer gegen den Vorschlag und liefert die besten zuerst.
-    static func rank(_ candidates: [ReferenceCandidate], for entry: CatalogWine) -> [RankedReferenceCandidate] {
+    /// `minimum` und `limit` lassen sich für die freie Suche lockern: Wer selbst einen Begriff
+    /// eingibt, will alles sehen, was die Quelle liefert, nicht nur das, was dem Vorschlag gleicht.
+    static func rank(
+        _ candidates: [ReferenceCandidate], for entry: CatalogWine,
+        minimum: Double = minimumScore, limit: Int = maximumResults
+    ) -> [RankedReferenceCandidate] {
         let ours = words(entry.producer + " " + entry.name)
         guard !ours.isEmpty else { return [] }
         var seen = Set<String>()
         return candidates
             .filter { seen.insert($0.vid).inserted }
             .map { RankedReferenceCandidate(candidate: $0, score: score($0, ours: ours, vintage: entry.vintage)) }
-            .filter { $0.score >= minimumScore }
+            .filter { $0.score >= minimum }
             .sorted {
                 if $0.score != $1.score { return $0.score > $1.score }
                 return $0.candidate.ratingsCount > $1.candidate.ratingsCount
             }
-            .prefix(maximumResults)
+            .prefix(limit)
             .map { $0 }
     }
 
@@ -321,6 +326,47 @@ enum ReferenceLookupSettings {
     }
 
     static var isConfigured: Bool { endpoint != nil && !token.isEmpty }
+
+    // MARK: Suche im Browser
+
+    static let browserKey = "reference.browser.url"
+
+    /// Adresse der Suche im Browser, mit „{q}“ als Platz für den Suchbegriff. In einer Adresse
+    /// muss der Host stehen; der Name der Quelle bleibt nur aus Texten und Bezeichnern heraus.
+    /// Eine in den Einstellungen eingetragene Adresse hat Vorrang.
+    static let defaultBrowserSearch = "https://www.vivino.com/search/wines?q={q}"
+
+    static var browserSearchString: String {
+        get {
+            let stored = UserDefaults.standard.string(forKey: browserKey) ?? ""
+            return stored.isEmpty ? defaultBrowserSearch : stored
+        }
+        set { UserDefaults.standard.set(newValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: browserKey) }
+    }
+
+    /// Die Suche im Browser für einen Begriff.
+    static func browserURL(for term: String) -> URL? {
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        let template = browserSearchString
+        guard !trimmed.isEmpty, !template.isEmpty else { return nil }
+        let allowed = CharacterSet.urlQueryAllowed.subtracting(CharacterSet(charactersIn: "&+=#"))
+        let encoded = trimmed.addingPercentEncoding(withAllowedCharacters: allowed) ?? trimmed
+        let text = template.contains("{q}")
+            ? template.replacingOccurrences(of: "{q}", with: encoded)
+            : template + (template.contains("?") ? "&" : "?") + "q=" + encoded
+        guard let url = URL(string: text), url.scheme == "https", url.host != nil else { return nil }
+        return url
+    }
+
+    /// Suchbegriff aus Produzent, Name und Jahrgang des Vorschlags, für die Suche im Browser.
+    static func browserTerm(for entry: CatalogWine) -> String {
+        var words = [entry.producer, entry.name]
+        if entry.vintage > 0 { words.append(String(entry.vintage)) }
+        return words
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
 }
 
 enum ReferenceLookupError: LocalizedError, Equatable {

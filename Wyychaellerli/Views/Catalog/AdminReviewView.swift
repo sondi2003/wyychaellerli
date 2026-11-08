@@ -221,8 +221,13 @@ struct AdminSubmissionEditor: View {
                 } label: {
                     Label("Mit der Quelle abgleichen", systemImage: "arrow.left.arrow.right")
                 }
+                if let url = ReferenceLookupSettings.browserURL(for: ReferenceLookupSettings.browserTerm(for: entry)) {
+                    Link(destination: url) {
+                        Label("Im Browser suchen", systemImage: "safari")
+                    }
+                }
             } footer: {
-                Text("Holt die Treffer der Quelle und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst.")
+                Text("„Abgleichen“ holt die Treffer der Quelle und stellt sie dem Vorschlag gegenüber; übernommen wird nur, was du wählst. „Im Browser suchen“ öffnet dieselbe Suche zum Vergleichen von Hand.")
             }
 
             CatalogFormFields(entry: $entry)
