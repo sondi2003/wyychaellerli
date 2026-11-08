@@ -96,41 +96,62 @@ enum CatalogMosaic {
             ))
             area.size.height -= strip
         }
-        split(big[...], in: area, into: &tiles)
+        tiles += rows(of: big, in: area)
         return tiles
     }
 
-    /// Teilt entlang der längeren Seite dort, wo die Summe der ersten Hälfte am nächsten bei
-    /// der halben Gesamtsumme liegt. Jede Kachel bekommt damit genau ihren Anteil.
-    private static func split(
-        _ items: ArraySlice<CatalogOverview.Country>,
-        in rect: CGRect,
-        into tiles: inout [Tile]
-    ) {
-        if items.count == 1, let only = items.first {
-            tiles.append(Tile(content: .country(only), rect: rect))
-            return
+    /// Ordnet die Länder in **Zeilen** an: Jede Zeile spannt die ganze Breite, ihre Höhe folgt
+    /// der Summe ihrer Länder, die Breite je Land seinem Anteil an der Zeile. So laufen alle
+    /// Kanten durch – eine Zeile endet nie versetzt zu einer anderen. Der frühere Ansatz
+    /// (abwechselnd waagrecht und senkrecht halbieren) lieferte Kacheln, deren Kanten links
+    /// und rechts um ein paar Punkte versetzt lagen; das sah wüst aus.
+    ///
+    /// Die Länder bleiben in Lesereihenfolge (grösstes zuerst, links oben). Wo die Zeilen
+    /// brechen, entscheidet die Form: Es gewinnt die Aufteilung, deren unförmigste Kachel am
+    /// nächsten an einem Quadrat liegt; bei Gleichstand die mit weniger Zeilen.
+    static func rows(of countries: [CatalogOverview.Country], in area: CGRect) -> [Tile] {
+        guard !countries.isEmpty else { return [] }
+        let total = Double(countries.reduce(0) { $0 + $1.count })
+
+        func layout(_ breaks: [Int]) -> [Tile] {
+            var tiles: [Tile] = []
+            var y = area.minY
+            var start = 0
+            for end in breaks + [countries.count] {
+                let row = countries[start..<end]
+                let rowSum = Double(row.reduce(0) { $0 + $1.count })
+                let height = area.height * CGFloat(rowSum / total)
+                var x = area.minX
+                for country in row {
+                    let width = area.width * CGFloat(Double(country.count) / rowSum)
+                    tiles.append(Tile(content: .country(country), rect: CGRect(x: x, y: y, width: width, height: height)))
+                    x += width
+                }
+                y += height
+                start = end
+            }
+            return tiles
         }
-        let total = Double(items.reduce(0) { $0 + $1.count })
-        var best = items.startIndex + 1
-        var bestGap = Double.infinity
-        var running = 0.0
-        for index in items.startIndex..<(items.endIndex - 1) {
-            running += Double(items[index].count)
-            let gap = abs(running - total / 2)
-            if gap < bestGap { bestGap = gap; best = index + 1 }
+
+        func worstAspect(_ tiles: [Tile]) -> CGFloat {
+            tiles.map { max($0.rect.width / $0.rect.height, $0.rect.height / $0.rect.width) }.max() ?? .infinity
         }
-        let first = items[items.startIndex..<best]
-        let second = items[best...]
-        let share = CGFloat(Double(first.reduce(0) { $0 + $1.count }) / total)
-        if rect.width >= rect.height {
-            let cut = rect.width * share
-            split(first, in: CGRect(x: rect.minX, y: rect.minY, width: cut, height: rect.height), into: &tiles)
-            split(second, in: CGRect(x: rect.minX + cut, y: rect.minY, width: rect.width - cut, height: rect.height), into: &tiles)
-        } else {
-            let cut = rect.height * share
-            split(first, in: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: cut), into: &tiles)
-            split(second, in: CGRect(x: rect.minX, y: rect.minY + cut, width: rect.width, height: rect.height - cut), into: &tiles)
+
+        // Alle Möglichkeiten, die Reihe in aufeinanderfolgende Zeilen zu schneiden (bei höchstens
+        // sechs Ländern 32): Bit i gesetzt = nach dem i-ten Land beginnt eine neue Zeile.
+        let gaps = countries.count - 1
+        var best: [Tile] = layout([])
+        var bestScore = worstAspect(best)
+        var bestRows = 1
+        for mask in 1..<(1 << max(gaps, 0)) {
+            let breaks = (0..<gaps).filter { mask & (1 << $0) != 0 }.map { $0 + 1 }
+            let tiles = layout(breaks)
+            let score = worstAspect(tiles)
+            let count = breaks.count + 1
+            if score < bestScore - 0.001 || (abs(score - bestScore) <= 0.001 && count < bestRows) {
+                best = tiles; bestScore = score; bestRows = count
+            }
         }
+        return best
     }
 }

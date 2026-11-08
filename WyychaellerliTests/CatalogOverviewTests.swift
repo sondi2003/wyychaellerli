@@ -92,6 +92,34 @@ struct CatalogOverviewTests {
         }
     }
 
+    @Test("Kacheln stehen in Zeilen mit durchgehenden Kanten, grösstes Land zuerst")
+    func rowsAlignEdges() {
+        // Die echten Zahlen vom 7.11.2026: Der frühere Ansatz (abwechselnd halbieren) legte die
+        // Kanten links und rechts versetzt – „wüst“.
+        let real = [("Chile", 285), ("Italien", 205), ("Südafrika", 194), ("Argentinien", 192),
+                    ("Deutschland", 100), ("Schweiz", 99), ("Spanien", 80), ("Portugal", 70), ("USA", 60),
+                    ("Neuseeland", 50), ("Österreich", 40), ("Frankreich", 30), ("Nordmazedonien", 4)]
+        let overview = CatalogOverview(entries: wines(real), locale: de)
+        let tiles = CatalogMosaic.tiles(for: overview.countries, in: CGSize(width: 360, height: 270))
+        let countryTiles = tiles.filter { if case .country = $0.content { return true } else { return false } }
+        // Jede Zeile beginnt links und hört rechts auf; Kacheln einer Zeile teilen Oberkante und Höhe.
+        let rowsByTop = Dictionary(grouping: countryTiles, by: { Int(($0.rect.minY * 10).rounded()) })
+        for (_, row) in rowsByTop {
+            #expect(Set(row.map { Int(($0.rect.height * 10).rounded()) }).count == 1)
+            #expect(abs((row.map(\.rect.minX).min() ?? 1) - 0) < 0.01)
+            #expect(abs((row.map(\.rect.maxX).max() ?? 0) - 360) < 0.01)
+        }
+        // Lesereihenfolge: oben vor unten, links vor rechts; die Weinzahl nimmt dabei nie zu.
+        let counts = countryTiles
+            .sorted { ($0.rect.minY, $0.rect.minX) < ($1.rect.minY, $1.rect.minX) }
+            .compactMap { tile -> Int? in if case .country(let c) = tile.content { return c.count } else { return nil } }
+        #expect(counts == counts.sorted(by: >))
+        // Keine Kachel ist ein Schlauch.
+        for tile in countryTiles {
+            #expect(max(tile.rect.width / tile.rect.height, tile.rect.height / tile.rect.width) < 3)
+        }
+    }
+
     @Test("Die Fläche folgt der Weinzahl")
     func areaIsProportional() {
         let overview = CatalogOverview(entries: wines(richards), locale: de)

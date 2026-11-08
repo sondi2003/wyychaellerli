@@ -16,6 +16,18 @@
             "state" : "translated",
             "value" : "Wyychällerli"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyychällerli"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyychällerli"
+          }
         }
       }
     },
@@ -30,6 +42,18 @@
           }
         },
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyychaellerli"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyychaellerli"
+          }
+        },
+        "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wyychaellerli"
@@ -51,6 +75,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The camera is used to photograph wine labels and read the details automatically."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’appareil photo sert à photographier les étiquettes de vin et à lire automatiquement les informations."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fotocamera viene usata per fotografare le etichette dei vini e leggere automaticamente i dati."
           }
         },
         "sr-Latn" : {
@@ -75,6 +111,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Face ID unlocks party mode so guests cannot leave it on their own."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face ID déverrouille le mode soirée pour que les invités ne puissent pas le quitter eux-mêmes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face ID sblocca la modalità festa, così gli ospiti non possono uscirne da soli."
           }
         },
         "sr-Latn" : {

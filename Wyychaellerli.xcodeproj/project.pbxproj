@@ -143,6 +143,8 @@
 			knownRegions = (
 				de,
 				en,
+				fr,
+				it,
 				Base,
 				"sr-Latn",
 			);

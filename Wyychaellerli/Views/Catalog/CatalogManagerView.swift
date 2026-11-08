@@ -306,15 +306,15 @@ struct CatalogWineEditor: View {
         .fullScreenCover(isPresented: $isCapturing) {
             CameraCaptureView { image in
                 isCapturing = false
-                if let image { Task { await useImage(image) } }
+                if let image { useImage(image.jpegData(compressionQuality: 0.95)) }
             }
             .ignoresSafeArea()
         }
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
             Task {
-                if let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) {
-                    await useImage(image)
+                if let data = try? await item.loadTransferable(type: Data.self), UIImage(data: data) != nil {
+                    useImage(data)
                 }
                 pickerItem = nil
             }
@@ -369,13 +369,13 @@ struct CatalogWineEditor: View {
         .background(.bar)
     }
 
-    private func useImage(_ image: UIImage) async {
-        isPreparingImage = true
-        defer { isPreparingImage = false }
-        if let data = await CatalogLabelPhoto.prepare(image) {
-            imageData = data
-            imageChange = .replace(data)
-        }
+    /// Das Foto geht unverändert in den Katalog: kein Zuschnitt, keine Verkleinerung.
+    /// Der Verlauf unten wird wie bei allen Katalogfotos erst auf dem Gerät gerechnet,
+    /// wenn jemand den Wein übernimmt – hier bleibt das Original.
+    private func useImage(_ data: Data?) {
+        guard let data else { return }
+        imageData = data
+        imageChange = .replace(data)
     }
 
     private func save() async {

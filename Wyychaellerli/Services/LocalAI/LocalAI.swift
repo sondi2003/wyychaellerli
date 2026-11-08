@@ -40,7 +40,7 @@ enum LocalAISource: Sendable, Hashable {
     /// rund 4000 Token für Anweisung, Eingabe und Antwort zusammen.
     var comfortableInputCharacters: Int {
         switch self {
-        case .onDevice:     return 5_000
+        case .onDevice:     return 20_000
         case .privateCloud: return 60_000
         }
     }

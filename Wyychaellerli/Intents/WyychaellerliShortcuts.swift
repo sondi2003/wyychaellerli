@@ -17,7 +17,11 @@ struct WyychaellerliShortcuts: AppShortcutsProvider {
                 "Welcher Wein aus \(.applicationName)",
                 "Frag \(.applicationName) nach einem Wein",
                 "Wine pairing in \(.applicationName)",
-                "Recommend a wine in \(.applicationName)"
+                "Recommend a wine in \(.applicationName)",
+                "Conseiller en vins dans \(.applicationName)",
+                "Recommander un vin dans \(.applicationName)",
+                "Consulente per i vini in \(.applicationName)",
+                "Consigliami un vino in \(.applicationName)"
             ],
             shortTitle: "Wein empfehlen",
             systemImageName: "wineglass"

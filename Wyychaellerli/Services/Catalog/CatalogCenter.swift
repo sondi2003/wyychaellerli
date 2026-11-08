@@ -86,8 +86,13 @@ final class CatalogCenter {
         #if DEBUG
         // Vorführung ohne iCloud: erfundene Weine, damit sich die Suche im Simulator ansehen lässt.
         // Vorführung der Länderübersicht: 621 erfundene Weine aus zwölf Ländern.
-        if ProcessInfo.processInfo.environment["CATALOG_DEMO"] == "2" {
-            let counts: [(String, Int)] = [
+        if ["2", "3"].contains(ProcessInfo.processInfo.environment["CATALOG_DEMO"]) {
+            // 2: erfundene Zahlen; 3: die echten Zahlen vom 7.11.2026 (1.569 Weine, 13 Länder).
+            let counts: [(String, Int)] = ProcessInfo.processInfo.environment["CATALOG_DEMO"] == "3" ? [
+                ("Chile", 285), ("Italien", 205), ("Südafrika", 194), ("Argentinien", 192), ("Deutschland", 100),
+                ("Schweiz", 99), ("Spanien", 150), ("Portugal", 120), ("Neuseeland", 90), ("USA", 60),
+                ("Österreich", 40), ("Frankreich", 30), ("Nordmazedonien", 4)
+            ] : [
                 ("Chile", 193), ("Italien", 110), ("Argentinien", 97), ("USA", 96), ("Neuseeland", 96),
                 ("Frankreich", 8), ("Schweiz", 8), ("Deutschland", 4), ("Portugal", 3), ("Spanien", 3),
                 ("Südafrika", 2), ("Nordmazedonien", 1)

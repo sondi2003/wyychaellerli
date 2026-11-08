@@ -75,6 +75,8 @@ enum LabelNotesTranslator {
         switch target.resolvedIdentifier {
         case "sr-Latn": targetCodes = ["sr", "sr-Latn", "hr", "bs"]
         case "en":      targetCodes = ["en"]
+        case "fr":      targetCodes = ["fr"]
+        case "it":      targetCodes = ["it"]
         default:        targetCodes = ["de"]
         }
         guard !targetCodes.contains(language.rawValue) else { return nil }

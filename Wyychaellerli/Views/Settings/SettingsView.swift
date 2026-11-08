@@ -49,6 +49,9 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()
+                    // Das UIKit-Segment liest seine Titel nur einmal; ohne neue Kennung bliebe es
+                    // nach einem Sprachwechsel in der alten Sprache stehen.
+                    .id(language)
                 } header: {
                     Text("Darstellung")
                 } footer: {

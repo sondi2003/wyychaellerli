@@ -21,12 +21,35 @@ enum LocalLabelParser {
         language: AppLanguage,
         labelImages: [Data] = []
     ) async throws -> WineLabelExtraction {
-        let instructions = PromptBuilder.labelSystemPrompt(language: language)
-        guard let session = LocalAI.session(for: source, instructions: instructions) else {
-            throw LocalAIError.sourceMissing
+        // Auf dem Gerät passt nur die Kurzfassung samt gekürztem Text in den Kontext.
+        // Scheitert der Versuch trotzdem (Kontext voll, Antwort abgeschnitten), kommt ein
+        // zweiter mit halb so viel Text, statt gleich auf die Regeln zu fallen.
+        let budgets: [Int] = source == .onDevice ? [2_600, 1_400] : [source.comfortableInputCharacters]
+        var lastError: Error = LocalAIError.emptyResult
+        for budget in budgets {
+            let instructions = source == .onDevice
+                ? PromptBuilder.compactLabelSystemPrompt(language: language)
+                : PromptBuilder.labelSystemPrompt(language: language)
+            guard let session = LocalAI.session(for: source, instructions: instructions) else {
+                throw LocalAIError.sourceMissing
+            }
+            let text = PromptBuilder.fitting(recognizedText: recognizedText, maxCharacters: budget)
+            do {
+                return try await respond(session: session, source: source, text: text, labelImages: labelImages)
+            } catch {
+                lastError = error
+            }
         }
-        let prompt = PromptBuilder.labelUserPrompt(recognizedText: recognizedText)
+        throw lastError
+    }
 
+    private static func respond(
+        session: LanguageModelSession,
+        source: LocalAISource,
+        text: String,
+        labelImages: [Data]
+    ) async throws -> WineLabelExtraction {
+        let prompt = PromptBuilder.labelUserPrompt(recognizedText: text)
         let label: GeneratedWineLabel
         if source == .privateCloud, !labelImages.isEmpty, #available(iOS 27.0, *) {
             let images = labelImages.compactMap(Self.cgImage(from:))
@@ -98,7 +121,7 @@ struct GeneratedWineLabel {
     @Guide(description: "Alkoholgehalt in Volumenprozent, 0 wenn unbekannt")
     var alcoholPercent: Double
 
-    @Guide(description: "Ein bis zwei Sätze zu Terroir, Vinifikation und Ausbau, zwingend in der Antwortsprache – fremdsprachigen Etikett-Text übersetzen, nicht kopieren. Leer, wenn nichts dazu steht.")
+    @Guide(description: "Ein Satz zu Terroir oder Ausbau in der Antwortsprache, übersetzt. Leer, wenn nichts dazu steht.")
     var notes: String
 
     @Guide(description: "Speiseempfehlungen vom Etikett, in die Antwortsprache übersetzt, kurze Begriffe. Leeres Array, wenn nichts dazu auf dem Etikett steht.")

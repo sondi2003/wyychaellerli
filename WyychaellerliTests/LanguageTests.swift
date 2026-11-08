@@ -116,7 +116,10 @@ struct LanguageTests {
         #expect(AppLanguage.identifier(forPreferred: "en") == "en")
         #expect(AppLanguage.identifier(forPreferred: "de-CH") == "de")
         #expect(AppLanguage.identifier(forPreferred: "sr-Latn-RS") == "sr-Latn")
-        #expect(AppLanguage.identifier(forPreferred: "fr-FR") == "de")
+        #expect(AppLanguage.identifier(forPreferred: "fr-FR") == "fr")
+        #expect(AppLanguage.identifier(forPreferred: "fr-CH") == "fr")
+        #expect(AppLanguage.identifier(forPreferred: "it-CH") == "it")
+        #expect(AppLanguage.identifier(forPreferred: "es-ES") == "de")
         #expect(AppLanguage.identifier(forPreferred: nil) == "de")
         #expect(AppLanguage.english.resolvedIdentifier == "en")
         #expect(AppLanguage.english.isEnglish)
@@ -139,5 +142,88 @@ struct LanguageTests {
         #expect(LabelNotesTranslator.foreignLanguage(in: english, target: .english) == nil)
         let german = "Die Reben wachsen an steilen Hängen über dem Meer, der Boden ist reich an Schiefer und Kalkstein."
         #expect(LabelNotesTranslator.foreignLanguage(in: german, target: .english) != nil)
+    }
+
+    // MARK: Französisch und Italienisch
+
+    private func resolved(_ resource: LocalizedStringResource, _ identifier: String) -> String {
+        var resource = resource
+        resource.locale = Locale(identifier: identifier)
+        return String(localized: resource)
+    }
+
+    @Test("Französisch und Italienisch haben eine eigene Kennung ohne Region")
+    func frenchAndItalianIdentifiers() {
+        #expect(AppLanguage.french.resolvedIdentifier == "fr")
+        #expect(AppLanguage.italian.resolvedIdentifier == "it")
+        #expect(AppLanguage.french.isFrench)
+        #expect(AppLanguage.italian.isItalian)
+        #expect(AppLanguage.french.title == "Français")
+        #expect(AppLanguage.italian.title == "Italiano")
+        #expect(AppLanguage.allCases.count == 6)
+    }
+
+    @Test("Pluralformen: Französisch zählt 0 und 1 als Einzahl, Italienisch nur 1")
+    func frenchAndItalianPlurals() {
+        #expect(resolved("\(1) Flaschen", "fr") == "1 bouteille")
+        #expect(resolved("\(0) Flaschen", "fr") == "0 bouteille")
+        #expect(resolved("\(2) Flaschen", "fr") == "2 bouteilles")
+        #expect(resolved("\(1) Flaschen", "it") == "1 bottiglia")
+        #expect(resolved("\(0) Flaschen", "it") == "0 bottiglie")
+        #expect(resolved("\(3) Flaschen", "it") == "3 bottiglie")
+    }
+
+    @Test("Die KI-Anweisungen nennen die Zielsprache")
+    func frenchAndItalianPrompts() {
+        #expect(AppLanguage.french.promptName.contains("Französisch"))
+        #expect(AppLanguage.italian.promptName.contains("Italienisch"))
+        #expect(PromptBuilder.translationSystemPrompt(language: .french).contains("Französische"))
+        #expect(PromptBuilder.translationSystemPrompt(language: .italian).contains("scisto"))
+        #expect(AppLanguage.french.promptCountryExamples.contains("Allemagne"))
+        #expect(AppLanguage.italian.promptCountryExamples.contains("Germania"))
+    }
+
+    @Test("Notizen: Französisch bzw. Italienisch sind jeweils die Zielsprache")
+    func frenchAndItalianNotesTarget() {
+        let french = "Les vignes poussent sur des coteaux escarpés face à la mer, dans un sol riche en schiste et en calcaire."
+        #expect(LabelNotesTranslator.foreignLanguage(in: french, target: .french) == nil)
+        #expect(LabelNotesTranslator.foreignLanguage(in: french, target: .italian) != nil)
+        let italian = "Le viti crescono su pendii ripidi di fronte al mare, in un terreno ricco di scisto e di calcare."
+        #expect(LabelNotesTranslator.foreignLanguage(in: italian, target: .italian) == nil)
+        #expect(LabelNotesTranslator.foreignLanguage(in: italian, target: .french) != nil)
+    }
+
+    @Test("Der Textkatalog ist vollständig: jede Zeile hat Französisch und Italienisch, Platzhalter stimmen")
+    func catalogIsComplete() throws {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Wyychaellerli/Localizable.xcstrings")
+        let data = try Data(contentsOf: url)
+        let root = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let strings = try #require(root["strings"] as? [String: [String: Any]])
+        let placeholder = try Regex(#"%(?:\d+\$)?(?:lld|@|d|f|s)|%%"#)
+        func values(_ localization: [String: Any]) -> [String] {
+            if let unit = localization["stringUnit"] as? [String: Any], let value = unit["value"] as? String { return [value] }
+            if let variations = localization["variations"] as? [String: Any],
+               let plural = variations["plural"] as? [String: [String: Any]] {
+                return plural.values.compactMap { ($0["stringUnit"] as? [String: Any])?["value"] as? String }
+            }
+            return []
+        }
+        func tokens(_ text: String) -> [String] { text.matches(of: placeholder).map { String(text[$0.range]) }.sorted() }
+        var problems: [String] = []
+        for (key, entry) in strings where !key.isEmpty {
+            let localizations = entry["localizations"] as? [String: [String: Any]] ?? [:]
+            for language in ["fr", "it"] {
+                guard let localization = localizations[language] else { problems.append("\(language) fehlt: \(key)"); continue }
+                let texts = values(localization)
+                if texts.isEmpty || texts.contains(where: { $0.isEmpty }) { problems.append("\(language) leer: \(key)") }
+                // Plural-Varianten dürfen die Zahl auslassen (\"Flasche einräumen\"); sonst gleiche Platzhalter wie die Quelle.
+                if localization["stringUnit"] != nil {
+                    for text in texts where tokens(text) != tokens(key) { problems.append("\(language) Platzhalter: \(key)") }
+                }
+            }
+        }
+        #expect(problems.isEmpty, "\(problems.prefix(8).joined(separator: "; "))")
     }
 }

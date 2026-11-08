@@ -199,6 +199,68 @@ enum PromptBuilder {
         """
     }
 
+    /// Kurzfassung für das Modell auf dem Gerät (rund 4000 Token für alles zusammen).
+    /// Die ausführliche Anweisung allein füllt ein Drittel davon; mit dem Text beider
+    /// Etikettseiten und dem Schema ging die Anfrage über die Grenze und scheiterte still,
+    /// worauf nur noch die Regeln zuordneten. Gleiche Regeln, knapp gefasst.
+    static func compactLabelSystemPrompt(language: AppLanguage = .current) -> String {
+        """
+        Du ordnest den OCR-Text eines Weinetiketts (Vorder- und Rückseite, mit Erkennungsfehlern, \
+        in Französisch, Italienisch, Spanisch, Deutsch oder Englisch) Feldern zu. Erfinde nichts; \
+        Unbekanntes bleibt leer bzw. 0.
+        - name: Name des Weins oder der Cuvée ohne Produzent; sonst Appellation oder Rebsorte.
+        - producer: Weingut, Domaine, Château, Cantina, Bodega.
+        - vintage: nur wenn die vierstellige Zahl wörtlich als Jahrgang dasteht, sonst 0. \
+        Postleitzahlen (2000 Neuchâtel) und „Depuis 1952“ sind kein Jahrgang.
+        - grape: Rebsorten, nur was dasteht.
+        - region: Region oder Appellation.
+        - country: Land auf \(language.promptName); aus eindeutiger Appellation ableiten, sonst leer.
+        - type: red, white, sparkling, rose, mulled oder unknown. Glühwein ist mulled, auch bei „Rotwein“.
+        - alcoholPercent: Volumenprozent.
+        - notes: ein Satz zu Terroir oder Ausbau auf \(language.promptName), übersetzt, nicht kopiert.
+        - foodPairings: nur Speisen, die auf dem Etikett stehen, auf \(language.promptTarget), kurze Begriffe; \
+        foodPairingSource: der unveränderte Abschnitt dazu. Sonst beides leer.
+        - drinkFrom/drinkTo: Trinkjahre; steht es auf dem Etikett, drinkWindowFromLabel true, sonst \
+        eine nüchterne Schätzung mit false; ohne Jahrgang 0.
+        """
+    }
+
+    /// Kürzt den Etikett-Text auf eine Zeichenzahl, ohne die Vorderseite zu opfern:
+    /// Name, Produzent und Jahrgang stehen vorne, die Rückseite trägt Zusatzangaben.
+    /// Die Vorderseite bekommt bis zu 60 % des Platzes, die Rückseite den Rest (und was
+    /// vorne übrig bleibt). Gekürzt wird zeilenweise; sehr kurze Zeilen (Reste) fallen zuerst.
+    static func fitting(recognizedText: String, maxCharacters: Int) -> String {
+        guard recognizedText.count > maxCharacters else { return recognizedText }
+        var sections: [(title: String, lines: [String])] = []
+        for line in recognizedText.components(separatedBy: "\n") {
+            if line.hasPrefix("[") && line.hasSuffix("]") {
+                sections.append((line, []))
+            } else if !line.trimmingCharacters(in: .whitespaces).isEmpty {
+                if sections.isEmpty { sections.append(("", [])) }
+                sections[sections.count - 1].lines.append(line)
+            }
+        }
+        func size(_ lines: [String]) -> Int { lines.reduce(0) { $0 + $1.count + 1 } }
+        func take(_ lines: [String], budget: Int) -> [String] {
+            var kept = lines
+            // Kürzeste Zeilen zuerst weglassen, Reihenfolge bleibt erhalten.
+            while size(kept) > budget, let drop = kept.indices.min(by: { kept[$0].count < kept[$1].count }) {
+                kept.remove(at: drop)
+            }
+            return kept
+        }
+        var remaining = maxCharacters
+        var parts: [String] = []
+        for (index, section) in sections.enumerated() {
+            let share = index == 0 && sections.count > 1 ? Int(Double(maxCharacters) * 0.6) : remaining
+            let budget = max(0, min(share, remaining) - section.title.count - 2)
+            let kept = take(section.lines, budget: budget)
+            remaining -= size(kept) + section.title.count + 2
+            parts.append((section.title.isEmpty ? "" : section.title + "\n") + kept.joined(separator: "\n"))
+        }
+        return parts.joined(separator: "\n\n")
+    }
+
     // MARK: Übersetzung
 
     static func translationSystemPrompt(language: AppLanguage = .current) -> String {

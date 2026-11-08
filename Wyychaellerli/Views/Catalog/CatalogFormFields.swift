@@ -74,26 +74,6 @@ struct CatalogFormFields: View {
     }
 }
 
-/// Bereitet ein neues Etikettfoto für den Katalog auf: derselbe Zuschnitt wie beim Scan.
-/// Findet der Zuschnitt nichts, geht das verkleinerte Foto.
-enum CatalogLabelPhoto {
-    static func prepare(_ image: UIImage) async -> Data? {
-        let resized = image.resizedForRecognition(maxDimension: 2400)
-        if let cgImage = resized.cgImage {
-            let scan = ScanImage(
-                cgImage: cgImage,
-                orientation: CGImagePropertyOrientation(resized.imageOrientation),
-                original: image.cgImage
-            )
-            if let lines = try? await LabelTextRecognizer.recognizeLines(in: scan),
-               let crop = await LabelImageCropper.cropLabel(from: scan, textLines: lines) {
-                return crop.jpegData
-            }
-        }
-        return image.resizedForRecognition(maxDimension: 1200).jpegData(compressionQuality: 0.8)
-    }
-}
-
 /// Eingabe der Strichcodes eines Katalogeintrags.
 ///
 /// Der Text bleibt, wie getippt; ins Modell gehen nur Codes, die die Prüfziffer bestehen.

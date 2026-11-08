@@ -16,8 +16,18 @@ struct CatalogMosaicCard: View {
         Color(red: 0.63, green: 0.23, blue: 0.32), Color(red: 0.70, green: 0.29, blue: 0.38),
         Color(red: 0.76, green: 0.37, blue: 0.45), Color(red: 0.81, green: 0.46, blue: 0.52)
     ]
-    private static let othersBackground = Color(red: 0.98, green: 0.94, blue: 0.95)
+    /// Der Streifen „weitere Länder“ trägt ein tiefes Weinrot wie die Kacheln, mit weisser
+    /// Schrift (Kontrast über 12 : 1). Früher ein heller Rosaton: Er stach aus dem Mosaik heraus.
+    private static let othersBackground = Color(red: 0.38, green: 0.07, blue: 0.15)
     private static let darkText = Color(red: 0.30, green: 0.04, blue: 0.10)
+    /// Rang eines Landes unter den Länderkacheln (0 = grösstes); der Streifen zählt nicht mit,
+    /// sonst bekäme das grösste Land schon den zweiten Ton der Reihe.
+    private static func rank(ofTileAt index: Int, in tiles: [CatalogMosaic.Tile]) -> Int {
+        tiles[..<index].filter { if case .country = $0.content { return true } else { return false } }.count
+    }
+
+    /// Halber Abstand zwischen zwei Kacheln.
+    private static let gutter: CGFloat = 3
 
     var body: some View {
         VStack(spacing: 10) {
@@ -26,9 +36,12 @@ struct CatalogMosaicCard: View {
                 let tiles = CatalogMosaic.tiles(for: overview.countries, in: proxy.size)
                 ZStack(alignment: .topLeading) {
                     ForEach(Array(tiles.enumerated()), id: \.element.id) { index, tile in
-                        tileView(tile, rank: index)
-                            .frame(width: tile.rect.width, height: tile.rect.height)
-                            .offset(x: tile.rect.minX, y: tile.rect.minY)
+                        // Gleichmässiger Abstand: Jede Kachel wird ringsum eingerückt, zwei
+                        // Nachbarn lassen also 2 × `gutter` zwischen sich, der Rand `gutter`.
+                        let inner = tile.rect.insetBy(dx: Self.gutter, dy: Self.gutter)
+                        tileView(tile, rank: Self.rank(ofTileAt: index, in: tiles), size: inner.size)
+                            .frame(width: inner.width, height: inner.height)
+                            .offset(x: inner.minX, y: inner.minY)
                             .opacity(appeared ? 1 : 0)
                             .scaleEffect(appeared ? 1 : 0.94)
                             .animation(
@@ -70,11 +83,11 @@ struct CatalogMosaicCard: View {
     // MARK: Kacheln
 
     @ViewBuilder
-    private func tileView(_ tile: CatalogMosaic.Tile, rank: Int) -> some View {
+    private func tileView(_ tile: CatalogMosaic.Tile, rank: Int, size: CGSize) -> some View {
         switch tile.content {
         case .country(let country):
             let isLight = rank >= 5  // gemessen: ab Rang 5 hat Dunkelrot mehr Kontrast als Weiss
-            let shortSide = min(tile.rect.width, tile.rect.height)
+            let shortSide = min(size.width, size.height)
             VStack(alignment: .leading, spacing: 0) {
                 if let flag = country.flag {
                     Text(verbatim: flag)
@@ -95,7 +108,6 @@ struct CatalogMosaicCard: View {
             .padding(10)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Self.ramp[min(rank, Self.ramp.count - 1)], in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .padding(1.5)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(verbatim: "\(country.name), \(tr("\(country.count) Weine"))"))
 
@@ -119,13 +131,12 @@ struct CatalogMosaicCard: View {
                 .fixedSize()
                 .layoutPriority(1)
             }
-            .foregroundStyle(Self.darkText)
+            .foregroundStyle(.white)
             .padding(.horizontal, 12)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            // Fester heller Grund: `Brand.blush` dunkelt im Dunkelmodus ab, der Text ist fest
-            // dunkelrot und ging darauf unter.
+            // Fester Grund, nicht an den Hell- und Dunkelmodus gebunden: Schrift und Fläche sind
+            // zusammen entworfen (`Brand.blush` dunkelt im Dunkelmodus ab).
             .background(Self.othersBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .padding(1.5)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(verbatim: rest.count == 1
                 ? "\(rest[0].name), \(tr("\(count) Weine"))"

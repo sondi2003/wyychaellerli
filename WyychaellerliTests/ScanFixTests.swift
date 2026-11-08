@@ -196,3 +196,43 @@ struct NameDetectionTests {
         #expect(HeuristicLabelParser.parse(recognizedText: text).name == "Merlot del Veneto")
     }
 }
+
+@Suite("Etikett-Text für das Modell auf dem Gerät kürzen")
+struct LabelTextFittingTests {
+
+    private func sample(front: Int, back: Int) -> String {
+        let f = (0..<front).map { "Vorne Zeile \($0) mit etwas Text" }.joined(separator: "\n")
+        let b = (0..<back).map { "Hinten Zeile \($0) mit etwas Text" }.joined(separator: "\n")
+        return "[Vorderseite]\n\(f)\n\n[Rückseite]\n\(b)"
+    }
+
+    @Test("Kurzer Text bleibt unverändert")
+    func shortUnchanged() {
+        let text = sample(front: 3, back: 3)
+        #expect(PromptBuilder.fitting(recognizedText: text, maxCharacters: 5_000) == text)
+    }
+
+    @Test("Gekürzter Text hält das Mass und behält beide Abschnitte")
+    func trimmedKeepsBothSections() {
+        let text = sample(front: 40, back: 120)
+        let result = PromptBuilder.fitting(recognizedText: text, maxCharacters: 1_400)
+        #expect(result.count <= 1_400)
+        #expect(result.contains("[Vorderseite]"))
+        #expect(result.contains("[Rückseite]"))
+    }
+
+    @Test("Die Vorderseite wird zuerst geschützt")
+    func frontFirst() {
+        let text = sample(front: 20, back: 200)
+        let result = PromptBuilder.fitting(recognizedText: text, maxCharacters: 1_400)
+        #expect(result.contains("Vorne Zeile 0 "))
+        #expect(result.contains("Vorne Zeile 19 "))
+    }
+
+    @Test("Die Kurzfassung der Anweisung ist deutlich kürzer")
+    func compactPromptIsShort() {
+        let full = PromptBuilder.labelSystemPrompt(language: .german).count
+        let compact = PromptBuilder.compactLabelSystemPrompt(language: .german).count
+        #expect(compact < full / 2)
+    }
+}
