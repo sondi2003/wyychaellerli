@@ -414,6 +414,7 @@ final class PersistenceController: @unchecked Sendable {
             attribute("geocodedQuery", .stringAttributeType, default: ""),
             attribute("geocodedPlaceName", .stringAttributeType, default: ""),
             attribute("geocodePrecision", .stringAttributeType, default: ""),
+            attribute("catalogSeen", .stringAttributeType, default: ""),
             attribute("createdAt", .dateAttributeType, optional: true)
         ]
 

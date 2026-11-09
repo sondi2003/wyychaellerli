@@ -10,7 +10,7 @@ import Foundation
 /// bewusst nicht einmal gelesen).
 struct CatalogOverview: Equatable, Sendable {
 
-    struct Country: Identifiable, Equatable, Sendable {
+    struct Country: Identifiable, Equatable, Hashable, Sendable {
         /// ISO-Code, sonst der Name, wie er steht – „Schweiz“ und „Suisse“ sind ein Land.
         let id: String
         let name: String
@@ -27,6 +27,17 @@ struct CatalogOverview: Equatable, Sendable {
     static let minimumForDisplay = 200
 
     var isWorthShowing: Bool { total >= Self.minimumForDisplay }
+
+    /// Die Weine eines Landes, alphabetisch. Gleicher Schlüssel wie bei der Gruppierung unten,
+    /// „Schweiz“ und „Suisse“ landen also in derselben Liste wie in der Kachel.
+    static func wines(inCountry id: String, from entries: [CatalogWine]) -> [CatalogWine] {
+        entries
+            .filter { !$0.country.isEmpty && (CountryFlag.regionCode(for: $0.country) ?? $0.country) == id }
+            .sorted {
+                let order = $0.name.localizedCaseInsensitiveCompare($1.name)
+                return order == .orderedSame ? $0.vintage > $1.vintage : order == .orderedAscending
+            }
+    }
 
     init(entries: [CatalogWine], locale: Locale) {
         total = entries.count

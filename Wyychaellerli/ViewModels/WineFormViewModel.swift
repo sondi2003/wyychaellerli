@@ -225,6 +225,92 @@ final class WineFormViewModel {
         catalogImageData = nil
     }
 
+    // MARK: Abgleich beim Bearbeiten
+
+    /// Der Katalogeintrag zu einem Wein, den der Nutzer bearbeitet – gefunden über denselben
+    /// Schlüssel wie beim Erfassen. Nur im Bearbeiten-Modus belegt.
+    var editCatalogEntry: CatalogWine?
+    /// Das Foto des Katalogs (mit Verlauf), falls es geladen werden konnte.
+    var editCatalogImage: Data?
+    /// „Nicht übernehmen“ wurde getippt.
+    private var catalogOfferDismissed = false
+
+    /// Die Angaben, wie sie gerade im Formular stehen.
+    var currentDetails: WineDetails {
+        get {
+            WineDetails(
+                name: name, producer: producer, grape: grape, region: region, country: country,
+                type: type, alcoholPercent: alcoholPercent, foodPairings: foodPairings)
+        }
+        set {
+            name = newValue.name
+            producer = newValue.producer
+            grape = newValue.grape
+            region = newValue.region
+            country = newValue.country
+            type = newValue.type
+            alcoholPercent = newValue.alcoholPercent
+            foodPairings = newValue.foodPairings
+        }
+    }
+
+    /// Was der Katalog anders oder zusätzlich weiss, gemessen am aktuellen Formular.
+    var catalogDifferences: [CatalogDifference] {
+        guard let entry = editCatalogEntry else { return [] }
+        return CatalogComparison.differences(entry: entry, mine: currentDetails)
+    }
+
+    /// Hat der Katalog sich seit dem letzten Blick geändert? Für einen Wein, der nie
+    /// verglichen wurde, ist die Antwort immer ja – gemeldet wird aber nur, wenn es etwas
+    /// anzubieten gibt (`offersCatalogEntry`).
+    var catalogEntryIsNew: Bool {
+        guard case .edit(let wine) = mode, let entry = editCatalogEntry else { return false }
+        return entry.fingerprint != wine.catalogSeen
+    }
+
+    /// Das Foto des Katalogs wird angeboten, wenn der Wein keines hat oder ein anderes.
+    var offersCatalogPhoto: Bool {
+        guard let editCatalogImage else { return false }
+        return labelImageData != editCatalogImage
+    }
+
+    /// Zeigt das Blatt den Hinweis? Nur, wenn der Katalog Neues hat **und** es etwas gibt, das
+    /// sich übernehmen lässt. Ein Wein, der schon ein eigenes Foto hat, bekommt das des Katalogs
+    /// nicht allein deshalb angeboten – sonst käme der Hinweis bei jedem Wein.
+    var offersCatalogEntry: Bool {
+        guard !catalogOfferDismissed, catalogEntryIsNew else { return false }
+        return !catalogDifferences.isEmpty || (labelImageData == nil && editCatalogImage != nil)
+    }
+
+    func takeCatalogField(_ field: CatalogField) {
+        guard let entry = editCatalogEntry else { return }
+        var details = currentDetails
+        CatalogComparison.apply(field, from: entry, to: &details)
+        currentDetails = details
+    }
+
+    /// `fillOnly`: nur leere Felder füllen, nichts Eigenes überschreiben.
+    func takeCatalogFields(fillOnly: Bool) {
+        for row in catalogDifferences where !fillOnly || row.kind == .fillable {
+            takeCatalogField(row.field)
+        }
+    }
+
+    func takeCatalogPhoto() {
+        guard let editCatalogImage else { return }
+        labelImageData = editCatalogImage
+    }
+
+    /// „Nicht übernehmen“: Der Hinweis verschwindet und kommt erst wieder, wenn der Admin den
+    /// Eintrag ändert. Wird sofort festgehalten, auch wenn das Formular danach abgebrochen wird.
+    func dismissCatalogOffer(in context: NSManagedObjectContext) {
+        catalogOfferDismissed = true
+        if case .edit(let wine) = mode, let entry = editCatalogEntry {
+            wine.catalogSeen = entry.fingerprint
+            context.saveChanges()
+        }
+    }
+
     /// Die Vorschläge unter dem Namensfeld (Suche beim Tippen auf dem Gerät).
     var suggestions: [CatalogDirectory.Suggestion] = []
 
@@ -418,7 +504,11 @@ final class WineFormViewModel {
             wine.drinkFrom = Int64(max(0, drinkFrom))
             wine.drinkTo = Int64(max(0, drinkTo))
             wine.drinkWindowFromLabel = drinkWindowFromLabel
+            // Wer das Blatt gespeichert hat, hat den Katalogeintrag gesehen.
+            if let editCatalogEntry { wine.catalogSeen = editCatalogEntry.fingerprint }
         }
+        // Ein bestätigter Katalogwein gilt ab dem Anlegen als gesehen.
+        if let created, let catalogMatch { created.catalogSeen = catalogMatch.fingerprint }
         context.saveChanges()
         return created
     }

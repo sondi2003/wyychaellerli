@@ -5,6 +5,10 @@ import SwiftUI
 struct CatalogMosaicCard: View {
 
     let overview: CatalogOverview
+    /// Die gewählte Kachel (`CatalogSelection.id`): Sie bleibt kräftig, die anderen treten zurück.
+    var selectedID: String?
+    /// Tipp auf eine Kachel; ohne Angabe bleibt die Karte reine Anzeige (Vorschau, Einführung).
+    var onSelect: ((CatalogSelection) -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
@@ -39,7 +43,9 @@ struct CatalogMosaicCard: View {
                         // Gleichmässiger Abstand: Jede Kachel wird ringsum eingerückt, zwei
                         // Nachbarn lassen also 2 × `gutter` zwischen sich, der Rand `gutter`.
                         let inner = tile.rect.insetBy(dx: Self.gutter, dy: Self.gutter)
-                        tileView(tile, rank: Self.rank(ofTileAt: index, in: tiles), size: inner.size)
+                        tappable(tile) {
+                            tileView(tile, rank: Self.rank(ofTileAt: index, in: tiles), size: inner.size)
+                        }
                             .frame(width: inner.width, height: inner.height)
                             .offset(x: inner.minX, y: inner.minY)
                             .opacity(appeared ? 1 : 0)
@@ -82,6 +88,64 @@ struct CatalogMosaicCard: View {
 
     // MARK: Kacheln
 
+    /// Die Kachel eines Landes ist gewählt, wenn ihr Land gewählt ist; der Streifen, wenn eines
+    /// seiner Länder gewählt ist.
+    private func isSelected(_ tile: CatalogMosaic.Tile) -> Bool {
+        guard let selectedID else { return false }
+        if case .others(let rest) = tile.content { return rest.contains { $0.id == selectedID } }
+        return tile.id == selectedID
+    }
+
+    private func isDimmed(_ tile: CatalogMosaic.Tile) -> Bool {
+        selectedID != nil && !isSelected(tile)
+    }
+
+    /// Macht eine Länderkachel antippbar, sofern jemand zuhört. Der Streifen ist keine Taste:
+    /// Dort ist jede Flagge für sich eine (`flagStrip`).
+    @ViewBuilder
+    private func tappable<Content: View>(_ tile: CatalogMosaic.Tile, @ViewBuilder content: () -> Content) -> some View {
+        if case .country(let country) = tile.content, let onSelect {
+            Button {
+                onSelect(CatalogSelection(country: country))
+            } label: {
+                content()
+                    .opacity(isDimmed(tile) ? 0.45 : 1)
+                    .animation(reduceMotion ? nil : .default, value: selectedID)
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(isSelected(tile) ? .isSelected : [])
+        } else {
+            content()
+                .opacity(isDimmed(tile) ? 0.45 : 1)
+                .animation(reduceMotion ? nil : .default, value: selectedID)
+        }
+    }
+
+    /// Die Flaggen der übrigen Länder, jede einzeln wählbar. Waagrecht scrollbar, falls es viele
+    /// werden; die gewählte Flagge sitzt auf einer hellen Kapsel, die anderen treten zurück.
+    private func flagStrip(_ rest: [CatalogOverview.Country]) -> some View {
+        let inStrip = selectedID.map { id in rest.contains { $0.id == id } } ?? false
+        return HStack(spacing: 0) {
+            ForEach(rest) { country in
+                let chosen = selectedID == country.id
+                Button {
+                    onSelect?(CatalogSelection(country: country))
+                } label: {
+                    Text(verbatim: country.flag ?? String(country.name.prefix(2)))
+                        .font(.system(size: 20))
+                        .frame(width: 29, height: 34)
+                        .background(chosen ? Color.white.opacity(0.28) : .clear, in: Capsule())
+                        .opacity(inStrip && !chosen ? 0.45 : 1)
+                }
+                .buttonStyle(.plain)
+                .disabled(onSelect == nil)
+                .accessibilityLabel(Text(verbatim: "\(country.name), \(tr("\(country.count) Weine"))"))
+                .accessibilityAddTraits(chosen ? .isSelected : [])
+            }
+        }
+        .frame(height: 34, alignment: .leading)
+    }
+
     @ViewBuilder
     private func tileView(_ tile: CatalogMosaic.Tile, rank: Int, size: CGSize) -> some View {
         switch tile.content {
@@ -114,10 +178,7 @@ struct CatalogMosaicCard: View {
         case .others(let rest):
             let count = rest.reduce(0) { $0 + $1.count }
             HStack(spacing: 10) {
-                Text(verbatim: rest.compactMap(\.flag).joined(separator: " "))
-                    .font(.system(size: 18))
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.7)
+                flagStrip(rest)
                     .layoutPriority(0)
                 Spacer(minLength: 4)
                 VStack(alignment: .trailing, spacing: 0) {
@@ -137,10 +198,7 @@ struct CatalogMosaicCard: View {
             // Fester Grund, nicht an den Hell- und Dunkelmodus gebunden: Schrift und Fläche sind
             // zusammen entworfen (`Brand.blush` dunkelt im Dunkelmodus ab).
             .background(Self.othersBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(verbatim: rest.count == 1
-                ? "\(rest[0].name), \(tr("\(count) Weine"))"
-                : "\(tr("weitere \(rest.count) Länder")), \(tr("\(count) Weine"))"))
+            .accessibilityElement(children: .contain)
         }
     }
 }

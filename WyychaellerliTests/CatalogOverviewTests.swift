@@ -34,6 +34,20 @@ struct CatalogOverviewTests {
         #expect(overview.countries.map(\.count) == overview.countries.map(\.count).sorted(by: >))
     }
 
+    @Test("Länderliste: nur die Weine des Landes, alle Schreibweisen, alphabetisch")
+    func winesOfCountry() {
+        var entries = wines([("Schweiz", 2), ("Suisse", 1), ("Chile", 4)])
+        entries[0].name = "Zeta"
+        entries[1].name = "alpha"
+        entries[2].name = "Mitte"
+        let overview = CatalogOverview(entries: entries, locale: de)
+        let swiss = overview.countries.first { $0.name == "Schweiz" }
+        #expect(swiss?.count == 3)
+        let list = CatalogOverview.wines(inCountry: swiss?.id ?? "", from: entries)
+        #expect(list.map(\.name) == ["alpha", "Mitte", "Zeta"])
+        #expect(CatalogOverview.wines(inCountry: "gibtsnicht", from: entries).isEmpty)
+    }
+
     @Test("Schweiz, Suisse und Switzerland sind ein Land")
     func mergesSpellings() {
         let overview = CatalogOverview(entries: wines([("Schweiz", 2), ("Suisse", 3), ("Switzerland", 1)]), locale: de)

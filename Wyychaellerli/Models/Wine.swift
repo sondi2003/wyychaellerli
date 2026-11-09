@@ -119,6 +119,10 @@ final class Wine: NSManagedObject, Identifiable {
     /// „place“ = Region gefunden, „country“ = nur das Land, „none“ = erfolglos gesucht,
     /// leer = noch nie gesucht.
     @NSManaged var geocodePrecision: String
+    /// Fingerabdruck (`CatalogWine.fingerprint`) des Katalogeintrags, den der Nutzer zuletzt
+    /// gesehen hat – übernommen oder bewusst nicht. Leer = noch nie verglichen. Solange der
+    /// Eintrag unverändert ist, meldet das Bearbeiten-Blatt nichts.
+    @NSManaged var catalogSeen: String
 
     // MARK: Anlegen
 

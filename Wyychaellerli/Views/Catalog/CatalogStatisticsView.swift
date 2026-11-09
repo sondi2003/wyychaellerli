@@ -14,25 +14,41 @@ struct CatalogStatisticsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
     @State private var overview: CatalogOverview?
+    /// Die Liste, aus der die Zahlen gerechnet sind: Quelle der Weinliste unter dem Mosaik.
+    @State private var entries: [CatalogWine] = []
+    @State private var selection: CatalogSelection?
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    if let overview, overview.isWorthShowing {
-                        CatalogMosaicCard(overview: overview)
-                    } else if overview != nil {
-                        ContentUnavailableView(
-                            "Der Katalog wächst",
-                            systemImage: "books.vertical",
-                            description: Text("Sobald genug Weine im gemeinsamen Katalog liegen, siehst du hier, aus welchen Ländern sie kommen.")
-                        )
-                        .padding(.top, 40)
-                    } else {
-                        ProgressView().padding(.top, 60)
+            VStack(spacing: 0) {
+                if let overview, overview.isWorthShowing {
+                    CatalogMosaicCard(overview: overview, selectedID: selection?.id) { tapped in
+                        // Dieselbe Kachel noch einmal: Wahl aufheben.
+                        selection = (selection == tapped) ? nil : tapped
                     }
+                    .padding([.horizontal, .top])
+                    .padding(.bottom, 8)
+                    if let selection {
+                        CatalogSelectionList(selection: selection, entries: entries)
+                    } else {
+                        Text("Tippe auf ein Land, um seine Weine zu sehen.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                            .padding(.top, 12)
+                    }
+                } else if overview != nil {
+                    ContentUnavailableView(
+                        "Der Katalog wächst",
+                        systemImage: "books.vertical",
+                        description: Text("Sobald genug Weine im gemeinsamen Katalog liegen, siehst du hier, aus welchen Ländern sie kommen.")
+                    )
+                    .padding(.top, 40)
+                    Spacer(minLength: 0)
+                } else {
+                    ProgressView().padding(.top, 60)
+                    Spacer(minLength: 0)
                 }
-                .padding()
             }
             .background(Color(.systemGroupedBackground))
             .appTitle(tr("Statistik"))
@@ -46,9 +62,15 @@ struct CatalogStatisticsView: View {
             .task { await catalog.refreshDirectory(maxAge: 30) }
             // Neu rechnen, wenn die Liste neu geladen wird oder die Sprache wechselt (Ländernamen).
             .task(id: "\(catalog.directoryVersion)-\(language.rawValue)") {
-                let entries = catalog.directory.entries
+                let current = catalog.directory.entries
                 let locale = language.locale
-                overview = await Task.detached { CatalogOverview(entries: entries, locale: locale) }.value
+                entries = current
+                let fresh = await Task.detached { CatalogOverview(entries: current, locale: locale) }.value
+                overview = fresh
+                // Die Wahl bleibt beim Land, trägt aber die aktuelle Zahl; ein Land, das es nicht mehr gibt, fällt weg.
+                if let chosen = selection {
+                    selection = fresh.countries.first { $0.id == chosen.id }.map(CatalogSelection.init(country:))
+                }
             }
         }
     }

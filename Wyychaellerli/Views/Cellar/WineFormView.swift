@@ -59,6 +59,9 @@ struct WineFormView: View {
                 if let candidate = viewModel.catalogCandidate {
                     candidateSection(candidate)
                 }
+                if viewModel.offersCatalogEntry {
+                    catalogUpdateSection
+                }
                 if showsPhotoSection {
                     Section {
                         if !isManualEntry {
@@ -337,6 +340,7 @@ struct WineFormView: View {
             .onChange(of: viewModel.vintage) { _, _ in updateSuggestions() }
             .onChange(of: catalog.directory.count) { _, _ in updateSuggestions() }
             // … der Abgleich über CloudKit gilt nur dem Scan und dem Strichcode.
+            .task { await consultCatalogForEdit() }
             .task(id: catalogQuery) {
                 guard usesServerLookup else {
                     if viewModel.catalogCandidate != nil { viewModel.offerCatalogEntry(nil) }
@@ -391,6 +395,73 @@ struct WineFormView: View {
     /// Fragt den gemeinsamen Katalog – nach dem Scan und beim Strichcode. Ohne Netz oder ohne
     /// Treffer passiert einfach nichts. Ein Treffer wird **angeboten**, nicht übernommen.
     /// Das Foto kommt erst, wenn der Treffer bestätigt ist.
+    /// Beim Bearbeiten: Gibt es den Wein im Katalog, vielleicht mit neueren Angaben oder einem
+    /// besseren Foto? Läuft einmal beim Öffnen; es wird nichts verändert, bevor der Nutzer wählt.
+    private func consultCatalogForEdit() async {
+        guard case .edit = viewModel.mode, viewModel.editCatalogEntry == nil else { return }
+        let entry = await catalog.lookup(
+            name: viewModel.name, producer: viewModel.producer,
+            vintage: viewModel.vintage, barcode: viewModel.validBarcode)
+        guard !Task.isCancelled, let entry else { return }
+        viewModel.editCatalogEntry = entry
+        guard viewModel.catalogEntryIsNew else { return }
+        guard let whole = await catalog.catalogImage(entry.id) else { return }
+        viewModel.editCatalogImage = CatalogPhotoFade.faded(from: whole) ?? whole
+    }
+
+    /// Der Hinweis „Im Katalog gibt es Angaben“ mit Gegenüberstellung. Übernommen wird nur ins
+    /// Formular; gespeichert wird mit „Sichern“. Notizen, Bewertungen und Bestand bleiben.
+    @ViewBuilder
+    private var catalogUpdateSection: some View {
+        let rows = viewModel.catalogDifferences
+        Section {
+            ForEach(rows) { row in
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(row.field.title)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(verbatim: row.catalog)
+                        if row.kind == .different {
+                            Text(verbatim: tr("Bei dir:") + " " + row.mine)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
+                    Button(row.kind == .fillable ? "Ergänzen" : "Übernehmen") {
+                        viewModel.takeCatalogField(row.field)
+                    }
+                    .buttonStyle(.brandOutline)
+                    .fixedSize()
+                }
+            }
+            if viewModel.offersCatalogPhoto, let data = viewModel.editCatalogImage, let image = UIImage(data: data) {
+                HStack(spacing: 12) {
+                    AdaptiveLabelImage(image: image, width: 56, height: 70, showsSignature: true)
+                        .labelLens(data, title: tr("Foto aus dem Katalog"), compact: true)
+                    Text("Foto aus dem Katalog")
+                        .font(.subheadline.weight(.medium))
+                        .layoutPriority(1)
+                    Spacer()
+                    Button("Verwenden") { viewModel.takeCatalogPhoto() }
+                        .buttonStyle(.brandOutline)
+                        .fixedSize()
+                }
+            }
+            if rows.count > 1 {
+                Button("Alle übernehmen") { viewModel.takeCatalogFields(fillOnly: false) }
+            }
+            Button("Nicht übernehmen", role: .cancel) {
+                viewModel.dismissCatalogOffer(in: context)
+            }
+        } header: {
+            Text("Im gemeinsamen Katalog gibt es Angaben")
+        } footer: {
+            Text("Übernommen wird ins Formular, gespeichert erst mit „Sichern“. Notizen, Bewertungen und Bestand bleiben unberührt.")
+        }
+    }
+
     private func consultCatalog() async {
         guard case .add = viewModel.mode, viewModel.catalogMatch == nil else { return }
         let entry = await catalog.lookup(
