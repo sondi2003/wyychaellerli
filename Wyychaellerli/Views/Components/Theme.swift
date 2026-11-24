@@ -428,12 +428,17 @@ struct BrandButtonStyle: ButtonStyle {
                 }
             }
             .contentShape(Capsule())
-            .opacity(isEnabled ? (configuration.isPressed ? 0.75 : 1) : 0.4)
+            // Gesperrt: gefüllte Knöpfe werden neutral grau (siehe `foreground`/`background`),
+            // umrandete blasser. Weinrot mit 40 % Deckkraft sah wie ein Darstellungsfehler aus.
+            .opacity(isEnabled ? (configuration.isPressed ? 0.75 : 1) : (isFilledKind ? 1 : 0.4))
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.snappy(duration: 0.15), value: configuration.isPressed)
     }
 
+    private var isFilledKind: Bool { kind == .filled || kind == .action }
+
     private var foreground: Color {
+        if !isEnabled && isFilledKind { return Color(.secondaryLabel) }
         switch kind {
         case .filled:  return Brand.onAccent
         case .action:  return .white
@@ -443,6 +448,7 @@ struct BrandButtonStyle: ButtonStyle {
     }
 
     private var background: Color {
+        if !isEnabled && isFilledKind { return Color(.tertiarySystemFill) }
         switch kind {
         case .filled:  return Brand.accent
         case .action:  return Brand.action

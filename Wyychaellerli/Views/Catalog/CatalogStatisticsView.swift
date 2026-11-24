@@ -47,11 +47,9 @@ struct CatalogStatisticsView: View {
                         }
                     }
                 } else if overview != nil {
-                    ContentUnavailableView(
-                        "Der Katalog wächst",
-                        systemImage: "books.vertical",
-                        description: Text("Sobald genug Weine im gemeinsamen Katalog liegen, siehst du hier, aus welchen Ländern sie kommen.")
-                    )
+                    EmptyState(title: "Der Katalog wächst", symbol: "books.vertical",
+                               message: "Sobald genug Weine im gemeinsamen Katalog liegen, siehst du hier, aus welchen Ländern sie kommen.",
+                               fillsScreen: false)
                     .padding(.top, 40)
                     Spacer(minLength: 0)
                 } else {

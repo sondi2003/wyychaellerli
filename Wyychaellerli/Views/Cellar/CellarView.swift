@@ -156,20 +156,15 @@ struct CellarView: View {
                     if !viewModel.searchText.isEmpty {
                         ContentUnavailableView.search(text: viewModel.searchText)
                     } else if viewModel.showArchived {
-                        ContentUnavailableView(
-                            "Archiv ist leer",
-                            systemImage: "archivebox",
-                            description: Text("Archivierte Weine erscheinen hier.")
-                        )
+                        EmptyState(title: "Archiv ist leer", symbol: "archivebox",
+                                   message: "Archivierte Weine erscheinen hier.", fillsScreen: false)
                     } else {
-                        ContentUnavailableView(
-                            "Nichts in dieser Ansicht",
-                            systemImage: "wineglass",
-                            description: Text("Ändere den Filter oder lege einen neuen Wein an.")
-                        )
+                        EmptyState(title: "Nichts in dieser Ansicht", symbol: "wineglass",
+                                   message: "Ändere den Filter oder lege einen neuen Wein an.", fillsScreen: false)
                     }
                 }
                 .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
 
             ForEach(groups, id: \.type) { group in
@@ -314,26 +309,21 @@ struct CellarView: View {
     // MARK: Leerer Keller
 
     private var emptyCellar: some View {
-        ContentUnavailableView {
-            Label("Der Keller ist leer", systemImage: "wineglass")
-        } description: {
-            Text("Lege deine erste Flasche an, damit der Wein-Berater etwas empfehlen kann.")
-        } actions: {
-            VStack(spacing: 10) {
-                Button {
-                    viewModel.addMode = .scan
-                } label: {
-                    Label("Etikett scannen", systemImage: "text.viewfinder")
-                }
-                .buttonStyle(.brandFilled)
-
-                Button {
-                    viewModel.addMode = .manual
-                } label: {
-                    Label("Manuell eingeben", systemImage: "plus")
-                }
-                .buttonStyle(.brandOutline)
+        EmptyState(title: "Der Keller ist leer", symbol: "wineglass",
+                   message: "Lege deine erste Flasche an, damit der Wein-Berater etwas empfehlen kann.") {
+            Button {
+                viewModel.addMode = .scan
+            } label: {
+                Label("Etikett scannen", systemImage: "text.viewfinder")
             }
+            .buttonStyle(.brandFilled)
+
+            Button {
+                viewModel.addMode = .manual
+            } label: {
+                Label("Manuell eingeben", systemImage: "plus")
+            }
+            .buttonStyle(.brandOutline)
         }
     }
 

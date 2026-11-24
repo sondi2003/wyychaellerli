@@ -35,11 +35,8 @@ struct RatingsOverviewView: View {
         NavigationStack {
             Group {
                 if rated.isEmpty {
-                    ContentUnavailableView(
-                        "Noch nichts bewertet",
-                        systemImage: "star",
-                        description: Text("Bewerte einen Wein auf seiner Detailseite. Hier siehst du dann, was euch geschmeckt hat und was ihr wieder kaufen solltet.")
-                    )
+                    EmptyState(title: "Noch nichts bewertet", symbol: "star",
+                               message: "Bewerte einen Wein auf seiner Detailseite. Hier siehst du dann, was euch geschmeckt hat und was ihr wieder kaufen solltet.")
                 } else {
                     List {
                         ForEach(groups, id: \.verdict.title) { group in

@@ -13422,35 +13422,6 @@
         }
       }
     },
-    "Ich schlage dir bis zu drei passende Weine aus deinem eigenen Keller vor – mit Begründung und Serviertipp." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I suggest up to three matching wines from your own cellar – with a reason and a serving tip."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je te propose jusqu’à trois vins adaptés de ta propre cave – avec une justification et un conseil de service."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ti propongo fino a tre vini adatti dalla tua cantina, con motivazione e consiglio di servizio."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Predlažem ti do tri odgovarajuća vina iz tvog podruma – sa obrazloženjem i savetom za služenje."
-          }
-        }
-      }
-    },
     "Im Archiv" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15619,35 +15590,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Popuni prazna polja"
-          }
-        }
-      }
-    },
-    "Lege dein Regal an, dann kannst du deine Flaschen darin einräumen und später wiederfinden.\n\nHast du auf einem anderen Gerät schon eines eingerichtet, warte kurz – es kommt über iCloud von selbst." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set up your rack, then you can place your bottles in it and find them again later.\n\nIf you have already set one up on another device, wait a moment – it arrives by itself via iCloud."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crée ton casier, puis tu pourras y ranger tes bouteilles et les retrouver plus tard.\n\nSi tu en as déjà configuré un sur un autre appareil, patiente un instant – il arrive tout seul via iCloud."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea il tuo scaffale: potrai collocarvi le bottiglie e ritrovarle in seguito.\n\nSe ne hai già impostato uno su un altro dispositivo, aspetta un momento: arriva da solo tramite iCloud."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Napravi svoj stalak, pa u njega možeš složiti flaše i kasnije ih naći.\n\nAko si već podesio stalak na drugom uređaju, sačekaj malo – stiže sam preko iCloud-a."
           }
         }
       }
@@ -18612,35 +18554,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zadnja strana"
-          }
-        }
-      }
-    },
-    "Sag mir, was du kochst." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tell me what you are cooking."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dis-moi ce que tu cuisines."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dimmi che cosa cucini."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reci mi šta kuvaš."
           }
         }
       }
@@ -24101,6 +24014,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skeniranje čita alkohol i bar-kod sa etikete. Zrelost za piće kaže savetniku koje flaše su na redu."
+          }
+        }
+      }
+    },
+    "Lege dein Regal an, dann kannst du deine Flaschen darin einräumen und später wiederfinden." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set up your rack, then you can place your bottles in it and find them again later."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée ton casier, puis tu pourras y ranger tes bouteilles et les retrouver plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea il tuo scaffale: potrai collocarvi le bottiglie e ritrovarle in seguito."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napravi svoj stalak, pa u njega možeš složiti flaše i kasnije ih naći."
+          }
+        }
+      }
+    },
+    "Hast du auf einem anderen Gerät schon eines eingerichtet, warte kurz – es kommt über iCloud von selbst." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you have already set one up on another device, wait a moment – it arrives by itself via iCloud."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si tu en as déjà configuré un sur un autre appareil, patiente un instant – il arrive tout seul via iCloud."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ne hai già impostato uno su un altro dispositivo, aspetta un momento: arriva da solo tramite iCloud."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ako si već podesio stalak na drugom uređaju, sačekaj malo – stiže sam preko iCloud-a."
+          }
+        }
+      }
+    },
+    "Bis zu drei Weine aus deinem Keller, mit Begründung und Serviertipp." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to three wines from your cellar, with reasons and a serving tip."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu’à trois vins de ta cave, avec explication et conseil de service."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fino a tre vini dalla tua cantina, con motivazione e consiglio di servizio."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do tri vina iz tvog podruma, sa obrazloženjem i savetom za služenje."
           }
         }
       }

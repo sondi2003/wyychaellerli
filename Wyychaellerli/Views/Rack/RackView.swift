@@ -53,20 +53,26 @@ struct RackView: View {
                 if let rack {
                     content(rack)
                 } else {
-                    ContentUnavailableView {
-                        Label("Noch kein Regal", systemImage: "square.grid.3x3")
-                    } description: {
-                        // Hinweis auf den Abgleich: Wer hier vorschnell anlegt, hat gleich
-                        // zwei Regale, sobald das erste über iCloud eintrifft.
-                        Text("Lege dein Regal an, dann kannst du deine Flaschen darin einräumen und später wiederfinden.\n\nHast du auf einem anderen Gerät schon eines eingerichtet, warte kurz – es kommt über iCloud von selbst.")
-                    } actions: {
-                        Button("Regal anlegen") { createRack() }
-                            .buttonStyle(.borderedProminent)
+                    // Hinweis auf den Abgleich: Wer hier vorschnell anlegt, hat gleich
+                    // zwei Regale, sobald das erste über iCloud eintrifft.
+                    EmptyState(
+                        title: "Noch kein Regal", symbol: "square.grid.3x3",
+                        message: "Lege dein Regal an, dann kannst du deine Flaschen darin einräumen und später wiederfinden.",
+                        footnote: "Hast du auf einem anderen Gerät schon eines eingerichtet, warte kurz – es kommt über iCloud von selbst."
+                    ) {
+                        Button {
+                            createRack()
+                        } label: {
+                            Label("Regal anlegen", systemImage: "plus")
+                        }
+                        .buttonStyle(.brandFilled)
                     }
                 }
             }
             .appTitle(rack?.name ?? tr("Regal"))
-            .navigationBarTitleDisplayMode(.inline)
+            // Ohne Regal der grosse Titel wie auf den anderen Reitern; mit Regal klein,
+            // damit der Bildschirm fürs Raster frei bleibt.
+            .navigationBarTitleDisplayMode(rack == nil && isTab ? .large : .inline)
             .toolbar {
                 // Als Reiter gibt es nichts zu schliessen.
                 if !isTab {

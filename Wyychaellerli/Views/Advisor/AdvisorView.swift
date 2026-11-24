@@ -37,16 +37,8 @@ struct AdvisorView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    // Solange noch nichts gefragt ist, begrüsst die dunkle Kopfkarte.
-                    if showsIntro {
-                        BrandHero(
-                            title: "Sag mir, was du kochst.",
-                            subtitle: "Ich schlage dir bis zu drei passende Weine aus deinem eigenen Keller vor – mit Begründung und Serviertipp.",
-                            symbol: "fork.knife.circle.fill"
-                        )
-                    }
                     dishInputCard
-                    requestButton
+                    hintLine
 
                     if viewModel.hasLabelMatches {
                         labelMatchSection
@@ -103,12 +95,24 @@ struct AdvisorView: View {
 
     // MARK: Eingabe
 
+    /// Eine Karte für alles, was zur Frage gehört: Titel, Eingabe, Ideen, Personen und der
+    /// Knopf. Früher standen darüber eine dunkle Kopfkarte, die dasselbe sagte, und darunter
+    /// der Knopf für sich.
     private var dishInputCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label("Was gibt es zu essen?", systemImage: "fork.knife")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Was gibt es zu essen?")
+                    .font(.title3.weight(.bold))
+                Text("Bis zu drei Weine aus deinem Keller, mit Begründung und Serviertipp.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
-            HStack {
+            HStack(spacing: 10) {
+                Image(systemName: "fork.knife")
+                    .foregroundStyle(Brand.accent)
+                    .accessibilityHidden(true)
                 TextField("z. B. Raclette, Spaghetti Bolognese …", text: $viewModel.dish)
                     .focused($dishFieldFocused)
                     .submitLabel(.go)
@@ -121,31 +125,42 @@ struct AdvisorView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Entfernen")
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 14)
             .padding(.vertical, 12)
-            .background(Color(.tertiarySystemFill).opacity(0.5), in: Capsule())
+            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            // Der Rand erscheint nur, während getippt wird.
             .overlay(
-                Capsule().strokeBorder(
-                    LinearGradient(colors: [Brand.rose, Brand.accent], startPoint: .leading, endPoint: .trailing),
-                    lineWidth: 1.5
-                )
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(Brand.accent, lineWidth: 1.5)
+                    .opacity(dishFieldFocused ? 1 : 0)
             )
+            .animation(.snappy, value: dishFieldFocused)
 
+            // Umbrechend statt seitlich scrollend: Abgeschnittene Chips am Rand lasen sich
+            // wie ein Fehler. Sechs Ideen genügen, mehr wären drei Reihen.
+            FlowLayout(spacing: 8) {
+                ForEach(PairingViewModel.suggestions.prefix(6), id: \.self) { suggestion in
+                    Button(suggestion) {
+                        viewModel.dish = suggestion
+                        dishFieldFocused = false
+                    }
+                    .buttonStyle(.brandOutline)
+                }
+            }
+
+            Divider()
             guestsRow
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(PairingViewModel.suggestions, id: \.self) { suggestion in
-                        Button(suggestion) {
-                            viewModel.dish = suggestion
-                            dishFieldFocused = false
-                        }
-                        .buttonStyle(.brandOutline)
-                    }
-                }
+            Button {
+                Task { await request() }
+            } label: {
+                Label("Empfehlung holen", systemImage: "sparkles")
             }
+            .buttonStyle(.brand(.filled, large: true))
+            .disabled(!viewModel.canRequest(hasInventory: !availableWines.isEmpty))
         }
         .cardStyle()
     }
@@ -177,20 +192,6 @@ struct AdvisorView: View {
     }
 
     // MARK: Aktion
-
-    private var requestButton: some View {
-        VStack(spacing: 10) {
-            Button {
-                Task { await request() }
-            } label: {
-                Label("Empfehlung holen", systemImage: "sparkles")
-            }
-            .buttonStyle(.brand(.filled, large: true))
-            .disabled(!viewModel.canRequest(hasInventory: !availableWines.isEmpty))
-
-            hintLine
-        }
-    }
 
     /// Eine Zeile unter dem Button: entweder was fehlt, oder was gleich passiert.
     @ViewBuilder
@@ -240,11 +241,6 @@ struct AdvisorView: View {
         }
         .frame(maxWidth: .infinity)
         .cardStyle()
-    }
-
-    /// Weder Ergebnis noch Fehler noch Laden – die Seite steht noch am Anfang.
-    private var showsIntro: Bool {
-        !viewModel.isLoading && viewModel.error == nil && viewModel.response == nil && !viewModel.hasLabelMatches
     }
 
     private func errorCard(_ error: AIServiceError) -> some View {
@@ -359,8 +355,8 @@ struct AdvisorView: View {
                     .font(.caption.weight(.semibold))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(Color.green.opacity(0.15), in: Capsule())
-                    .foregroundStyle(.green)
+                    .background(Color.green.opacity(0.18), in: Capsule())
+                    .foregroundStyle(.primary)
             }
 
             ForEach(viewModel.labelMatches) { match in
@@ -477,7 +473,7 @@ private struct LabelMatchCard: View {
         }
         .cardStyle()
         .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .strokeBorder(Color.green.opacity(0.45), lineWidth: 1.5)
         }
     }
