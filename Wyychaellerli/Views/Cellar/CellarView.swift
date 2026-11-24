@@ -185,14 +185,14 @@ struct CellarView: View {
                                 } label: {
                                     Label("Zurück in den Keller", systemImage: "tray.and.arrow.up")
                                 }
-                                .tint(.green)
+                                .tint(Brand.success)
                             } else {
                                 Button {
                                     viewModel.archive(wine)
                                 } label: {
                                     Label("Archivieren", systemImage: "archivebox")
                                 }
-                                .tint(.orange)
+                                .tint(Brand.warning)
                             }
                             Button {
                                 viewModel.wineToEdit = wine

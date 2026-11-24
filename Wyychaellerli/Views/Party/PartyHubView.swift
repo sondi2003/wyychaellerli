@@ -61,7 +61,7 @@ struct PartyHubView: View {
                                 .foregroundStyle(.tertiary)
                         }
                         .padding(16)
-                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
                     }
                     .buttonStyle(.plain)
                 }
@@ -102,9 +102,9 @@ struct PartyHubView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
+            RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous)
                 .strokeBorder(Brand.rose.opacity(0.7), lineWidth: 1.5)
         )
     }

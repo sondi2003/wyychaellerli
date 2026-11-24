@@ -49,11 +49,11 @@ struct PartyDrawView: View {
                         }
                         .padding(14)
                         .background(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                                 .fill(isLit ? Brand.accent.opacity(0.22) : Color(.secondarySystemGroupedBackground))
                         )
                         .overlay {
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                                 .strokeBorder(isLit ? Brand.accent : Color.clear, lineWidth: 3)
                         }
                         .scaleEffect(isLit && !reduceMotion ? 1.03 : 1)
@@ -67,11 +67,8 @@ struct PartyDrawView: View {
                 Task { await model.runDraw() }
             } label: {
                 Label(model.isDrawing ? "Wird ausgelost …" : "Losen", systemImage: "dice.fill")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.brand(.filled, large: true))
             .disabled(model.isDrawing)
             .padding(.horizontal)
             .padding(.bottom, 20)
@@ -118,11 +115,8 @@ struct PartyPodiumView: View {
 
                 Button(action: onFinish) {
                     Label("Party beenden", systemImage: "lock.fill")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.brand(.filled, large: true))
                 .padding(.horizontal)
 
                 Text("Das Ergebnis wird in der Historie gesichert. Danach kannst du die Flasche wie gewohnt öffnen – die App zeigt dir das Regalfach.")
@@ -153,7 +147,7 @@ struct PartyPodiumView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(maxHeight: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
                     .shadow(color: .black.opacity(0.2), radius: 14, y: 8)
             } else {
                 WineTypeIcon(type: wine.type, size: 96)
@@ -195,7 +189,7 @@ struct PartyPodiumView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(20)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous))
         .padding(.horizontal)
     }
 
@@ -220,7 +214,7 @@ struct PartyPodiumView: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
             ZStack {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous)
                     .fill(Color(.tertiarySystemFill))
                 Text("\(place)")
                     .font(.title.weight(.bold))
@@ -260,7 +254,7 @@ struct PartyPodiumView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
         .padding(.horizontal)
     }
 }

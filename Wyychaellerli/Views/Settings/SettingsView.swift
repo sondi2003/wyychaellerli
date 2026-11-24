@@ -194,7 +194,7 @@ struct SettingsView: View {
             }
             Spacer()
             Image(systemName: isUsable ? "checkmark.circle.fill" : "minus.circle")
-                .foregroundStyle(isUsable ? Color.green : Color.secondary)
+                .foregroundStyle(isUsable ? Brand.success : Color.secondary)
         }
         .accessibilityElement(children: .combine)
     }
@@ -209,7 +209,7 @@ struct SettingsView: View {
             if settings.activeProvider == provider {
                 Text("Aktiv")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Brand.success)
             } else if settings.hasAPIKey(for: provider) {
                 Text("Key hinterlegt")
                     .font(.caption)
@@ -283,7 +283,7 @@ struct ProviderSettingsView: View {
                 if let keychainError {
                     Text(keychainError)
                         .font(.footnote)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Brand.danger)
                 }
             } header: {
                 Text("Zugang")
@@ -317,7 +317,7 @@ struct ProviderSettingsView: View {
                 Section {
                     Label("Dieser Anbieter ist aktiv.", systemImage: "checkmark.circle.fill")
                         .font(.footnote)
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Brand.success)
                 }
             }
         }

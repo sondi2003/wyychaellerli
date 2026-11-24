@@ -30,7 +30,7 @@ struct LabelPager: View {
                         .resizable()
                         .scaledToFit()
                         .bottleSignature(for: page.image)
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
                         .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
                         // Wie in der Fotos-App: Ein Tipp aufs Bild öffnet es gross, keine sichtbare Lupe.
                         // Die ganze Bildfläche ist Trefferfläche; Wischen blättert weiter zwischen den Seiten.

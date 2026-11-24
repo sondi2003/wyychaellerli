@@ -40,10 +40,10 @@ struct GuidedAccessCard: View {
         if isActive {
             Label("Geführter Zugriff läuft – das Gerät bleibt auf dieser App.", systemImage: "lock.shield.fill")
                 .font(.footnote)
-                .foregroundStyle(.green)
+                .foregroundStyle(Brand.success)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(12)
-                .background(Color.green.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(Brand.success.opacity(0.12), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
         } else {
             VStack(alignment: .leading, spacing: 8) {
                 Label("Bevor du weitergibst", systemImage: "lock.shield")
@@ -59,7 +59,7 @@ struct GuidedAccessCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(12)
-            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
         }
     }
 }

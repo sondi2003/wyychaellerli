@@ -93,7 +93,7 @@ struct WineRackCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 4)
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.brandOutline)
                 }
             }
             .cardStyle()

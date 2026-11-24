@@ -157,7 +157,7 @@ struct WineRackSheet: View {
                     if rack.freeCount == 0 {
                         Label("Das Regal ist voll.", systemImage: "exclamationmark.triangle")
                             .font(.footnote)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Brand.warning)
                     } else {
                         Text(selectionStatus)
                             .font(.subheadline.weight(.medium))

@@ -132,11 +132,8 @@ struct LabelScanView: View {
             Task { await viewModel.scan(service: LabelScanService(aiService: aiService), settings: settings) }
         } label: {
             Label("Etikett auslesen", systemImage: "text.viewfinder")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.brand(.filled, large: true))
         .disabled(!viewModel.hasImages || viewModel.isProcessing)
     }
 
@@ -190,7 +187,7 @@ private struct LabelPhotoSlot: View {
         VStack(spacing: 10) {
             Button(action: onScan) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                         .fill(Color(.secondarySystemGroupedBackground))
                     if let photo {
                         // Color.clear gibt die Grösse vor, das Overlay füllt sie und wird beschnitten.
@@ -200,7 +197,7 @@ private struct LabelPhotoSlot: View {
                                     .resizable()
                                     .scaledToFill()
                             }
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
                     } else {
                         VStack(spacing: 8) {
                             Image(systemName: canScan ? "camera.viewfinder" : symbol)
@@ -219,7 +216,7 @@ private struct LabelPhotoSlot: View {
                 }
                 .frame(height: 200)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                         .strokeBorder(
                             photo == nil ? Color.accentColor.opacity(0.35) : Color.clear,
                             style: StrokeStyle(lineWidth: 1.5, dash: [6, 4])
@@ -258,7 +255,7 @@ private struct LabelPhotoSlot: View {
                     .font(.footnote)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.brandOutline)
             .accessibilityLabel("\(side.title) aus Fotos wählen")
 
             if photo != nil, canScan {
@@ -287,7 +284,7 @@ private struct LabelPhotoSlot: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: 40, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
                         .overlay(alignment: .topTrailing) {
                             Button {
                                 onRemoveExtra(index)
@@ -309,7 +306,7 @@ private struct LabelPhotoSlot: View {
                                 .font(.caption2)
                         }
                         .frame(width: 44, height: 50)
-                        .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Weitere Ansicht der \(side.title) fotografieren")

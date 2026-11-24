@@ -238,7 +238,7 @@ struct RackView: View {
         VStack(alignment: .leading, spacing: 10) {
             Label("Gleichnamige Regale gefunden", systemImage: "exclamationmark.triangle.fill")
                 .font(.headline)
-                .foregroundStyle(.orange)
+                .foregroundStyle(Brand.warning)
             Text(duplicateCount == 1 ? "Es gibt zwei Regale mit demselben Namen. Das passiert, wenn auf zwei Geräten gleichzeitig eines angelegt wurde, bevor das erste über iCloud ankam. Willst du wirklich zwei getrennte Regale, gib ihnen unter „Bearbeiten“ verschiedene Namen." : "Es gibt mehrere Regale mit demselben Namen. Das passiert, wenn auf zwei Geräten gleichzeitig eines angelegt wurde, bevor das erste über iCloud ankam. Willst du wirklich getrennte Regale, gib ihnen unter „Bearbeiten“ verschiedene Namen.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -249,7 +249,7 @@ struct RackView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.brandOutline)
             if let mergeResult {
                 Text(mergeResult)
                     .font(.footnote)

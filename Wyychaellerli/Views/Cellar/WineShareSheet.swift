@@ -52,9 +52,7 @@ struct WineShareSheet: View {
                                     comment = suggestion
                                     isCommentFocused = false
                                 }
-                                .font(.footnote)
-                                .buttonStyle(.bordered)
-                                .buttonBorderShape(.capsule)
+                                .buttonStyle(.brandOutline)
                             }
                         }
                         .padding(.vertical, 2)
@@ -103,7 +101,7 @@ struct WineShareSheet: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 64, height: 80)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
             } else {
                 WineTypeIcon(type: wine.type, size: 56)
             }

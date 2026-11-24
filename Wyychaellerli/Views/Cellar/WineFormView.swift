@@ -99,7 +99,7 @@ struct WineFormView: View {
                                     .foregroundStyle(.secondary)
                             } icon: {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.green)
+                                    .foregroundStyle(Brand.success)
                             }
                         }
                         if let data = viewModel.catalogImageData, viewModel.labelImageData == data {
@@ -403,7 +403,7 @@ struct WineFormView: View {
         Label {
             Text(text).foregroundStyle(.primary)
         } icon: {
-            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Brand.warning)
         }
     }
 
@@ -654,7 +654,7 @@ struct WineFormView: View {
                         .lineLimit(1)
                     Text(stateText(existing))
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(existing.isArchived ? .orange : .secondary)
+                        .foregroundStyle(existing.isArchived ? Brand.warning : .secondary)
                 }
                 Spacer(minLength: 0)
             }
@@ -676,7 +676,7 @@ struct WineFormView: View {
             .foregroundStyle(.secondary)
         } header: {
             Label("Diesen Wein hast du schon", systemImage: "exclamationmark.circle.fill")
-                .foregroundStyle(.orange)
+                .foregroundStyle(Brand.warning)
         } footer: {
             Text(existing.isArchived
                  ? "Der Eintrag liegt im Archiv. „Aufstocken“ holt ihn zurück und zählt deine Flaschen dazu."

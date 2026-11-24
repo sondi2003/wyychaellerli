@@ -30,9 +30,7 @@ struct NewRackView: View {
                                     name = suggestion
                                     isNameFocused = false
                                 }
-                                .font(.subheadline)
-                                .buttonStyle(.bordered)
-                                .buttonBorderShape(.capsule)
+                                .buttonStyle(.brandOutline)
                             }
                         }
                         .padding(.vertical, 2)

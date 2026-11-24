@@ -94,7 +94,7 @@ struct RatingCard: View {
                 }
                 .font(.footnote)
                 .padding(10)
-                .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             }
         }
         .cardStyle()
@@ -140,9 +140,9 @@ struct RatingCard: View {
 
     private func color(for verdict: Wine.BuyAgain) -> Color {
         switch verdict {
-        case .yes:     return .green
-        case .maybe:   return .orange
-        case .no:      return .red
+        case .yes:     return Brand.success
+        case .maybe:   return Brand.warning
+        case .no:      return Brand.danger
         case .unrated: return .secondary
         }
     }

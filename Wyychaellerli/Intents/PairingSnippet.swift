@@ -95,12 +95,12 @@ struct PairingSnippetView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: 48, height: 60)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
         } else {
             Image(systemName: wine.typeSymbol)
                 .font(.title2)
                 .frame(width: 48, height: 60)
-                .background(Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .background(Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
         }
     }
 }

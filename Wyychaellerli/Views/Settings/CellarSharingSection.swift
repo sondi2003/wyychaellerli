@@ -45,7 +45,7 @@ struct CellarSharingSection: View {
                     }
                 } icon: {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Brand.warning)
                 }
             }
             if isGuest {
@@ -102,7 +102,7 @@ struct CellarSharingSection: View {
             if let errorMessage {
                 Text(errorMessage)
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Brand.danger)
             }
         } header: {
             Text("Teilen")

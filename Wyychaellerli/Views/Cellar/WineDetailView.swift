@@ -154,12 +154,12 @@ struct WineDetailView: View {
             }
             .foregroundStyle(Brand.accent)
             .frame(width: 84, height: 104)
-            .background(Brand.blush, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(Brand.blush, in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                     .strokeBorder(Brand.accent.opacity(0.45), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
             )
-            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Etikett fotografieren")
@@ -180,7 +180,7 @@ struct WineDetailView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity)
-        .background(Brand.blush, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(Brand.blush, in: RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous))
     }
 
     /// Flagge und „Region, Land“ in einer Zeile. Ohne bekannte Flagge steht nur der Text.
@@ -238,9 +238,9 @@ struct WineDetailView: View {
 
     private var maturityColor: Color {
         switch wine.maturity {
-        case .drinkSoon: return .orange
-        case .pastPeak:  return .red
-        case .ready:     return .green
+        case .drinkSoon: return Brand.warning
+        case .pastPeak:  return Brand.danger
+        case .ready:     return Brand.success
         default:         return .secondary
         }
     }

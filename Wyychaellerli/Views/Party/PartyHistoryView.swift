@@ -124,9 +124,9 @@ struct PartyHistoryView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 44, height: 55)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
             } else {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous)
                     .fill(Color(.tertiarySystemFill))
                     .frame(width: 44, height: 55)
                     .overlay { Image(systemName: "trophy").foregroundStyle(.secondary) }

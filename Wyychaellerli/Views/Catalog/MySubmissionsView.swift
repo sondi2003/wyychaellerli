@@ -76,7 +76,7 @@ struct MySubmissionsView: View {
                     Text(verbatim: submission.status.title)
                 }
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(submission.status == .accepted ? Color.green : Brand.accent)
+                .foregroundStyle(submission.status == .accepted ? Brand.success : Brand.accent)
             }
             Spacer(minLength: 0)
         }

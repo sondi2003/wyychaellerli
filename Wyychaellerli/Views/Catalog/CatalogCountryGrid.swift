@@ -49,7 +49,7 @@ struct CatalogCountryGrid: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 
@@ -86,9 +86,9 @@ struct CatalogCountryGrid: View {
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
             .frame(maxWidth: .infinity)
-            .background(Self.tileColor, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background(Self.tileColor, in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                     .strokeBorder(Brand.rose, lineWidth: chosen ? 2 : 0)
             }
             .opacity(dimmed ? 0.45 : 1)

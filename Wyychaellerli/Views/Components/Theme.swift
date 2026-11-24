@@ -24,6 +24,24 @@ enum Brand {
     /// Hauptaktion (Trinken, Übernehmen).
     static let action = Color.adaptive(light: (0.00, 0.50, 0.36), dark: (0.15, 0.68, 0.50))
 
+    /// Statusfarben. Als Schrift auf hellem Grund lesbar (rund 5:1) – die Systemfarben
+    /// Grün und Orange liegen dort bei rund 2:1. Grün ist dasselbe wie die Hauptaktion:
+    /// In der App gibt es nur ein Grün.
+    static let success = action
+    static let warning = Color.adaptive(light: (0.65, 0.37, 0.00), dark: (1.00, 0.70, 0.25))
+    static let danger = Color.adaptive(light: (0.78, 0.13, 0.15), dark: (1.00, 0.42, 0.40))
+
+    /// Die drei Eckenradien der App. Kein anderer Wert, ausser wo es begründet ist
+    /// (Einführung, Zeichnungen, Regalraster).
+    enum Radius {
+        /// Bilder, Abzeichen.
+        static let small: CGFloat = 8
+        /// Felder, Hinweisboxen, Kacheln.
+        static let medium: CGFloat = 14
+        /// Karten, Bühne.
+        static let large: CGFloat = 20
+    }
+
     /// Verlauf wie auf den Startseiten: oben fast schwarz-rot, unten Rosé.
     static let gradient = LinearGradient(
         colors: [deep, Color(red: 0.33, green: 0.04, blue: 0.10), Color(red: 0.62, green: 0.16, blue: 0.27), rose],
@@ -111,7 +129,7 @@ struct LabelThumbnail: View {
         } else {
             // Platzhalter im selben Hochformat wie ein Etikettfoto, damit Zeilen mit und
             // ohne Foto gleich breit und gleich hoch beginnen.
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
+            RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous)
                 .fill(wine.type.color.opacity(0.15))
                 .frame(width: size, height: size * 1.25)
                 .overlay {
@@ -190,9 +208,9 @@ struct AdaptiveLabelImage: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: width, height: height)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous)
                         .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5)
                 )
                 .accessibilityHidden(true)
@@ -239,7 +257,7 @@ struct StockBadge: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 4)
         .background(
-            Capsule().fill(quantity > 0 ? Color(.tertiarySystemFill) : Color.red)
+            Capsule().fill(quantity > 0 ? Color(.tertiarySystemFill) : Brand.danger)
         )
         // Eine Zahl, die sich zusammendrücken lässt, verschwindet in der Kapsel.
         // In einer Zeile mit langem Namen gewinnt sonst der Text den Platz.
@@ -256,8 +274,8 @@ struct CalloutBox: View {
         var color: Color {
             switch self {
             case .info:    return .accentColor
-            case .warning: return .orange
-            case .error:   return .red
+            case .warning: return Brand.warning
+            case .error:   return Brand.danger
             }
         }
 
@@ -284,7 +302,7 @@ struct CalloutBox: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(12)
-        .background(kind.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(kind.color.opacity(0.10), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
     }
 }
 
@@ -293,7 +311,7 @@ struct CardBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(16)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous))
             .shadow(color: Brand.deep.opacity(0.08), radius: 8, y: 2)
     }
 }
@@ -424,7 +442,7 @@ struct BrandButtonStyle: ButtonStyle {
                 if kind == .outline {
                     Capsule().strokeBorder(Color.primary.opacity(0.25), lineWidth: 1)
                 } else if kind == .destructive {
-                    Capsule().strokeBorder(Color.red.opacity(0.6), lineWidth: 1.5)
+                    Capsule().strokeBorder(Brand.danger.opacity(0.6), lineWidth: 1.5)
                 }
             }
             .contentShape(Capsule())
@@ -443,7 +461,7 @@ struct BrandButtonStyle: ButtonStyle {
         case .filled:  return Brand.onAccent
         case .action:  return .white
         case .outline: return .primary
-        case .destructive: return .red
+        case .destructive: return Brand.danger
         }
     }
 
@@ -490,9 +508,9 @@ struct BrandHero: View {
                 .accessibilityHidden(true)
         }
         .padding(20)
-        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .background(Brand.heroGradient, in: RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
+            RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous)
                 .strokeBorder(Brand.rose.opacity(0.7), lineWidth: 1.5)
         )
     }

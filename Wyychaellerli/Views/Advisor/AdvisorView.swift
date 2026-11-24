@@ -130,10 +130,10 @@ struct AdvisorView: View {
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
-            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             // Der Rand erscheint nur, während getippt wird.
             .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                     .strokeBorder(Brand.accent, lineWidth: 1.5)
                     .opacity(dishFieldFocused ? 1 : 0)
             )
@@ -247,7 +247,7 @@ struct AdvisorView: View {
         VStack(alignment: .leading, spacing: 12) {
             Label(error.title, systemImage: "xmark.octagon.fill")
                 .font(.headline)
-                .foregroundStyle(.red)
+                .foregroundStyle(Brand.danger)
             Text(error.localizedDescription)
                 .font(.subheadline)
                 .fixedSize(horizontal: false, vertical: true)
@@ -338,7 +338,7 @@ struct AdvisorView: View {
                 Spacer(minLength: 0)
             }
             .padding(12)
-            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
         }
     }
 
@@ -355,7 +355,7 @@ struct AdvisorView: View {
                     .font(.caption.weight(.semibold))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(Color.green.opacity(0.18), in: Capsule())
+                    .background(Brand.success.opacity(0.18), in: Capsule())
                     .foregroundStyle(.primary)
             }
 
@@ -410,7 +410,7 @@ struct AdvisorView: View {
             }
         }
         .padding(12)
-        .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
     }
 
     /// Ordnet eine Empfehlung dem Wein im Keller zu (Name + Jahrgang, Name-Fallback).
@@ -473,8 +473,8 @@ private struct LabelMatchCard: View {
         }
         .cardStyle()
         .overlay {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .strokeBorder(Color.green.opacity(0.45), lineWidth: 1.5)
+            RoundedRectangle(cornerRadius: Brand.Radius.large, style: .continuous)
+                .strokeBorder(Brand.success.opacity(0.45), lineWidth: 1.5)
         }
     }
 }

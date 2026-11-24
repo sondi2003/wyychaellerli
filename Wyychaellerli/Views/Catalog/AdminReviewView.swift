@@ -25,7 +25,7 @@ struct AdminReviewView: View {
         List {
             if let errorMessage {
                 Section {
-                    Text(errorMessage).foregroundStyle(.red)
+                    Text(errorMessage).foregroundStyle(Brand.danger)
                 }
             }
             if groups.isEmpty, !isLoading, errorMessage == nil {
@@ -67,7 +67,7 @@ struct AdminReviewView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 44, height: 44)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
             } else {
                 Image(systemName: "photo")
                     .frame(width: 44, height: 44)
@@ -187,7 +187,7 @@ struct AdminSubmissionEditor: View {
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: .infinity, maxHeight: 200)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
                         .labelLens(data)
                     if referencePhoto != nil {
                         Label("Foto der Quelle: wird im Katalog gespeichert und ersetzt ein vorhandenes.", systemImage: "photo.badge.checkmark")
@@ -209,7 +209,7 @@ struct AdminSubmissionEditor: View {
                             Label(tr("Ergänzt den bestehenden Eintrag um: \(added.joined(separator: ", ")). Aufnehmen fügt das hinzu und ändert sonst nichts."), systemImage: "plus.circle")
                         } else {
                             Label("Steht schon im Katalog – Aufnehmen überschreibt den Eintrag mit diesen Angaben.", systemImage: "exclamationmark.triangle")
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(Brand.warning)
                         }
                     }
                 }
@@ -234,7 +234,7 @@ struct AdminSubmissionEditor: View {
 
             if let errorMessage {
                 Section {
-                    Text(errorMessage).foregroundStyle(.red)
+                    Text(errorMessage).foregroundStyle(Brand.danger)
                 }
             }
 

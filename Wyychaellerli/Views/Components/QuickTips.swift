@@ -118,6 +118,6 @@ struct CompactTipStyle: TipViewStyle {
             .accessibilityLabel("Tipp schliessen")
         }
         .padding(12)
-        .background(Brand.blush, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(Brand.blush, in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
     }
 }

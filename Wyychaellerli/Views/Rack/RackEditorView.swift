@@ -86,7 +86,7 @@ struct RackEditorView: View {
                                 .font(.footnote)
                         } icon: {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(Brand.warning)
                         }
                     }
                 }

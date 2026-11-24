@@ -60,7 +60,7 @@ struct WineOriginMapView: View {
                 }
             }
             .frame(height: 180)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             .allowsHitTesting(false)
             .accessibilityLabel("Karte der Herkunft: \(wine.geocodedPlaceName.isEmpty ? wine.region : wine.geocodedPlaceName)")
 

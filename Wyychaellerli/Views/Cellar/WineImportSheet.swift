@@ -54,7 +54,7 @@ struct WineImportSheet: View {
                     .resizable()
                     .scaledToFit()
                     .frame(maxHeight: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
                     .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
             } else {
                 WineTypeIcon(type: share.wineType, size: 84)
@@ -91,7 +91,7 @@ struct WineImportSheet: View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Den hast du schon", systemImage: "exclamationmark.triangle.fill")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.orange)
+                .foregroundStyle(Brand.warning)
             Text("„\(wine.nameWithVintage)“ liegt bereits in deinem Keller\(wine.isArchived ? tr(" (im Archiv)") : tr(", Bestand \(Int(wine.quantity))")). Übernimmst du ihn trotzdem, steht er zweimal in der Liste.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -177,7 +177,7 @@ struct WineImportSheet: View {
         if didImport {
             Label("In deinen Keller übernommen", systemImage: "checkmark.circle.fill")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.green)
+                .foregroundStyle(Brand.success)
         } else {
             Button {
                 share.importing(into: context)
@@ -185,11 +185,8 @@ struct WineImportSheet: View {
             } label: {
                 Label(duplicate == nil ? "In meinen Keller übernehmen" : "Trotzdem übernehmen",
                       systemImage: "square.and.arrow.down")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.brand(.filled, large: true))
 
             Text("Wird mit Bestand 1 angelegt. Etikett, Notizen und Trinkreife kommen mit.")
                 .font(.caption)

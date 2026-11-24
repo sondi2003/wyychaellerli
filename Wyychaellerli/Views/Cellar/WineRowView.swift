@@ -72,7 +72,7 @@ struct WineRowView: View {
                 // und „zu jung“ stünden bei fast jeder Flasche – nur Rauschen.
                 // Schrift in Textfarbe auf getöntem Grund: Orange auf Weiss wäre zu schwach.
                 if wine.needsDrinkingSoon {
-                    let tone: Color = wine.maturity == .pastPeak ? .red : .orange
+                    let tone: Color = wine.maturity == .pastPeak ? Brand.danger : Brand.warning
                     Label {
                         Text(wine.maturity.title)
                     } icon: {

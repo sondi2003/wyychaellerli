@@ -113,11 +113,8 @@ struct PartyCandidatesView: View {
                 model.goToGuests(in: context)
             } label: {
                 Text("Weiter zu den Gästen")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.brand(.filled, large: true))
             .disabled(!model.canStartGuests)
 
             if !model.canStartGuests {
@@ -183,7 +180,7 @@ struct PartyGuestsView: View {
                                 Label("hat gestimmt", systemImage: "checkmark.circle.fill")
                                     .font(.caption)
                                     .labelStyle(.iconOnly)
-                                    .foregroundStyle(.green)
+                                    .foregroundStyle(Brand.success)
                             }
                         }
                         .swipeActions {
@@ -217,11 +214,8 @@ struct PartyGuestsView: View {
                 model.startVoting()
             } label: {
                 Text(model.state.totalVotes > 0 ? "Weiter abstimmen" : "Abstimmung starten")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.brand(.filled, large: true))
             .disabled(!model.canStartVoting || model.state.pendingGuests.isEmpty)
 
             // Zurück zur Auswahl geht nur, solange noch keine Stimme gefallen ist –

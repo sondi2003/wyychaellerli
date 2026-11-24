@@ -146,7 +146,7 @@ struct ReferenceCompareSheet: View {
             if let manualError {
                 Text(verbatim: manualError)
                     .font(.footnote)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(Brand.warning)
             }
         }
     }
@@ -293,7 +293,7 @@ private struct ReferenceComparisonView: View {
             }
             if photo != nil, photo == preview {
                 Label("Wird beim Aufnehmen im Katalog gespeichert.", systemImage: "checkmark.circle")
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Brand.success)
                 Button("Nicht verwenden", role: .destructive) {
                     photo = nil
                     photoDeclined = true
@@ -335,7 +335,7 @@ private struct ReferenceComparisonView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: .infinity, maxHeight: 160)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.small, style: .continuous))
             } else {
                 Group {
                     if isLoadingPhoto && title == tr("Quelle") { ProgressView() } else { Text(verbatim: "–").foregroundStyle(.secondary) }
@@ -391,11 +391,11 @@ private struct ReferenceComparisonView: View {
         case .same:
             Label("gleich", systemImage: "checkmark")
                 .font(.caption)
-                .foregroundStyle(.green)
+                .foregroundStyle(Brand.success)
         case .different:
             Label("abweichend", systemImage: "exclamationmark.triangle")
                 .font(.caption)
-                .foregroundStyle(.orange)
+                .foregroundStyle(Brand.warning)
         case .fillable:
             Label("fehlt im Vorschlag", systemImage: "plus.circle")
                 .font(.caption)
@@ -466,7 +466,7 @@ struct ReferenceSettingsView: View {
             if ReferenceLookupSettings.endpoint == nil, !url.isEmpty {
                 Section {
                     Label("Die Adresse muss mit https:// beginnen.", systemImage: "exclamationmark.triangle")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Brand.warning)
                 }
             }
         }

@@ -45,7 +45,7 @@ struct CatalogStatusCard: View {
                     if let errorMessage {
                         Text(errorMessage)
                             .font(.footnote)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Brand.danger)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -69,7 +69,7 @@ struct CatalogStatusCard: View {
         switch state {
         case .inCatalog:
             Label("Steht im Katalog", systemImage: "checkmark.seal.fill")
-                .foregroundStyle(.green)
+                .foregroundStyle(Brand.success)
         case .missing:
             Text("Noch nicht im Katalog. Schick ihn zur Prüfung, dann profitieren alle davon, die ihn später erfassen.")
                 .font(.subheadline)

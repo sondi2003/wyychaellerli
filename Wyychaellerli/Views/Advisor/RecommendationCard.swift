@@ -105,7 +105,7 @@ struct RecommendationCard: View {
         .cardStyle()
         .overlay(alignment: .topLeading) {
             if recommendation.rank == 1 {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                     .strokeBorder(Color.accentColor.opacity(0.5), lineWidth: 1.5)
             }
         }
@@ -114,10 +114,10 @@ struct RecommendationCard: View {
     /// Ehrliche Einstufung wie beim Sommelier: Perfekt, passt gut, geht, Notlösung.
     private var fitBadge: some View {
         let color: Color = switch recommendation.fit {
-        case .excellent:  .green
+        case .excellent:  Brand.success
         case .good:       .accentColor
-        case .acceptable: .orange
-        case .poor:       .red
+        case .acceptable: Brand.warning
+        case .poor:       Brand.danger
         }
         return Label(recommendation.fit.displayName, systemImage: recommendation.fit.symbolName)
             .font(.caption.weight(.semibold))

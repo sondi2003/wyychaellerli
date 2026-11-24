@@ -31,7 +31,7 @@ struct CatalogManagerView: View {
 
             if let errorMessage {
                 Section {
-                    Text(errorMessage).foregroundStyle(.red)
+                    Text(errorMessage).foregroundStyle(Brand.danger)
                 }
             }
 
@@ -176,7 +176,7 @@ struct CatalogManagerView: View {
             Spacer(minLength: 0)
             if CatalogFilter.isIncomplete(entry) {
                 Image(systemName: "exclamationmark.circle")
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(Brand.warning)
                     .accessibilityLabel(Text("Lückenhaft"))
             }
         }
@@ -286,7 +286,7 @@ struct CatalogWineEditor: View {
 
             if let errorMessage {
                 Section {
-                    Text(errorMessage).foregroundStyle(.red)
+                    Text(errorMessage).foregroundStyle(Brand.danger)
                 }
             }
         }
@@ -332,7 +332,7 @@ struct CatalogWineEditor: View {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             } else if isLoadingImage || isPreparingImage {
                 ProgressView()
             } else {

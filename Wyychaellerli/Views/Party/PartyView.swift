@@ -71,7 +71,7 @@ struct PartyView: View {
             if guidedAccess.isActive {
                 Image(systemName: "lock.shield.fill")
                     .font(.footnote)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Brand.success)
                     .accessibilityLabel("Geführter Zugriff läuft")
             }
             Text(phaseTitle)
@@ -217,11 +217,8 @@ struct PartyHandoverView: View {
                     model.beginTurn()
                 } label: {
                     Text("Ich bin's, los geht's")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.brand(.filled, large: true))
                 .padding(.horizontal, 40)
 
                 Button("Aussetzen, jemand anderes zuerst") {

@@ -92,7 +92,7 @@ private struct GtinField: View {
             if Barcode.hasInvalidEntry(in: text) {
                 Label("Ein Code besteht die Prüfziffer nicht und wird nicht gespeichert.", systemImage: "exclamationmark.triangle.fill")
                     .font(.footnote)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(Brand.warning)
             }
         }
         .onAppear {

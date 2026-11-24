@@ -97,7 +97,7 @@ struct RatingSheet: View {
 
     private func tagChip(_ tag: RatingTag) -> some View {
         let isSelected = selectedTags.contains(tag.rawValue)
-        let tint: Color = tag.isPositive ? .green : .orange
+        let tint: Color = tag.isPositive ? Brand.success : Brand.warning
         return Button {
             if isSelected {
                 selectedTags.remove(tag.rawValue)

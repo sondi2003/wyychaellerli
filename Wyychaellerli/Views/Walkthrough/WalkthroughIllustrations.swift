@@ -265,7 +265,7 @@ struct AdvisorIllustration: View {
                 }
                 Text("passt sehr gut")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Brand.success)
             }
         }
     }

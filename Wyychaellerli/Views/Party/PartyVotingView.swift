@@ -59,11 +59,8 @@ struct PartyVotingView: View {
                 withAnimation { model.finishTurn() }
             } label: {
                 Text(model.remainingVotes == 0 ? "Fertig, weitergeben" : "Fertig")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.brand(.filled, large: true))
             .disabled(model.state.currentVotes.isEmpty)
 
             Text("Antippen wählt, nochmals antippen nimmt zurück.")
@@ -160,9 +157,9 @@ struct PartyWineCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous)
                     .strokeBorder(isChosen ? Brand.accent : Color.clear, lineWidth: 2.5)
             }
             .opacity(canChoose || isChosen ? 1 : 0.55)

@@ -44,7 +44,7 @@ struct ScanOptionsSheet: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 13)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Brand.Radius.medium, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
