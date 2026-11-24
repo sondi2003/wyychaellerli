@@ -101,7 +101,7 @@ struct WineOriginMapView: View {
     }
 
     private func openInMaps(_ coordinate: CLLocationCoordinate2D) {
-        let item = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        let item = MKMapItem(location: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude), address: nil)
         item.name = wine.geocodedPlaceName.isEmpty ? wine.region : wine.geocodedPlaceName
         item.openInMaps()
     }

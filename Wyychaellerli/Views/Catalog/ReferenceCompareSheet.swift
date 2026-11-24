@@ -50,8 +50,9 @@ struct ReferenceCompareSheet: View {
                     ContentUnavailableView {
                         Label("Kein passender Treffer", systemImage: "magnifyingglass")
                     } description: {
-                        Text("Die Quelle kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser.")
-                        + Text(verbatim: "\n\n" + tr("Gesucht wurde nach:") + " " + ReferenceRanker.searchTerms(for: entry).map { "„\($0)“" }.joined(separator: ", "))
+                        Text(verbatim: tr("Die Quelle kennt diesen Wein nicht unter diesem Namen. Prüfe Name und Produzent oder suche im Browser.")
+                             + "\n\n" + tr("Gesucht wurde nach:") + " "
+                             + ReferenceRanker.searchTerms(for: entry).map { "„\($0)“" }.joined(separator: ", "))
                     } actions: {
                         VStack(spacing: 12) {
                             manualSearchField
