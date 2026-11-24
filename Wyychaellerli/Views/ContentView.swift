@@ -67,9 +67,11 @@ struct ContentView: View {
     @State private var isShowingSettings = false
     private let notificationRouter = NotificationRouter.shared
     @State private var isKeyboardVisible = false
-    /// Gemessene Höhe der Leiste ohne Home-Indikator.
-    @State private var tabBarHeight: CGFloat = 56
-    /// Höhe der Leiste plus 16 pt für den erhabenen Scan-Knopf; bei offener Tastatur null.
+    /// Ob unten ein Home-Indikator Platz braucht; über SwiftUI gelesen (siehe `BrandTabBar`).
+    @State private var hasHomeIndicator = true
+    /// Höhe der Leiste über dem sicheren Bereich. Fest gerechnet, nicht an der Leiste gemessen.
+    private var tabBarHeight: CGFloat { BrandTabBar.occupiedHeight(hasHomeIndicator: hasHomeIndicator) }
+    /// Höhe der Leiste plus 16 pt Luft über der schwebenden Kapsel; bei offener Tastatur null.
     private var tabBarClearance: CGFloat { isKeyboardVisible ? 0 : tabBarHeight + 16 }
     /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
     @State private var incomingShare: WineShare?
@@ -96,7 +98,7 @@ struct ContentView: View {
                 // Rand am Ende des Inhalts. `.safeAreaInset` und `.safeAreaPadding` an
                 // diesem Stapel kamen bei den Listen in den Navigationsstapeln nicht an:
                 // Auf dem iPhone SE (ohne Home-Indikator) blieb das Ende jeder Liste unter
-                // der Leiste. Die 16 pt sind der erhabene Scan-Knopf.
+                // der Leiste. Die 16 pt sind Luft über der schwebenden Kapsel.
                 .contentMargins(.bottom, tabBarClearance, for: .scrollContent)
                 .contentMargins(.bottom, isKeyboardVisible ? 0 : tabBarHeight, for: .scrollIndicators)
                 .environment(\.tabBarClearance, tabBarClearance)
@@ -105,10 +107,10 @@ struct ContentView: View {
                 if !isKeyboardVisible {
                     BrandTabBar(
                         selection: $selectedTab,
+                        hasHomeIndicator: hasHomeIndicator,
                         onScan: startScan,
                         onShowOptions: showScanOptions
                     )
-                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
                 }
             }
             .environment(\.openSettings) { isShowingSettings = true }
@@ -191,6 +193,7 @@ struct ContentView: View {
                     .zIndex(2)
             }
         }
+        .onGeometryChange(for: Bool.self) { $0.safeAreaInsets.bottom > 0 } action: { hasHomeIndicator = $0 }
         .animation(.easeInOut(duration: 0.25), value: party.isRunning)
         .onAppear { party.restoreIfNeeded(in: context) }
         // Tipp auf eine Katalog-Mitteilung: Die Einstellungen öffnen sich und führen selbst

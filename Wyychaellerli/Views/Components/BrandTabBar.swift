@@ -1,41 +1,59 @@
 import SwiftUI
 
-/// Eigene Tableiste in Weinrot mit erhabenem Scan-Knopf in der Mitte.
+/// Eigene Tableiste: schwebende Glas-Kapsel mit vier Reitern, daneben der Scan-Knopf
+/// als eigener Kreis in der Akzentfarbe.
 ///
-/// Die Systemleiste schwebt seit iOS 26 als Glas und lässt sich weder einfärben noch
-/// um einen Mittelknopf ergänzen. Deshalb zeichnet `ContentView` die Reiter selbst.
+/// Die Systemleiste kennt keinen abgesetzten Aktionsknopf in Markenfarbe. Deshalb zeichnet
+/// `ContentView` die Reiter selbst. Ab iOS 26 ist die Kapsel echtes Glas (`glassEffect`),
+/// davor ein Material. Der Inhalt läuft unter der Leiste durch; den Abstand am Ende der
+/// Listen regelt `ContentView` über `contentMargins`.
 struct BrandTabBar: View {
 
     @Binding var selection: AppTab
+    /// Ob das Gerät unten einen Home-Indikator hat. Kommt von `ContentView`, das den
+    /// sicheren Bereich über SwiftUI liest – **nicht** hier über `keyWindow.safeAreaInsets`:
+    /// Das erzwingt mitten im Aufbau der Ansicht ein Layout und endete in
+    /// „AttributeGraph: cycle detected“ (Leiste zeichnete nicht mehr neu).
+    var hasHomeIndicator = true
     let onScan: () -> Void
     /// Langes Drücken auf den Scan-Knopf: die Auswahl zeigt `ContentView`.
     var onShowOptions: () -> Void = {}
 
+    /// Höhe von Kapsel und Scan-Knopf – beide gleich hoch, damit sie als Paar lesen.
+    static let barHeight: CGFloat = 58
+
     var body: some View {
-        HStack(alignment: .bottom, spacing: 0) {
-            item(.cellar, title: "Wyychällerli", symbol: "cabinet")
-            item(.advisor, title: "Wein-Berater", symbol: "sparkles")
+        HStack(spacing: 8) {
+            HStack(spacing: 0) {
+                item(.cellar, title: "Keller", symbol: "cabinet")
+                item(.advisor, title: "Berater", symbol: "sparkles")
+                item(.rack, title: "Regal", symbol: "square.grid.3x3")
+                item(.ratings, title: "Bewertungen", symbol: "star")
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 6)
+            .frame(height: Self.barHeight)
+            .barGlass(in: Capsule())
+
             ScanButton(onScan: onScan, onShowOptions: onShowOptions)
-            item(.rack, title: "Regal", symbol: "square.grid.3x3")
-            item(.ratings, title: "Bewertungen", symbol: "star")
         }
-        .padding(.horizontal, 6)
-        .padding(.top, 6)
-        // Ohne Home-Indikator (iPhone SE) gibt es unten keinen Sicherheitsabstand –
-        // die Beschriftung stiesse sonst an den Bildschirmrand.
-        .padding(.bottom, hasHomeIndicator ? 2 : 8)
-        // Das Weinrot reicht bis unter den Home-Indikator und seitlich bis an den Rand: Auf
-        // dem iPhone Duo steht rechts (oder links) ein senkrechter Streifen mit Uhr und
-        // Knöpfen, die Leiste endete sonst davor und liess unten einen weissen Rest.
-        // Die Reiter selbst bleiben innerhalb des sicheren Bereichs.
-        .background(Brand.burgundy.ignoresSafeArea(edges: [.bottom, .horizontal]))
+        .padding(.horizontal, 12)
+        // Mit Home-Indikator rückt die Leiste etwas in den sicheren Bereich hinein, wie die
+        // Systemleiste von iOS 26 – sonst schwebte sie auffällig hoch. Ohne Home-Indikator
+        // (iPhone SE) braucht sie Abstand zum Bildschirmrand.
+        .padding(.bottom, Self.bottomPadding(hasHomeIndicator: hasHomeIndicator))
+        // Die Beschriftung wächst mit der Systemschrift, aber nur so weit, wie vier Reiter
+        // nebeneinander Platz haben.
+        .dynamicTypeSize(...DynamicTypeSize.xLarge)
+        .sensoryFeedback(.selection, trigger: selection)
     }
 
-    private var hasHomeIndicator: Bool {
-        let window = UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-            .first
-        return (window?.safeAreaInsets.bottom ?? 0) > 0
+    private static func bottomPadding(hasHomeIndicator: Bool) -> CGFloat { hasHomeIndicator ? -10 : 8 }
+
+    /// Was die Leiste über dem sicheren Bereich belegt. `ContentView` rechnet damit den
+    /// Abstand am Ende der Listen aus – bewusst ohne Vermessung der Leiste.
+    static func occupiedHeight(hasHomeIndicator: Bool) -> CGFloat {
+        barHeight + bottomPadding(hasHomeIndicator: hasHomeIndicator)
     }
 
     private func item(_ tab: AppTab, title: LocalizedStringKey, symbol: String) -> some View {
@@ -43,20 +61,21 @@ struct BrandTabBar: View {
         return Button {
             selection = tab
         } label: {
-            VStack(spacing: 3) {
+            VStack(spacing: 2) {
                 Image(systemName: symbol)
-                    .font(.system(size: 18, weight: .semibold))
-                    .frame(width: 52, height: 30)
-                    // Gewählter Reiter: dunkle Kapsel hinter dem Symbol, wie auf der Vorlage.
-                    .background(isSelected ? Brand.deep.opacity(0.55) : .clear, in: Capsule())
+                    .font(.body.weight(.semibold))
+                    .symbolVariant(isSelected ? .fill : .none)
+                    .frame(height: 22)
                 Text(title)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.caption2.weight(.semibold))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(0.75)
             }
-            .foregroundStyle(.white.opacity(isSelected ? 1 : 0.7))
-            .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
+            .foregroundStyle(isSelected ? AnyShapeStyle(Brand.accent) : AnyShapeStyle(Color.primary.opacity(0.62)))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Gewählter Reiter: zarte Pille im Akzent, Symbol und Schrift ebenfalls.
+            .background(isSelected ? Brand.accent.opacity(0.14) : .clear, in: Capsule())
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
@@ -64,7 +83,7 @@ struct BrandTabBar: View {
     }
 }
 
-/// Weisser Kreis, der über die Leiste hinausragt – der schnellste Weg zur neuen Flasche.
+/// Kreis in der Akzentfarbe neben der Kapsel – der schnellste Weg zur neuen Flasche.
 ///
 /// Ein Tipp öffnet sofort die Kamera, langes Drücken die Auswahl: Foto aus der
 /// Mediathek oder ganz ohne Foto. Ohne Foto braucht es selten (Etikett unlesbar,
@@ -83,18 +102,13 @@ private struct ScanButton: View {
 
     var body: some View {
         Image(systemName: "camera.fill")
-            .font(.system(size: 24, weight: .semibold))
-            .foregroundStyle(Brand.burgundy)
-            .frame(width: 62, height: 62)
-            .background(Circle().fill(.white))
-            .overlay(Circle().strokeBorder(Brand.burgundy, lineWidth: 4))
-            .shadow(color: .black.opacity(0.25), radius: 6, y: 3)
+            .font(.title3.weight(.semibold))
+            .foregroundStyle(Brand.onAccent)
+            .frame(width: BrandTabBar.barHeight, height: BrandTabBar.barHeight)
+            .scanGlass()
             .contentShape(Circle())
             .onTapGesture { onScan() }
             .onLongPressGesture(minimumDuration: 0.4) { onShowOptions() }
-            .offset(y: -14)
-            .padding(.bottom, -14)
-            .frame(maxWidth: .infinity)
             .accessibilityElement()
             .accessibilityAddTraits(.isButton)
             .accessibilityLabel("Etikett scannen")
@@ -103,7 +117,34 @@ private struct ScanButton: View {
     }
 }
 
-/// Wie viel Platz die Tableiste unten belegt, samt erhabenem Scan-Knopf.
+private extension View {
+
+    /// Grund der Kapsel: ab iOS 26 Glas, davor ein Material mit feinem Rand.
+    @ViewBuilder
+    func barGlass(in shape: some Shape) -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(.regular, in: shape)
+        } else {
+            background(.regularMaterial, in: shape)
+                .overlay(shape.stroke(Color.primary.opacity(0.08), lineWidth: 0.5))
+                .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
+        }
+    }
+
+    /// Grund des Scan-Knopfs: ab iOS 26 getöntes Glas, das auf Berührung reagiert,
+    /// davor ein gefüllter Kreis.
+    @ViewBuilder
+    func scanGlass() -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(.regular.tint(Brand.accent).interactive(), in: Circle())
+        } else {
+            background(Brand.accent, in: Circle())
+                .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+        }
+    }
+}
+
+/// Wie viel Platz die Tableiste unten belegt, samt etwas Luft darüber.
 ///
 /// Die Leiste liegt über den Reitern. Eine Ansicht mit eigener Knopfleiste unten
 /// (`.safeAreaInset(edge: .bottom)`) muss sie um diesen Wert anheben, sonst liegt die
