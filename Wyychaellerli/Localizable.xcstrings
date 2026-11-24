@@ -12698,35 +12698,6 @@
         }
       }
     },
-    "Getrunken? Minus tippen" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drank one? Tap minus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu une bouteille ? Touche moins"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bevuta una bottiglia? Tocca meno"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Popijeno? Dodirni minus"
-          }
-        }
-      }
-    },
     "Gibt's bei Coop." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13939,35 +13910,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Berba"
-          }
-        }
-      }
-    },
-    "Jede Zeile zeigt, wie viele Flaschen da sind. Mit dem Minus buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll. Über „Filter“ grenzt du nach Land, Alkoholgehalt oder Trinkreife ein, unter „Bewertungen“ siehst du, was euch geschmeckt hat." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Each row shows how many bottles there are. With the minus you take off a bottle you drank. For the last one, the app asks whether the wine should go to the archive. Use “Filter” to narrow down by country, alcohol content or drinking window, and under “Ratings” you see what you both liked."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chaque ligne indique combien de bouteilles il y a. Avec le moins, tu retires une bouteille bue. Pour la dernière, l’app demande si le vin doit aller aux archives. Avec « Filtre », tu restreins par pays, teneur en alcool ou maturité, et sous « Notes » tu vois ce qui vous a plu."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ogni riga mostra quante bottiglie ci sono. Con il meno scarichi una bottiglia bevuta. Per l’ultima l’app chiede se il vino deve andare in archivio. Con «Filtro» restringi per paese, gradazione o maturità, e sotto «Valutazioni» vedi che cosa vi è piaciuto."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Svaki red pokazuje koliko je flaša tu. Minusom skidaš popijenu flašu sa zalihe. Kod poslednje aplikacija pita da li vino ide u arhivu. Preko „Filter“ sužavaš izbor po zemlji, alkoholu ili zrelosti za piće, a pod „Ocene“ vidiš šta vam se dopalo."
           }
         }
       }
@@ -24042,6 +23984,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Savetnik"
+          }
+        }
+      }
+    },
+    "Getrunken? Nach rechts wischen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drank one? Swipe right"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu une bouteille ? Balaie vers la droite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevuta una bottiglia? Scorri verso destra"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popijeno? Prevuci udesno"
+          }
+        }
+      }
+    },
+    "Jede Zeile zeigt, wie viele Flaschen da sind. Wischst du eine Zeile nach rechts, buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll. Über „Filter“ grenzt du nach Land, Alkoholgehalt oder Trinkreife ein, unter „Bewertungen“ siehst du, was euch geschmeckt hat." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each row shows how many bottles there are. Swipe a row to the right to take off a bottle you drank. For the last one, the app asks whether the wine should go to the archive. Use “Filter” to narrow down by country, alcohol content or drinking window, and under “Ratings” you see what you both liked."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque ligne indique combien de bouteilles il y a. Balaie une ligne vers la droite pour retirer une bouteille bue. Pour la dernière, l’app demande si le vin doit aller aux archives. Avec « Filtre », tu restreins par pays, teneur en alcool ou maturité, et sous « Notes » tu vois ce qui vous a plu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni riga mostra quante bottiglie ci sono. Scorri una riga verso destra per scaricare una bottiglia bevuta. Per l’ultima l’app chiede se il vino deve andare in archivio. Con «Filtro» restringi per paese, gradazione o maturità, e sotto «Valutazioni» vedi che cosa vi è piaciuto."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Svaki red pokazuje koliko je flaša tu. Prevlačenjem reda udesno skidaš popijenu flašu sa zalihe. Kod poslednje aplikacija pita da li vino ide u arhivu. Preko „Filter“ sužavaš izbor po zemlji, alkoholu ili zrelosti za piće, a pod „Ocene“ vidiš šta vam se dopalo."
+          }
+        }
+      }
+    },
+    "Tipp schliessen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close tip"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer l’astuce"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi suggerimento"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatvori savet"
           }
         }
       }

@@ -145,7 +145,7 @@ private struct ViewfinderCorners: Shape {
     }
 }
 
-// MARK: - Bestand: eine Zeile der Kellerliste mit Minus
+// MARK: - Bestand: eine Zeile der Kellerliste, nach rechts gewischt
 
 struct StockIllustration: View {
     var body: some View {
@@ -159,6 +159,15 @@ struct StockIllustration: View {
 
     private func row(color: Color, count: Int, active: Bool) -> some View {
         HStack(spacing: 12) {
+            // Die aktive Zeile ist ein Stück nach rechts gewischt: links erscheint „Trinken“.
+            if active {
+                Image(systemName: "wineglass")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 50)
+                    .background(Brand.action, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(alignment: .bottomTrailing) { Finger().offset(x: 14, y: 22) }
+            }
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .fill(color.opacity(0.15))
                 .frame(width: 40, height: 50)
@@ -176,14 +185,6 @@ struct StockIllustration: View {
                 .padding(.horizontal, 9)
                 .padding(.vertical, 3)
                 .background(Color(.tertiarySystemFill), in: Capsule())
-            ZStack(alignment: .bottomTrailing) {
-                Image(systemName: "minus.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(Color.accentColor)
-                if active {
-                    Finger().offset(x: 14, y: 22)
-                }
-            }
         }
         .padding(12)
         .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))

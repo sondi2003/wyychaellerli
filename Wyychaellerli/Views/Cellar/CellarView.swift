@@ -7,6 +7,8 @@ struct CellarView: View {
 
     private let consumeTip = ConsumeTip()
     private let scanOptionsTip = ScanOptionsTip()
+    /// Nur ein Tipp aufs Mal: Der zweite kommt erst, wenn der erste erledigt oder weg ist.
+    @State private var showsConsumeTip = true
 
     @Environment(\.managedObjectContext) private var context
     @Environment(\.openSettings) private var openSettings
@@ -70,6 +72,11 @@ struct CellarView: View {
             }
             // Der Tipp zum langen Drücken auf den Scan-Knopf kommt erst mit dem ersten Wein.
             .task(id: wines.isEmpty) { ScanOptionsTip.hasWines = !wines.isEmpty }
+            .task {
+                for await shouldDisplay in consumeTip.shouldDisplayUpdates {
+                    showsConsumeTip = shouldDisplay
+                }
+            }
             // Katalogliste für den Filter „Passt zu“: Weine ohne eigene Empfehlung nehmen die des Katalogs.
             .onChange(of: catalog.directoryVersion, initial: true) { viewModel.catalogDirectory = catalog.directory }
             // Fest unter dem Titel: Ohne Systemleiste setzt iOS 26 die Suche sonst nach unten,
@@ -124,15 +131,23 @@ struct CellarView: View {
                     // Bildschirmrand laufen – dann sieht man, dass sie scrollen.
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                     .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 // Erst wenn es etwas abzubuchen gibt; im leeren Keller wäre er nur Rauschen.
+                // Kompakt und einer aufs Mal: Zwei grosse Karten liessen beim Start nur
+                // einen einzigen Wein auf dem Bildschirm übrig.
                 if !groups.isEmpty {
-                    TipView(consumeTip)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                        .listRowBackground(Color.clear)
-                    // Als Karte hier, nicht als Blase am Scan-Knopf – siehe `ScanButton`.
-                    TipView(scanOptionsTip)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                        .listRowBackground(Color.clear)
+                    Group {
+                        if showsConsumeTip {
+                            TipView(consumeTip)
+                        } else {
+                            // Als Karte hier, nicht als Blase am Scan-Knopf – siehe `ScanButton`.
+                            TipView(scanOptionsTip)
+                        }
+                    }
+                    .tipViewStyle(CompactTipStyle())
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
             }
 
@@ -161,10 +176,7 @@ struct CellarView: View {
                 Section {
                     ForEach(group.wines) { wine in
                         NavigationLink(value: wine) {
-                            WineRowView(wine: wine) {
-                                consumeTip.invalidate(reason: .actionPerformed)
-                                viewModel.consume(wine)
-                            }
+                            WineRowView(wine: wine)
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
@@ -187,8 +199,6 @@ struct CellarView: View {
                                 }
                                 .tint(.orange)
                             }
-                        }
-                        .swipeActions(edge: .leading) {
                             Button {
                                 viewModel.wineToEdit = wine
                             } label: {
@@ -196,17 +206,41 @@ struct CellarView: View {
                             }
                             .tint(Brand.burgundy)
                         }
+                        // Nach rechts wischen bucht eine Flasche ab – der häufigste Handgriff,
+                        // deshalb der ganze Wisch und das Grün der Hauptaktion.
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            if !wine.isArchived && !wine.isOutOfStock {
+                                Button {
+                                    consumeTip.invalidate(reason: .actionPerformed)
+                                    viewModel.consume(wine)
+                                } label: {
+                                    Label("Trinken", systemImage: "wineglass")
+                                }
+                                .tint(Brand.action)
+                                .accessibilityLabel("Eine Flasche \(wine.name) trinken")
+                            }
+                        }
                     }
                 } header: {
-                    // Fette Überschrift in Textfarbe, nur das Symbol trägt die Weinart.
-                    Label {
-                        Text(group.type.displayName)
-                            .foregroundStyle(.primary)
-                    } icon: {
-                        Image(systemName: group.type.symbolName)
-                            .foregroundStyle(group.type.color)
+                    // Fette Überschrift in Textfarbe, nur das Symbol trägt die Weinart;
+                    // rechts, was in der Gruppe liegt.
+                    HStack(alignment: .firstTextBaseline) {
+                        Label {
+                            Text(group.type.displayName)
+                                .foregroundStyle(.primary)
+                        } icon: {
+                            Image(systemName: group.type.symbolName)
+                                .foregroundStyle(group.type.color)
+                        }
+                        .font(.title3.weight(.bold))
+                        Spacer(minLength: 8)
+                        if !viewModel.showArchived {
+                            Text(viewModel.summary(for: group.wines))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
                     }
-                    .font(.title3.weight(.bold))
                     .textCase(nil)
                 }
             }

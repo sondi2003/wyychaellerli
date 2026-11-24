@@ -367,7 +367,7 @@ final class Wine: NSManagedObject, Identifiable {
     /// `true`, sobald keine Flasche mehr übrig ist.
     var isOutOfStock: Bool { quantity <= 0 }
 
-    /// Eine Flasche abbuchen (Minus-Button). Fällt nie unter 0.
+    /// Eine Flasche abbuchen (Wisch in der Liste, Minus auf der Detailseite). Fällt nie unter 0.
     ///
     /// Räumt nötigenfalls ein Fach mit: Wären hinterher mehr Fächer belegt als Flaschen
     /// da sind, zeigte das Regal eine Flasche, die es nicht mehr gibt. Geräumt wird die

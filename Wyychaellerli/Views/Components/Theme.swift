@@ -109,7 +109,17 @@ struct LabelThumbnail: View {
         if let image = wine.labelImage {
             AdaptiveLabelImage(image: image, width: size, height: size * 1.25)
         } else {
-            WineTypeIcon(type: wine.type, size: size)
+            // Platzhalter im selben Hochformat wie ein Etikettfoto, damit Zeilen mit und
+            // ohne Foto gleich breit und gleich hoch beginnen.
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(wine.type.color.opacity(0.15))
+                .frame(width: size, height: size * 1.25)
+                .overlay {
+                    Image(systemName: wine.type.symbolName)
+                        .font(.system(size: size * 0.42, weight: .semibold))
+                        .foregroundStyle(wine.type.color)
+                }
+                .accessibilityHidden(true)
         }
     }
 }

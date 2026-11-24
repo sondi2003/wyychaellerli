@@ -67,11 +67,11 @@ struct ScanOptionsTip: Tip {
 /// In der Kellerliste, sobald Weine da sind.
 struct ConsumeTip: Tip {
     var id: String { "consume.\(QuickTips.generation)" }
-    var title: Text { Text("Getrunken? Minus tippen") }
+    var title: Text { Text("Getrunken? Nach rechts wischen") }
     var message: Text? {
         Text("Bucht eine Flasche ab. Liegt sie im Regal, fragt die App, aus welchem Fach. Bei der letzten Flasche fragt sie, ob der Wein ins Archiv soll.")
     }
-    var image: Image? { Image(systemName: "minus.circle") }
+    var image: Image? { Image(systemName: "hand.draw") }
 }
 
 /// Auf der Detailseite am Etikett, wenn es eine Rückseite gibt.
@@ -80,4 +80,44 @@ struct BackLabelTip: Tip {
     var title: Text { Text("Wisch nach links") }
     var message: Text? { Text("Dahinter liegt die Rückseite mit Terroir, Ausbau und Speiseempfehlung.") }
     var image: Image? { Image(systemName: "hand.point.left") }
+}
+
+/// Schmale Tippkarte für Listen: Symbol, Titel, Text in kleiner Schrift, Schliessen.
+///
+/// Die Karte von TipKit ist für eine Blase gedacht und nimmt in einer Liste so viel Platz
+/// wie drei Weine. Diese hier bleibt unter 80 pt und trägt den zarten Markengrund.
+struct CompactTipStyle: TipViewStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            configuration.image?
+                .font(.body.weight(.semibold))
+                .foregroundStyle(Brand.accent)
+                .frame(width: 24)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                configuration.title?
+                    .font(.subheadline.weight(.semibold))
+                configuration.message?
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            Button {
+                configuration.tip.invalidate(reason: .tipClosed)
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Brand.accent)
+                    .frame(width: 26, height: 26)
+                    .background(Brand.accent.opacity(0.12), in: Circle())
+                    // Tippfläche grösser als das Bild.
+                    .contentShape(Rectangle().inset(by: -9))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Tipp schliessen")
+        }
+        .padding(12)
+        .background(Brand.blush, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
 }

@@ -151,7 +151,7 @@ struct WalkthroughPage {
         ),
         WalkthroughPage(
             title: tr("Bestand im Blick"),
-            text: tr("Jede Zeile zeigt, wie viele Flaschen da sind. Mit dem Minus buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll. Über „Filter“ grenzt du nach Land, Alkoholgehalt oder Trinkreife ein, unter „Bewertungen“ siehst du, was euch geschmeckt hat."),
+            text: tr("Jede Zeile zeigt, wie viele Flaschen da sind. Wischst du eine Zeile nach rechts, buchst du eine getrunkene Flasche ab. Bei der letzten fragt die App, ob der Wein ins Archiv soll. Über „Filter“ grenzt du nach Land, Alkoholgehalt oder Trinkreife ein, unter „Bewertungen“ siehst du, was euch geschmeckt hat."),
             illustration: AnyView(StockIllustration())
         ),
         WalkthroughPage(
