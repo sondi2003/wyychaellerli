@@ -13943,34 +13943,6 @@
         }
       }
     },
-    "Kamera unten lange drücken" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long-press the camera at the bottom"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuie longuement sur l’appareil photo en bas"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tieni premuta la fotocamera in basso"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dugo pritisni kameru dole"
-          }
-        }
-      }
-    },
     "Kann man wieder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -24337,35 +24309,6 @@
         }
       }
     },
-    "Tippe unten rechts auf die Kamera und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit. Hältst du den Knopf gedrückt, wählst du Fotos aus oder erfasst ohne Foto." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap the camera at the bottom right and photograph the bottle as it stands. The app finds the label itself, reads name, vintage, grape and region and fills everything in. If you photograph the back label too, the notes come along. Hold the button to choose photos or to add a wine without a photo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Touche l’appareil photo en bas à droite et photographie la bouteille telle qu’elle est. L’app trouve elle-même l’étiquette, lit le nom, le millésime, le cépage et la région et remplit tout. Si tu photographies aussi le verso, les notes suivent. En maintenant le bouton, tu choisis des photos ou tu saisis sans photo."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca la fotocamera in basso a destra e fotografa la bottiglia così com’è. L’app trova da sola l’etichetta, legge nome, annata, vitigno e regione e compila tutto. Se fotografi anche il retro, arrivano anche le note. Tenendo premuto il pulsante scegli le foto o inserisci senza foto."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dodirni kameru dole desno i fotografiši flašu onako kako stoji. Aplikacija sama pronalazi etiketu, čita naziv, berbu, sortu i region i sve unapred popunjava. Ako fotografišeš i zadnju stranu, stižu i beleške. Ako držiš dugme pritisnutim, biraš fotografije ili uneseš vino bez fotografije."
-          }
-        }
-      }
-    },
     "Ohne Key" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -24391,6 +24334,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bez ključa"
+          }
+        }
+      }
+    },
+    "Weitere Wege: Plus oben rechts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More ways: plus at the top right"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autres possibilités : le plus en haut à droite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altre possibilità: il più in alto a destra"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugi načini: plus gore desno"
+          }
+        }
+      }
+    },
+    "Tippe unten rechts auf die Kamera und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit. Über das Plus oben rechts wählst du Fotos aus oder erfasst ohne Foto." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the camera at the bottom right and photograph the bottle as it stands. The app finds the label itself, reads name, vintage, grape and region and fills everything in. If you photograph the back label too, the notes come along. Use the plus at the top right to choose photos or to add a wine without a photo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touche l’appareil photo en bas à droite et photographie la bouteille telle qu’elle est. L’app trouve elle-même l’étiquette, lit le nom, le millésime, le cépage et la région et remplit tout. Si tu photographies aussi le verso, les notes suivent. Avec le plus en haut à droite, tu choisis des photos ou tu saisis sans photo."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca la fotocamera in basso a destra e fotografa la bottiglia così com’è. L’app trova da sola l’etichetta, legge nome, annata, vitigno e regione e compila tutto. Se fotografi anche il retro, arrivano anche le note. Con il più in alto a destra scegli le foto o inserisci senza foto."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodirni kameru dole desno i fotografiši flašu onako kako stoji. Aplikacija sama pronalazi etiketu, čita naziv, berbu, sortu i region i sve unapred popunjava. Ako fotografišeš i zadnju stranu, stižu i beleške. Preko plusa gore desno biraš fotografije ili uneseš vino bez fotografije."
           }
         }
       }

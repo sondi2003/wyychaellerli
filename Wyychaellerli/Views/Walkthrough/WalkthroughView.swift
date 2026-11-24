@@ -141,7 +141,7 @@ struct WalkthroughPage {
         ),
         WalkthroughPage(
             title: tr("Etikett scannen statt tippen"),
-            text: tr("Tippe unten rechts auf die Kamera und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit. Hältst du den Knopf gedrückt, wählst du Fotos aus oder erfasst ohne Foto."),
+            text: tr("Tippe unten rechts auf die Kamera und fotografiere die Flasche, wie sie steht. Die App findet das Etikett selbst, liest Name, Jahrgang, Rebsorte und Region und füllt alles vor. Fotografierst du auch die Rückseite, kommen die Notizen gleich mit. Über das Plus oben rechts wählst du Fotos aus oder erfasst ohne Foto."),
             illustration: AnyView(ScanIllustration())
         ),
         WalkthroughPage(

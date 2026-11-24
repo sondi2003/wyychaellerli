@@ -211,7 +211,6 @@ struct CatalogWineEditor: View {
 
     @Environment(CatalogCenter.self) private var catalog
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.tabBarClearance) private var tabBarClearance
 
     @State private var entry: CatalogWine
     @State private var imageData: Data?
@@ -365,7 +364,7 @@ struct CatalogWineEditor: View {
         .disabled(isWorking || isPreparingImage)
         .padding(.horizontal, 16)
         .padding(.top, 10)
-        .padding(.bottom, 10 + tabBarClearance)
+        .padding(.bottom, 10)
         .background(.bar)
     }
 

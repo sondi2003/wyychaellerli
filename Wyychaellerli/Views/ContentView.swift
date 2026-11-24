@@ -4,14 +4,30 @@ import SwiftUI
 import TipKit
 import UIKit
 
-/// Die Reiter der App. Der Scan-Knopf daneben ist kein Reiter, sondern öffnet die Kamera.
-/// Die Einstellungen sind ebenfalls keiner: Man braucht sie selten, sie öffnen sich über
-/// das Zahnrad oben im Keller (`openSettings`).
+/// Die Reiter der App. Die Einstellungen sind keiner: Man braucht sie selten, sie öffnen
+/// sich über das Zahnrad oben im Keller (`openSettings`).
 enum AppTab: Hashable {
     case cellar
     case advisor
     case rack
     case ratings
+    /// Der abgesetzte Scan-Knopf der Leiste. Wird nie gewählt: Der Tipp öffnet die Kamera.
+    case scan
+}
+
+/// Die Wege zum neuen Wein: Kamera (Scan-Knopf der Leiste), Mediathek, ohne Foto.
+enum AddWineOption { case camera, photos, manual }
+
+/// Startet einen der Wege zum neuen Wein – vom Plus-Menü im Keller aus.
+private struct AddWineKey: EnvironmentKey {
+    static let defaultValue: @MainActor (AddWineOption) -> Void = { _ in }
+}
+
+extension EnvironmentValues {
+    var addWine: @MainActor (AddWineOption) -> Void {
+        get { self[AddWineKey.self] }
+        set { self[AddWineKey.self] = newValue }
+    }
 }
 
 /// Öffnet die Einstellungen als Blatt – von jedem Reiter aus, ohne den Reiter zu wechseln.
@@ -58,21 +74,12 @@ struct ContentView: View {
     @State private var finishedScan: LabelScanResult?
     /// Rückfall ohne Kamera: Formular mit Scan-Blatt darin.
     @State private var isScanning = false
-    /// Langes Drücken auf den Scan-Knopf: Foto aus der Mediathek oder ganz ohne Foto.
+    /// Plus-Menü im Keller: Foto aus der Mediathek oder ganz ohne Foto.
     @State private var isPickingPhoto = false
     @State private var pickedPhoto: PhotosPickerItem?
     @State private var isAddingManually = false
-    @State private var isShowingScanOptions = false
-    @State private var scanOption: ScanOptionsSheet.Option?
     @State private var isShowingSettings = false
     private let notificationRouter = NotificationRouter.shared
-    @State private var isKeyboardVisible = false
-    /// Ob unten ein Home-Indikator Platz braucht; über SwiftUI gelesen (siehe `BrandTabBar`).
-    @State private var hasHomeIndicator = true
-    /// Höhe der Leiste über dem sicheren Bereich. Fest gerechnet, nicht an der Leiste gemessen.
-    private var tabBarHeight: CGFloat { BrandTabBar.occupiedHeight(hasHomeIndicator: hasHomeIndicator) }
-    /// Höhe der Leiste plus 16 pt Luft über der schwebenden Kapsel; bei offener Tastatur null.
-    private var tabBarClearance: CGFloat { isKeyboardVisible ? 0 : tabBarHeight + 16 }
     /// Ein empfohlener Wein, den jemand als Datei geschickt hat.
     @State private var incomingShare: WineShare?
 
@@ -85,43 +92,9 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            // Eigene Leiste statt TabView-Leiste (siehe `BrandTabBar`). Alle Reiter bleiben
-            // geladen, damit Navigation und Scrollstand beim Wechseln erhalten bleiben.
-            ZStack(alignment: .bottom) {
-                ZStack {
-                    tab(.cellar) { CellarView() }
-                    tab(.advisor) { AdvisorView() }
-                    tab(.rack) { RackView(isTab: true) }
-                    tab(.ratings) { RatingsOverviewView(isTab: true) }
-                }
-                // Die Leiste liegt über den Reitern; jede Liste bekommt ihre Höhe als
-                // Rand am Ende des Inhalts. `.safeAreaInset` und `.safeAreaPadding` an
-                // diesem Stapel kamen bei den Listen in den Navigationsstapeln nicht an:
-                // Auf dem iPhone SE (ohne Home-Indikator) blieb das Ende jeder Liste unter
-                // der Leiste. Die 16 pt sind Luft über der schwebenden Kapsel.
-                .contentMargins(.bottom, tabBarClearance, for: .scrollContent)
-                .contentMargins(.bottom, isKeyboardVisible ? 0 : tabBarHeight, for: .scrollIndicators)
-                .environment(\.tabBarClearance, tabBarClearance)
-
-                // Über der Tastatur stünde die Leiste nur im Weg.
-                if !isKeyboardVisible {
-                    BrandTabBar(
-                        selection: $selectedTab,
-                        hasHomeIndicator: hasHomeIndicator,
-                        onScan: startScan,
-                        onShowOptions: showScanOptions
-                    )
-                }
-            }
+            tabs
             .environment(\.openSettings) { isShowingSettings = true }
-            // Ein Blatt, keine Blase: Unter iOS 26 verankern sich `confirmationDialog`,
-            // `Menu`, `.contextMenu` und `popoverTip` an einer Stelle – und jede davon hielt
-            // die Markierung der Leiste fest (siehe `ScanButton`). Blätter sind nicht
-            // verankert. Der gewählte Weg startet erst nach dem Schliessen, sonst verschluckt
-            // UIKit die zweite Präsentation.
-            .sheet(isPresented: $isShowingScanOptions, onDismiss: runScanOption) {
-                ScanOptionsSheet { scanOption = $0 }
-            }
+            .environment(\.addWine) { add($0) }
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView(isSheet: true)
             }
@@ -172,12 +145,6 @@ struct ContentView: View {
             .sheet(isPresented: $isScanning) {
                 WineFormView(mode: .add, startWithScanner: true)
             }
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-                isKeyboardVisible = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-                isKeyboardVisible = false
-            }
 
             if isShowingSplash {
                 SplashView()
@@ -193,7 +160,6 @@ struct ContentView: View {
                     .zIndex(2)
             }
         }
-        .onGeometryChange(for: Bool.self) { $0.safeAreaInsets.bottom > 0 } action: { hasHomeIndicator = $0 }
         .animation(.easeInOut(duration: 0.25), value: party.isRunning)
         .onAppear { party.restoreIfNeeded(in: context) }
         // Tipp auf eine Katalog-Mitteilung: Die Einstellungen öffnen sich und führen selbst
@@ -227,14 +193,37 @@ struct ContentView: View {
         }
     }
 
-    private func showScanOptions() {
-        ScanOptionsTip().invalidate(reason: .actionPerformed)
-        isShowingScanOptions = true
+    // MARK: Leiste
+
+    /// Die Systemleiste: vier Reiter und ein abgesetzter fünfter als Scan-Knopf
+    /// (`TabRole.prominent`, neu in iOS 27). Er wird nie wirklich gewählt – die Bindung
+    /// fängt den Tipp ab und öffnet die Kamera. Beim Scrollen nach unten zieht sich die
+    /// Leiste auf den aktiven Reiter zusammen.
+    ///
+    /// Bis 24.11.2026 stand hier eine eigene Leiste (`BrandTabBar`): Die Systemleiste liess
+    /// sich nicht weinrot färben und kannte keinen Aktionsknopf. Beides ist erledigt – die
+    /// Leiste ist Glas, und `.prominent` ist der Aktionsknopf.
+    private var tabs: some View {
+        let selection = Binding<AppTab>(
+            get: { selectedTab },
+            set: { newValue in
+                if newValue == .scan { startScan() } else { selectedTab = newValue }
+            }
+        )
+        // `.id(language)`: Ein Sprachwechsel baut die Reiter neu auf, damit auch berechnete
+        // Texte nachziehen.
+        return TabView(selection: selection) {
+            Tab("Keller", systemImage: "cabinet", value: AppTab.cellar) { CellarView().id(language) }
+            Tab("Berater", systemImage: "sparkles", value: AppTab.advisor) { AdvisorView().id(language) }
+            Tab("Regal", systemImage: "square.grid.3x3", value: AppTab.rack) { RackView(isTab: true).id(language) }
+            Tab("Bewertungen", systemImage: "star", value: AppTab.ratings) { RatingsOverviewView(isTab: true).id(language) }
+            Tab("Etikett scannen", systemImage: "camera.fill", value: AppTab.scan, role: .prominent) { Color.clear }
+        }
+        .tabBarMinimizeBehavior(.onScrollDown)
     }
 
-    private func runScanOption() {
-        guard let option = scanOption else { return }
-        scanOption = nil
+    private func add(_ option: AddWineOption) {
+        ScanOptionsTip().invalidate(reason: .actionPerformed)
         switch option {
         case .camera: startScan()
         case .photos: isPickingPhoto = true
@@ -248,17 +237,6 @@ struct ContentView: View {
         } else {
             isScanning = true
         }
-    }
-
-    /// Ein Reiter, nur sichtbar und bedienbar, wenn er gewählt ist.
-    /// Ein Sprachwechsel baut ihn neu auf, damit auch berechnete Texte nachziehen.
-    private func tab(_ tab: AppTab, @ViewBuilder content: () -> some View) -> some View {
-        let isSelected = selectedTab == tab
-        return content()
-            .id(language)
-            .opacity(isSelected ? 1 : 0)
-            .allowsHitTesting(isSelected)
-            .accessibilityHidden(!isSelected)
     }
 }
 

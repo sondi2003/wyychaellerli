@@ -9,7 +9,6 @@ struct CatalogCellarCheckView: View {
 
     @Environment(CatalogCenter.self) private var catalog
     @Environment(\.managedObjectContext) private var context
-    @Environment(\.tabBarClearance) private var tabBarClearance
 
     @State private var result: CatalogCenter.CellarCheck?
     @State private var checked = 0
@@ -82,11 +81,10 @@ struct CatalogCellarCheckView: View {
                 .disabled(selection.isEmpty || isSending)
                 .padding(.horizontal)
                 .padding(.top)
-                .padding(.bottom, 16 + tabBarClearance)
+                .padding(.bottom, 16)
                 .background(.bar)
             }
         }
-        .contentMargins(.bottom, result?.missing.isEmpty == false ? 0 : tabBarClearance, for: .scrollContent)
         .task { await runCheck() }
     }
 

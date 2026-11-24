@@ -12,6 +12,7 @@ struct CellarView: View {
 
     @Environment(\.managedObjectContext) private var context
     @Environment(\.openSettings) private var openSettings
+    @Environment(\.addWine) private var addWine
     @Environment(CatalogCenter.self) private var catalog
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: false)],
@@ -82,8 +83,8 @@ struct CellarView: View {
             }
             // Katalogliste für den Filter „Passt zu“: Weine ohne eigene Empfehlung nehmen die des Katalogs.
             .onChange(of: catalog.directoryVersion, initial: true) { viewModel.catalogDirectory = catalog.directory }
-            // Fest unter dem Titel: Ohne Systemleiste setzt iOS 26 die Suche sonst nach unten,
-            // wo sie unter der eigenen Leiste (`BrandTabBar`) verschwindet.
+            // Fest unter dem Titel, wo man sie im Keller sucht – sonst setzt iOS die Suche
+            // in die Tableiste.
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
@@ -143,7 +144,7 @@ struct CellarView: View {
                         if showsConsumeTip {
                             TipView(consumeTip)
                         } else {
-                            // Als Karte hier, nicht als Blase am Scan-Knopf – siehe `ScanButton`.
+                            // Der zweite Tipp: die Wege im Plus-Menü.
                             TipView(scanOptionsTip)
                         }
                     }
@@ -344,6 +345,17 @@ struct CellarView: View {
                 Image(systemName: "chart.bar.xaxis")
             }
             .accessibilityLabel("Statistik")
+        }
+        // Die selteneren Wege zum neuen Wein. Der schnelle – Kamera – ist der Knopf der Leiste.
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Button("Etikett fotografieren", systemImage: "camera") { addWine(.camera) }
+                Button("Aus Fotos", systemImage: "photo") { addWine(.photos) }
+                Button("Ohne Foto erfassen", systemImage: "square.and.pencil") { addWine(.manual) }
+            } label: {
+                Image(systemName: "plus")
+            }
+            .accessibilityLabel("Wein hinzufügen")
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button {

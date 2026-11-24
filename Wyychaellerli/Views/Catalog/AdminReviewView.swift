@@ -161,7 +161,6 @@ struct AdminSubmissionEditor: View {
 
     @Environment(CatalogCenter.self) private var catalog
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.tabBarClearance) private var tabBarClearance
 
     @State private var entry: CatalogWine
     @State private var existing: CatalogWine?
@@ -307,7 +306,7 @@ struct AdminSubmissionEditor: View {
         .disabled(isWorking || entry.name.trimmingCharacters(in: .whitespaces).isEmpty)
         .padding(.horizontal, 16)
         .padding(.top, 10)
-        .padding(.bottom, 10 + tabBarClearance)
+        .padding(.bottom, 10)
         .background(.bar)
     }
 
