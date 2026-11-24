@@ -10,6 +10,9 @@ import SwiftUI
 /// würde den Katalog kleiner machen, als er in Wirklichkeit ist.
 struct CatalogStatisticsView: View {
 
+    /// Der Umschalter „Mein Keller / Katalog“ aus `StatisticsView`, oben im Blatt.
+    var header: AnyView? = nil
+
     @Environment(CatalogCenter.self) private var catalog
     @Environment(\.dismiss) private var dismiss
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
@@ -21,6 +24,7 @@ struct CatalogStatisticsView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                if let header { header }
                 if let overview, overview.isWorthShowing {
                     ScrollViewReader { proxy in
                         ScrollView {

@@ -64,7 +64,10 @@ struct CellarView: View {
             .appTitle(tr("Wyychällerli"))
             .toolbar { toolbarContent }
             .sheet(isPresented: $isShowingStatistics) {
-                CatalogStatisticsView()
+                StatisticsView {
+                    viewModel.showArchived = false
+                    viewModel.showOnlyDrinkSoon = true
+                }
             }
             .sheet(isPresented: $isShowingFilters) {
                 CellarFilterSheet(viewModel: viewModel, countries: viewModel.countryOptions(in: wines),
@@ -333,7 +336,7 @@ struct CellarView: View {
     /// Scan-Knopf der Leiste, Regal und Bewertungen sind Reiter, die Party liegt im Berater.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        // Links, dem Zahnrad gegenüber: der Katalog in Zahlen.
+        // Links, dem Zahnrad gegenüber: der eigene Keller und der Katalog in Zahlen.
         ToolbarItem(placement: .topBarLeading) {
             Button {
                 isShowingStatistics = true
