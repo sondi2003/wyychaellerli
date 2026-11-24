@@ -4,8 +4,7 @@ import SwiftUI
 /// als eigener Kreis in der Akzentfarbe.
 ///
 /// Die Systemleiste kennt keinen abgesetzten Aktionsknopf in Markenfarbe. Deshalb zeichnet
-/// `ContentView` die Reiter selbst. Ab iOS 26 ist die Kapsel echtes Glas (`glassEffect`),
-/// davor ein Material. Der Inhalt läuft unter der Leiste durch; den Abstand am Ende der
+/// `ContentView` die Reiter selbst. Die Kapsel ist echtes Glas (`glassEffect`). Der Inhalt läuft unter der Leiste durch; den Abstand am Ende der
 /// Listen regelt `ContentView` über `contentMargins`.
 struct BrandTabBar: View {
 
@@ -119,28 +118,14 @@ private struct ScanButton: View {
 
 private extension View {
 
-    /// Grund der Kapsel: ab iOS 26 Glas, davor ein Material mit feinem Rand.
-    @ViewBuilder
+    /// Grund der Kapsel: Liquid Glass.
     func barGlass(in shape: some Shape) -> some View {
-        if #available(iOS 26.0, *) {
-            glassEffect(.regular, in: shape)
-        } else {
-            background(.regularMaterial, in: shape)
-                .overlay(shape.stroke(Color.primary.opacity(0.08), lineWidth: 0.5))
-                .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
-        }
+        glassEffect(.regular, in: shape)
     }
 
-    /// Grund des Scan-Knopfs: ab iOS 26 getöntes Glas, das auf Berührung reagiert,
-    /// davor ein gefüllter Kreis.
-    @ViewBuilder
+    /// Grund des Scan-Knopfs: getöntes Glas, das auf Berührung reagiert.
     func scanGlass() -> some View {
-        if #available(iOS 26.0, *) {
-            glassEffect(.regular.tint(Brand.accent).interactive(), in: Circle())
-        } else {
-            background(Brand.accent, in: Circle())
-                .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
-        }
+        glassEffect(.regular.tint(Brand.accent).interactive(), in: Circle())
     }
 }
 

@@ -26,7 +26,7 @@ Privater Weinkeller-Assistent für iPhone und iPad. Verwaltet den Flaschenbestan
 ## Voraussetzungen
 
 - Xcode 16 oder neuer (Projekt nutzt synchronisierte Ordner)
-- iOS 17 oder neuer
+- iOS 27 oder neuer
 - Ein API-Key bei mindestens einem Anbieter:
   - OpenAI: <https://platform.openai.com/api-keys>
   - Google AI Studio: <https://aistudio.google.com/app/apikey>

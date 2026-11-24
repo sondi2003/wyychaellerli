@@ -3789,35 +3789,6 @@
         }
       }
     },
-    "Ab iOS 27, ohne Key" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "From iOS 27, no key"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À partir d’iOS 27, sans clé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Da iOS 27, senza chiave"
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Od iOS 27, bez ključa"
-          }
-        }
-      }
-    },
     "Ab iPhone 15 Pro, Apple Intelligence eingeschaltet" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -24391,6 +24362,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodirni kameru dole desno i fotografiši flašu onako kako stoji. Aplikacija sama pronalazi etiketu, čita naziv, berbu, sortu i region i sve unapred popunjava. Ako fotografišeš i zadnju stranu, stižu i beleške. Ako držiš dugme pritisnutim, biraš fotografije ili uneseš vino bez fotografije."
+          }
+        }
+      }
+    },
+    "Ohne Key" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No key needed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans clé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senza chiave"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez ključa"
           }
         }
       }

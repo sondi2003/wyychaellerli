@@ -74,7 +74,6 @@ enum PairingEngine {
                 switch source {
                 case .local(let localSource):
                     #if canImport(FoundationModels)
-                    guard #available(iOS 26.0, *) else { continue }
                     let response = try await LocalSommelier.recommend(
                         request,
                         source: localSource,

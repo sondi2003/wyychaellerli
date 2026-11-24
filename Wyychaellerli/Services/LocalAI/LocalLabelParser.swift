@@ -12,7 +12,6 @@ import FoundationModels
 /// Bilder an, liest damit geschwungene oder verschnörkelte Schrift besser als jede
 /// Texterkennung und hat Platz genug dafür. Das kleine Modell auf dem Gerät bekommt nur den
 /// Text – sein Kontext von rund 4000 Token reicht für ein Bild nicht verlässlich.
-@available(iOS 26.0, *)
 enum LocalLabelParser {
 
     static func parse(
@@ -51,7 +50,7 @@ enum LocalLabelParser {
     ) async throws -> WineLabelExtraction {
         let prompt = PromptBuilder.labelUserPrompt(recognizedText: text)
         let label: GeneratedWineLabel
-        if source == .privateCloud, !labelImages.isEmpty, #available(iOS 27.0, *) {
+        if source == .privateCloud, !labelImages.isEmpty {
             let images = labelImages.compactMap(Self.cgImage(from:))
             let response = try await session.respond(generating: GeneratedWineLabel.self) {
                 prompt
@@ -94,7 +93,6 @@ enum LocalAIError: Error {
 }
 
 /// Zielstruktur für das Foundation-Models-Framework. Spiegel von `WineLabelExtraction`.
-@available(iOS 26.0, *)
 @Generable
 struct GeneratedWineLabel {
     @Guide(description: "Name des Weins oder der Cuvée ohne Produzent, leer wenn unbekannt")

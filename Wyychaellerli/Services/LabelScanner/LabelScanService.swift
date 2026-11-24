@@ -179,7 +179,6 @@ struct LabelScanService: Sendable {
         filler: WineLabelExtraction
     ) async -> (WineLabelExtraction, LabelExtractionSource)? {
         #if canImport(FoundationModels)
-        guard #available(iOS 26.0, *) else { return nil }
         let language = AppLanguage.current
         for source in await LocalAI.usableSources(for: language) {
             // Das kleine Modell auf dem Gerät hat wenig Platz: Bei sehr langem Text

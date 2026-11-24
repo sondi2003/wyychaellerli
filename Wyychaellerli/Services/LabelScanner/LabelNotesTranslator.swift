@@ -93,7 +93,6 @@ enum LabelNotesTranslator {
     /// Systemdialog aus einer View heraus, und der gehört nicht mitten in einen Scan.
     private static func appleTranslation(of text: String, from language: NLLanguage, target: AppLanguage) async -> String? {
         #if canImport(Translation)
-        guard #available(iOS 26.0, *) else { return nil }
         let source = Locale.Language(identifier: language.rawValue)
         let targetLanguage = Locale.Language(identifier: target.resolvedIdentifier)
         guard await LanguageAvailability().status(from: source, to: targetLanguage) == .installed else {

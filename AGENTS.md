@@ -4,7 +4,7 @@ Anleitung für KI-Agenten (Claude Code u. a.), die an diesem Projekt arbeiten. D
 
 ## Projekt in einem Satz
 
-SwiftUI-App „Wyychällerli“ (iOS 17+, Core Data mit CloudKit, MVVM) mit Multi-AI-Service für Wein-Empfehlungen über OpenAI, Gemini oder Anthropic. Details in [README.md](README.md).
+SwiftUI-App „Wyychällerli“ (ab iOS 27, Core Data mit CloudKit, MVVM) mit Multi-AI-Service für Wein-Empfehlungen über OpenAI, Gemini oder Anthropic. Details in [README.md](README.md).
 
 ## Sprache und Stil
 
@@ -17,7 +17,7 @@ SwiftUI-App „Wyychällerli“ (iOS 17+, Core Data mit CloudKit, MVVM) mit Mult
 ## Tests
 
 - **Target `WyychaellerliTests`**, Swift Testing (`@Test`, `#expect`), 255 Tests in 33 Suiten: Party-Abstimmung, Landesflaggen, Speiseabgleich, Doppelerkennung, Regal, Wein, Alkohol, Jahrgang, Weitergabe, Sprache, Scan-Fehler, Vorauswahl, Katalog, Strichcode, Ergänzungen, Katalogsuche, Kellerstatistik. Die Sprachtests lösen mit ausdrücklicher Locale auf (Pluralformen, Wortstellung) und fassen die gespeicherte App-Sprache nicht an; `TestStack.makeContext()` setzt sie auf Deutsch, weil der Simulator sie zwischen Läufen behält. Laufen in unter einer Sekunde.
-- Ausführen: `xcodebuild -project Wyychaellerli.xcodeproj -scheme Wyychaellerli -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test`. Das Scheme liegt geteilt unter `xcshareddata/xcschemes/` und gehört ins Repo.
+- Ausführen: `xcodebuild -project Wyychaellerli.xcodeproj -scheme Wyychaellerli -destination 'platform=iOS Simulator,name=iPhone 17 Pro iOS 27' test`. **Mindestversion ist seit 24.11.2026 iOS 27** (`IPHONEOS_DEPLOYMENT_TARGET = 27.0`): Bauen, Testen und Ansehen gehen nur noch auf einem Simulator mit iOS 27; „iPhone 17 Pro iOS 27“ (iOS 27.2) ist dafür angelegt, der ältere „iPhone 17 Pro“ läuft auf iOS 26.2 und startet die App nicht mehr. Im Code stehen keine `#available`-Weichen mehr – neue nur für Dinge, die erst nach iOS 27 kommen. Das Scheme liegt geteilt unter `xcshareddata/xcschemes/` und gehört ins Repo.
 - **Core Data im Test**: `TestStack.makeContext()` gibt je Test einen frischen In-Memory-Stack ohne CloudKit (`PersistenceController(inMemory: true, useCloudKit: false)`). Nie einen geteilten Stack verwenden – sonst hängt ein Fehlschlag von der Reihenfolge ab.
 - **Tests halten Entscheidungen fest, nicht nur Code.** Die Schwellen der Doppelerkennung, „Riserva ist ein anderer Wein“, „der Bestand ändert sich beim Zusammenführen nie“, „ohne Stimme kein Sieger“ – wer eine Zahl verschiebt, sieht sofort, welcher Fall kippt.
 - Eine bekannte Grenze steht als eigener Test drin: `LabelPairingMatcher` vergleicht ganze Zeichenketten, nicht Wortstämme – „Lammfleisch“ trifft „Lammbraten“ **nicht**. Der Test hält das fest, damit es niemand versehentlich für einen Fehler hält; als Verbesserung wäre ein Stammvergleich ab vier Zeichen denkbar.
@@ -34,7 +34,7 @@ xcodebuild build -project Wyychaellerli.xcodeproj -scheme Wyychaellerli -destina
 Schneller Typecheck aller Quellen (Swift 5 und Swift 6 strict concurrency müssen beide sauber sein):
 
 ```bash
-find Wyychaellerli -name '*.swift' -print0 | xargs -0 xcrun -sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios17.0-simulator -swift-version 6 -parse-as-library
+find Wyychaellerli -name '*.swift' -print0 | xargs -0 xcrun -sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios27.0-simulator -swift-version 6 -parse-as-library
 ```
 
 Wichtig: Der Ordner `Preview Content` enthält ein Leerzeichen – Dateilisten immer mit `-print0 | xargs -0` übergeben.

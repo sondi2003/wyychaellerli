@@ -14,7 +14,6 @@ import FoundationModels
 ///
 /// Die Antwort läuft durch denselben `PairingValidator` wie bei den externen Anbietern:
 /// unbekannte Weine und Platzhalter fliegen raus, bei Bedarf folgt ein zweiter Versuch.
-@available(iOS 26.0, *)
 enum LocalSommelier {
 
     private static let logger = Logger(subsystem: "com.weinkeller.app", category: "LocalSommelier")
@@ -66,7 +65,6 @@ enum LocalSommelier {
 // MARK: - Zielstruktur
 
 /// Spiegel von `PairingResponse` für das Foundation-Models-Framework.
-@available(iOS 26.0, *)
 @Generable
 struct GeneratedPairing {
     @Guide(description: "Bis zu drei Empfehlungen aus dem Inventar, beste zuerst. Leer, wenn keine Flasche mindestens acceptable passt.")
@@ -91,7 +89,6 @@ struct GeneratedPairing {
     }
 }
 
-@available(iOS 26.0, *)
 @Generable
 struct GeneratedRecommendation {
     @Guide(description: "1 = beste Empfehlung, 2 = zweitbeste, usw. Jeder Rang nur einmal.")

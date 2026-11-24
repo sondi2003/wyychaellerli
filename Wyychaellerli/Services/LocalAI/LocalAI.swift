@@ -58,17 +58,13 @@ enum LocalAI {
     static func usableSources(for language: AppLanguage) async -> [LocalAISource] {
         #if canImport(FoundationModels)
         var result: [LocalAISource] = []
-        if #available(iOS 26.0, *) {
-            let model = SystemLanguageModel.default
-            if model.isAvailable, model.supportsLocale(language.locale) {
-                result.append(.onDevice)
-            }
+        let onDevice = SystemLanguageModel.default
+        if onDevice.isAvailable, onDevice.supportsLocale(language.locale) {
+            result.append(.onDevice)
         }
-        if #available(iOS 27.0, *) {
-            let model = PrivateCloudComputeLanguageModel()
-            if model.isAvailable, (try? await model.supportsLocale(language.locale)) == true {
-                result.append(.privateCloud)
-            }
+        let privateCloud = PrivateCloudComputeLanguageModel()
+        if privateCloud.isAvailable, (try? await privateCloud.supportsLocale(language.locale)) == true {
+            result.append(.privateCloud)
         }
         return result
         #else
@@ -77,17 +73,14 @@ enum LocalAI {
     }
 
     #if canImport(FoundationModels)
-    /// Eine Sitzung für die gewählte Quelle. `nil`, wenn die Quelle auf diesem System fehlt.
-    @available(iOS 26.0, *)
+    /// Eine Sitzung für die gewählte Quelle. Optional geblieben, weil die Aufrufer damit
+    /// rechnen; seit iOS 27 als Mindestversion gibt es immer eine.
     static func session(for source: LocalAISource, instructions: String) -> LanguageModelSession? {
         switch source {
         case .onDevice:
             return LanguageModelSession(instructions: instructions)
         case .privateCloud:
-            if #available(iOS 27.0, *) {
-                return LanguageModelSession(model: PrivateCloudComputeLanguageModel(), instructions: instructions)
-            }
-            return nil
+            return LanguageModelSession(model: PrivateCloudComputeLanguageModel(), instructions: instructions)
         }
     }
     #endif

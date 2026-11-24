@@ -78,7 +78,7 @@ struct SettingsView: View {
 
                 Section {
                     localRow(.onDevice, hint: tr("Ab iPhone 15 Pro, Apple Intelligence eingeschaltet"))
-                    localRow(.privateCloud, hint: tr("Ab iOS 27, ohne Key"))
+                    localRow(.privateCloud, hint: tr("Ohne Key"))
                     if settings.activeProvider != nil {
                         Toggle("Externe KI zuerst fragen", isOn: $settings.prefersExternal)
                     }

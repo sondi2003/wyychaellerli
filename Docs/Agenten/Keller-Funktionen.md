@@ -128,7 +128,7 @@ Gäste stimmen ab, welche Flasche geöffnet wird. **Ein Gerät wandert von Hand 
 - `Views/Components/QuickTips.swift`: fünf Tipps – Abbuchen (Kellerliste, nur wenn Weine da sind), langes Drücken auf den Scan-Knopf (Kellerliste, Regel `hasWines`), ganze Flasche fotografieren (Scan-Sheet), Wein antippen und wischen (Regal, über der Liste der unverorteten Weine), Rückseite (Detailseite, `popoverTip` am Etikett, nur mit zwei Seiten). `Tips.configure` läuft im `init` der App mit `.displayFrequency(.immediate)` – die Tipps liegen auf verschiedenen Seiten und konkurrieren nicht.
 - Jeder Tipp wird mit `.invalidate(reason: .actionPerformed)` erledigt, sobald die Sache einmal gemacht wurde – nicht erst beim Wegtippen.
 - **„Tipps nochmals zeigen“ ohne Neustart:** `Tips.resetDatastore()` muss vor `configure` laufen, das geht zur Laufzeit nicht. Deshalb trägt jede Tipp-`id` eine Generation (`tips.generation` in UserDefaults); hochzählen macht alle Tipps für TipKit zu neuen. Nicht auf die Standard-`id` (Typname) zurückbauen.
-- `popoverTip` mit **optionalem** Tipp gibt es erst ab iOS 26 – bei Ziel 17 stattdessen mit `if` verzweigen.
+- `popoverTip` mit **optionalem** Tipp gibt es ab iOS 26 – seit der Mindestversion iOS 27 also immer; die `if`-Verzweigung an der Detailseite stammt aus der Zeit mit Ziel 17 und darf vereinfacht werden.
 
 ## Bekannte Stolperfallen
 
