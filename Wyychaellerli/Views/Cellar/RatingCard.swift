@@ -10,6 +10,7 @@ struct RatingCard: View {
 
     @ObservedObject var wine: Wine
     @Environment(CurrentRater.self) private var rater
+    @Environment(\.openSettings) private var openSettings
 
     /// Wird getippt, um den eigenen Bogen zu öffnen.
     let onRate: () -> Void
@@ -38,18 +39,17 @@ struct RatingCard: View {
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
-                // Der eine kleine Knopf: Stern zum Bewerten, Stift zum Ändern.
+                // Beschriftet statt nur ein Symbol: Der kleine Stern war leicht zu übersehen.
                 Button(action: onRate) {
-                    Image(systemName: ownRating == nil ? "star.circle.fill" : "pencil.circle.fill")
-                        .font(.title2)
-                        .symbolRenderingMode(.hierarchical)
+                    Label(ownRating == nil ? "Bewerten" : "Ändern",
+                          systemImage: ownRating == nil ? "star" : "pencil")
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.brandOutline)
                 .accessibilityLabel(ownRating == nil ? "Jetzt bewerten" : "Meine Bewertung ändern")
             }
 
             if wine.ratingList.isEmpty {
-                Text("Noch nicht bewertet – tippe auf den Stern.")
+                Text("Noch nicht bewertet")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
@@ -81,9 +81,20 @@ struct RatingCard: View {
             }
 
             if rater.name.isEmpty {
-                Label("Trage in den Einstellungen deinen Namen ein, damit man sieht, von wem die Bewertung stammt.", systemImage: "person.crop.circle.badge.questionmark")
-                    .font(.footnote)
-                    .foregroundStyle(.orange)
+                // Grau mit Verweis statt oranger Schrift: Orange auf Weiss war kaum lesbar,
+                // und der Weg in die Einstellungen stand nur als Satz da.
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "person.crop.circle")
+                        .foregroundStyle(.secondary)
+                    Text("Ohne Namen sieht niemand, von wem die Bewertung stammt.")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button("Namen eintragen") { openSettings() }
+                        .font(.footnote.weight(.semibold))
+                        .buttonStyle(.borderless)
+                }
+                .font(.footnote)
+                .padding(10)
+                .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }
         .cardStyle()

@@ -122,126 +122,80 @@ struct WineFormView: View {
                     // Keine Autokorrektur: Weinnamen sind Eigennamen. Sie hielt eine Korrektur bis
                     // zum Fokuswechsel zurück und änderte den Namen **nach** der Wahl eines
                     // Katalogvorschlags – dann galt die Wahl als aufgehoben.
-                    TextField("Name / Cuvée", text: $viewModel.name)
-                        .focused($focusedField, equals: .name)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.words)
-                        .submitLabel(.next)
-                        .onSubmit { focusedField = .producer }
+                    field("Name") {
+                        TextField("Name / Cuvée", text: $viewModel.name)
+                            .focused($focusedField, equals: .name)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.words)
+                            .submitLabel(.next)
+                            .onSubmit { focusedField = .producer }
+                    }
                     suggestionRows
 
-                    TextField("Produzent / Weingut", text: $viewModel.producer)
-                        .focused($focusedField, equals: .producer)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.words)
-                        .submitLabel(.next)
-                        .onSubmit { focusedField = .grape }
+                    field("Produzent") {
+                        TextField("Produzent / Weingut", text: $viewModel.producer)
+                            .focused($focusedField, equals: .producer)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.words)
+                            .submitLabel(.next)
+                            .onSubmit { focusedField = .grape }
+                    }
 
-                    Picker("Jahrgang", selection: $viewModel.vintage) {
-                        // „Ohne Jahrgang“ muss wählbar sein: Manche Etiketten nennen
-                        // keinen, und geraten wird hier nichts.
-                        ForEach(WineFormViewModel.vintageChoices, id: \.self) { year in
-                            Text(year == 0 ? tr("Ohne Jahrgang") : String(year)).tag(year)
+                    field("Jahrgang") {
+                        Picker("Jahrgang", selection: $viewModel.vintage) {
+                            // „Ohne Jahrgang“ muss wählbar sein: Manche Etiketten nennen
+                            // keinen, und geraten wird hier nichts.
+                            ForEach(WineFormViewModel.vintageChoices, id: \.self) { year in
+                                Text(year == 0 ? tr("Ohne Jahrgang") : String(year)).tag(year)
+                            }
                         }
+                        .labelsHidden()
+                        .padding(.leading, -12)
+                        Spacer(minLength: 0)
+                    }
+
+                    // Die Rebsorte gehört zum Wein, nicht zur Herkunft.
+                    field("Rebsorte") {
+                        TextField("Rebsorte(n)", text: $viewModel.grape)
+                            .focused($focusedField, equals: .grape)
+                            .textInputAutocapitalization(.words)
+                            .submitLabel(.next)
+                            .onSubmit { focusedField = .region }
                     }
                 }
 
+                // Chips statt einer Liste über fünf Zeilen: alle Arten auf einen Blick,
+                // gewählt mit einem Tipp.
                 Section {
-                    TextField("Rebsorte(n)", text: $viewModel.grape)
-                        .focused($focusedField, equals: .grape)
-                        .textInputAutocapitalization(.words)
-                        .submitLabel(.next)
-                        .onSubmit { focusedField = .region }
-
-                    TextField("Region / Appellation", text: $viewModel.region)
-                        .focused($focusedField, equals: .region)
-                        .textInputAutocapitalization(.words)
-                        .submitLabel(.next)
-                        .onSubmit { focusedField = .country }
-
-                    TextField("Land", text: $viewModel.country)
-                        .focused($focusedField, equals: .country)
-                        .textInputAutocapitalization(.words)
-                        .submitLabel(.done)
-                } header: {
-                    Text("Herkunft")
-                } footer: {
-                    Text("Das Land macht die Karte auf der Detailseite eindeutig.")
-                }
-
-                Section {
-                    Picker("Typ", selection: $viewModel.type) {
+                    FlowLayout(spacing: 8) {
                         ForEach(WineType.allCases) { type in
-                            Label(type.displayName, systemImage: type.symbolName)
-                                .tag(type)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
-                    .onChange(of: viewModel.type) { _, _ in viewModel.typeNeedsReview = false }
-                } header: {
-                    Text("Typ")
-                } footer: {
-                    if viewModel.typeNeedsReview {
-                        Label("Die Weinart wurde nicht erkannt – bitte wählen.", systemImage: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                    }
-                }
-
-                Section {
-                    // Halbe Schritte: Etiketten nennen 12,5 oder 13,5 – ganze Prozente
-                    // wären zu grob, Zehntel zu fummelig.
-                    Stepper(value: alcoholBinding, in: 0...20, step: 0.5) {
-                        HStack {
-                            Text("Alkohol")
-                            Spacer()
-                            if viewModel.alcoholPercent > 0 {
-                                Text("\(viewModel.alcoholPercent.formatted(.number.precision(.fractionLength(0...1)))) %")
-                                    .font(.body.monospacedDigit().weight(.semibold))
-                                    .contentTransition(.numericText())
-                            } else {
-                                Text("keine Angabe")
-                                    .foregroundStyle(.secondary)
+                            PillChip(
+                                title: type.displayName,
+                                symbol: type.symbolName,
+                                symbolColor: type.color,
+                                isSelected: viewModel.type == type
+                            ) {
+                                viewModel.type = type
+                                viewModel.typeNeedsReview = false
                             }
                         }
                     }
-                    .animation(.snappy, value: viewModel.alcoholPercent)
-                    if let strength = Wine.Strength.from(percent: viewModel.alcoholPercent) {
-                        Label("\(strength.title) – \(strength.range)", systemImage: strength.symbolName)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                    // Der Weg zurück zu „keine Angabe“ wären sonst zwei Dutzend Tipper.
-                    if viewModel.alcoholPercent > 0 {
-                        Button("Keine Angabe") { viewModel.alcoholPercent = 0 }
-                            .font(.footnote)
-                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    // Etwas Rand: Die Zeile ist rund beschnitten und frässe sonst die Chip-Ecken an.
+                    .padding(4)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
                 } header: {
-                    Text("Alkoholgehalt")
+                    Text("Weinart")
                 } footer: {
-                    Text("Wird beim Scannen vom Etikett übernommen. Auf 0 stellen heisst „keine Angabe“ – dann wird nichts angezeigt.")
-                }
-
-                Section {
-                    TextField("Ziffern unter dem Strichcode", text: $viewModel.barcode)
-                        .keyboardType(.numberPad)
-                        .monospacedDigit()
-                } header: {
-                    Text("Strichcode")
-                } footer: {
-                    if viewModel.barcodeIsInvalid {
-                        Label("Kein gültiger Strichcode: 13 oder 8 Ziffern, und die letzte muss stimmen. So wird er nicht gespeichert.", systemImage: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                    } else {
-                        Text("Wird beim Scannen von der Rückseite gelesen und hilft, den Wein im gemeinsamen Katalog wiederzufinden.")
+                    if viewModel.typeNeedsReview {
+                        formWarning("Die Weinart wurde nicht erkannt – bitte wählen.")
                     }
                 }
 
                 Section("Bestand") {
                     Stepper(value: $viewModel.quantity, in: 0...999) {
-                        HStack {
-                            Text("Flaschen")
-                            Spacer()
+                        field("Flaschen") {
                             Text("\(viewModel.quantity)")
                                 .font(.body.monospacedDigit().weight(.semibold))
                                 .contentTransition(.numericText())
@@ -251,31 +205,24 @@ struct WineFormView: View {
                 }
 
                 Section {
-                    Picker("Ab", selection: $viewModel.drinkFrom) {
-                        Text("keine Angabe").tag(0)
-                        ForEach(WineFormViewModel.drinkYearRange, id: \.self) { year in
-                            Text(String(year)).tag(year)
-                        }
+                    field("Region") {
+                        TextField("Region / Appellation", text: $viewModel.region)
+                            .focused($focusedField, equals: .region)
+                            .textInputAutocapitalization(.words)
+                            .submitLabel(.next)
+                            .onSubmit { focusedField = .country }
                     }
-                    Picker("Bis", selection: $viewModel.drinkTo) {
-                        Text("keine Angabe").tag(0)
-                        ForEach(WineFormViewModel.drinkYearRange, id: \.self) { year in
-                            Text(String(year)).tag(year)
-                        }
+
+                    field("Land") {
+                        TextField("Land", text: $viewModel.country)
+                            .focused($focusedField, equals: .country)
+                            .textInputAutocapitalization(.words)
+                            .submitLabel(.done)
                     }
                 } header: {
-                    Text("Trinkreife")
+                    Text("Herkunft")
                 } footer: {
-                    if viewModel.drinkFrom > 0 && viewModel.drinkTo > 0 && viewModel.drinkTo < viewModel.drinkFrom {
-                        Text("„Bis“ liegt vor „Ab“ – die Angabe wird nicht verwendet.")
-                            .foregroundStyle(.red)
-                    } else if viewModel.drinkWindowFromLabel {
-                        Text("Diese Spanne stand auf dem Etikett.")
-                    } else if viewModel.drinkFrom > 0 || viewModel.drinkTo > 0 {
-                        Text("Geschätzt aus Rebsorte, Region und Jahrgang. Du kannst sie jederzeit anpassen.")
-                    } else {
-                        Text("Wann der Wein am besten getrunken wird. Der Berater bevorzugt Flaschen, die dran sind.")
-                    }
+                    Text("Das Land macht die Karte auf der Detailseite eindeutig.")
                 }
 
                 Section {
@@ -291,6 +238,85 @@ struct WineFormView: View {
                     TextField("Terroir, Ausbau, „Geschenk von Anna“, „bis 2030 trinken“ …", text: $viewModel.notes, axis: .vertical)
                         .lineLimit(2...6)
                         .focused($focusedField, equals: .notes)
+                }
+
+                // Was der Scan meist selbst füllt und man selten von Hand ändert, steht
+                // zusammen am Schluss.
+                Section {
+                    // Halbe Schritte: Etiketten nennen 12,5 oder 13,5 – ganze Prozente
+                    // wären zu grob, Zehntel zu fummelig.
+                    Stepper(value: alcoholBinding, in: 0...20, step: 0.5) {
+                        field("Alkohol") {
+                            if viewModel.alcoholPercent > 0 {
+                                Text("\(viewModel.alcoholPercent.formatted(.number.precision(.fractionLength(0...1)))) %")
+                                    .font(.body.monospacedDigit().weight(.semibold))
+                                    .contentTransition(.numericText())
+                            } else {
+                                Text("keine Angabe")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .animation(.snappy, value: viewModel.alcoholPercent)
+                    if let strength = Wine.Strength.from(percent: viewModel.alcoholPercent) {
+                        HStack {
+                            Label("\(strength.title) – \(strength.range)", systemImage: strength.symbolName)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            // Der Weg zurück zu „keine Angabe“ wären sonst zwei Dutzend Tipper.
+                            Button("Keine Angabe") { viewModel.alcoholPercent = 0 }
+                                .buttonStyle(.borderless)
+                        }
+                        .font(.footnote)
+                    }
+
+                    field("Trinkreife") {
+                        Picker("Ab", selection: $viewModel.drinkFrom) {
+                            Text(verbatim: "–").accessibilityLabel("keine Angabe").tag(0)
+                            ForEach(WineFormViewModel.drinkYearRange, id: \.self) { year in
+                                Text(String(year)).tag(year)
+                            }
+                        }
+                        .labelsHidden()
+                        .fixedSize()
+                        .padding(.leading, -12)
+                        .accessibilityLabel("Ab")
+                        Text("bis")
+                            .foregroundStyle(.secondary)
+                        Picker("Bis", selection: $viewModel.drinkTo) {
+                            Text(verbatim: "–").accessibilityLabel("keine Angabe").tag(0)
+                            ForEach(WineFormViewModel.drinkYearRange, id: \.self) { year in
+                                Text(String(year)).tag(year)
+                            }
+                        }
+                        .labelsHidden()
+                        .fixedSize()
+                        .accessibilityLabel("Bis")
+                        Spacer(minLength: 0)
+                    }
+
+                    field("Strichcode") {
+                        TextField("Ziffern unter dem Strichcode", text: $viewModel.barcode)
+                            .keyboardType(.numberPad)
+                            .monospacedDigit()
+                    }
+                } header: {
+                    Text("Weitere Angaben")
+                } footer: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        if viewModel.barcodeIsInvalid {
+                            formWarning("Kein gültiger Strichcode: 13 oder 8 Ziffern, und die letzte muss stimmen. So wird er nicht gespeichert.")
+                        }
+                        if viewModel.drinkFrom > 0 && viewModel.drinkTo > 0 && viewModel.drinkTo < viewModel.drinkFrom {
+                            formWarning("„Bis“ liegt vor „Ab“ – die Angabe wird nicht verwendet.")
+                        } else if viewModel.drinkWindowFromLabel {
+                            Text("Diese Spanne stand auf dem Etikett.")
+                        } else if viewModel.drinkFrom > 0 || viewModel.drinkTo > 0 {
+                            Text("Geschätzt aus Rebsorte, Region und Jahrgang. Du kannst sie jederzeit anpassen.")
+                        } else {
+                            Text("Alkohol und Strichcode liest der Scan vom Etikett. Die Trinkreife sagt dem Berater, welche Flaschen dran sind.")
+                        }
+                    }
                 }
             }
             .appTitle(viewModel.mode.title)
@@ -354,6 +380,30 @@ struct WineFormView: View {
                     focusedField = .name
                 }
             }
+        }
+    }
+
+    /// Eine Formularzeile mit Beschriftung links. Ohne sie stand ein ausgefülltes Feld
+    /// („Merlot“, „Schweiz“) namenlos da – der Platzhalter verschwindet mit dem ersten Zeichen.
+    private func field(_ label: LocalizedStringKey, @ViewBuilder content: () -> some View) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(label)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(width: 92, alignment: .leading)
+            content()
+        }
+    }
+
+    /// Warnung in einer Fusszeile: Symbol in Orange, Schrift in Textfarbe – orange Schrift
+    /// auf hellem Grund ist kaum lesbar.
+    private func formWarning(_ text: LocalizedStringKey) -> some View {
+        Label {
+            Text(text).foregroundStyle(.primary)
+        } icon: {
+            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
         }
     }
 

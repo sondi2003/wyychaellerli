@@ -16927,35 +16927,6 @@
         }
       }
     },
-    "Noch nicht bewertet – tippe auf den Stern." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not rated yet – tap the star."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore noté – touche l’étoile."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ancora valutato: tocca la stella."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Još nije ocenjeno – dodirni zvezdicu."
-          }
-        }
-      }
-    },
     "Noch nicht im Katalog. Schick ihn zur Prüfung, dann profitieren alle davon, die ihn später erfassen." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -20184,35 +20155,6 @@
         }
       }
     },
-    "Trage in den Einstellungen deinen Namen ein, damit man sieht, von wem die Bewertung stammt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter your name in Settings so it shows who a rating is from."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisis ton nom dans les réglages pour qu’on voie de qui vient la note."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inserisci il tuo nome nelle impostazioni, così si vede da chi proviene la valutazione."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Upiši svoje ime u podešavanjima da bi se videlo od koga je ocena."
-          }
-        }
-      }
-    },
     "Trinken" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -21272,35 +21214,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Proveri predloge"
-          }
-        }
-      }
-    },
-    "Wann der Wein am besten getrunken wird. Der Berater bevorzugt Flaschen, die dran sind." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When the wine is best drunk. The advisor prefers bottles that are ready."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quand le vin se boit le mieux. Le conseiller privilégie les bouteilles qui sont à point."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando il vino è al meglio. Il consulente privilegia le bottiglie che sono pronte."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kada je vino najbolje piti. Savetnik daje prednost flašama koje su na redu."
           }
         }
       }
@@ -22456,63 +22369,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Žrebanje u toku …"
-          }
-        }
-      }
-    },
-    "Wird beim Scannen vom Etikett übernommen. Auf 0 stellen heisst „keine Angabe“ – dann wird nichts angezeigt." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Taken from the label when you scan. Setting it to 0 means “not specified” – then nothing is shown."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repris de l’étiquette lors du scan. Mettre à 0 signifie « non précisé » – alors rien n’est affiché."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acquisito dall’etichetta durante la scansione. Impostare 0 significa «non indicato»: allora non viene mostrato nulla."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pri skeniranju se preuzima sa etikete. Podešavanje na 0 znači „bez podatka“ – tada se ništa ne prikazuje."
-          }
-        }
-      }
-    },
-    "Wird beim Scannen von der Rückseite gelesen und hilft, den Wein im gemeinsamen Katalog wiederzufinden." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Read from the back label when you scan and helps find the wine again in the shared catalog."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lu sur le verso lors du scan et aide à retrouver le vin dans le catalogue commun."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Letto dal retro durante la scansione, aiuta a ritrovare il vino nel catalogo comune."
-          }
-        },
-        "sr-Latn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Čita se pri skeniranju sa zadnje strane i pomaže da se vino pronađe u zajedničkom katalogu."
           }
         }
       }
@@ -24071,6 +23927,180 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zatvori savet"
+          }
+        }
+      }
+    },
+    "Ändern" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izmeni"
+          }
+        }
+      }
+    },
+    "Namen eintragen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add name"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir le nom"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci il nome"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unesi ime"
+          }
+        }
+      }
+    },
+    "Ohne Namen sieht niemand, von wem die Bewertung stammt." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Without a name, nobody can see who gave the rating."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans nom, personne ne voit de qui vient la note."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senza nome nessuno vede di chi è la valutazione."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez imena niko ne vidi čija je ocena."
+          }
+        }
+      }
+    },
+    "Weitere Angaben" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autres indications"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altri dati"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostali podaci"
+          }
+        }
+      }
+    },
+    "bis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "à"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "a"
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "do"
+          }
+        }
+      }
+    },
+    "Alkohol und Strichcode liest der Scan vom Etikett. Die Trinkreife sagt dem Berater, welche Flaschen dran sind." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The scan reads alcohol and barcode from the label. The drinking window tells the advisor which bottles are due."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le scan lit l’alcool et le code-barres sur l’étiquette. La maturité indique au conseiller quelles bouteilles sont à boire."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La scansione legge alcol e codice a barre dall’etichetta. La maturità dice al consulente quali bottiglie sono da bere."
+          }
+        },
+        "sr-Latn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skeniranje čita alkohol i bar-kod sa etikete. Zrelost za piće kaže savetniku koje flaše su na redu."
           }
         }
       }

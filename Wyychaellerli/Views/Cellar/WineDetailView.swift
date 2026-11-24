@@ -18,6 +18,8 @@ struct WineDetailView: View {
     @State private var isRating = false
     /// Alle Flaschen liegen im Regal – dann muss beim Abbuchen das Fach gewählt werden.
     @State private var isTakingFromRack = false
+    /// Die Kachel „Etikett“ im Kopf öffnet das Formular gleich mit dem Scanner.
+    @State private var isAddingLabel = false
 
     var body: some View {
         ScrollView {
@@ -26,16 +28,18 @@ struct WineDetailView: View {
                 stockCard
                 WineRackCard(wine: wine)
                 RatingCard(wine: wine) { isRating = true }
-                factsCard
-                CatalogStatusCard(wine: wine)
+                // Was man vor dem Öffnen wissen will, steht oben: wozu er passt. Der
+                // gemeinsame Katalog ist Beiwerk und steht am Schluss.
                 if !wine.foodPairings.isEmpty {
                     pairingCard
                 }
-                WineOriginMapView(wine: wine)
+                factsCard
                 if !wine.notes.isEmpty {
                     notesCard
                 }
-                archiveCard
+                WineOriginMapView(wine: wine)
+                CatalogStatusCard(wine: wine)
+                archiveButtons
             }
             .padding()
         }
@@ -56,6 +60,9 @@ struct WineDetailView: View {
         }
         .sheet(isPresented: $isEditing) {
             WineFormView(mode: .edit(wine))
+        }
+        .sheet(isPresented: $isAddingLabel) {
+            WineFormView(mode: .edit(wine), startWithScanner: true)
         }
         .sheet(isPresented: $isSharing) {
             WineShareSheet(wine: wine)
@@ -90,9 +97,16 @@ struct WineDetailView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 16) {
-            labelStage
+            // Mit Foto die grosse Bühne. Ohne Foto wäre sie eine leere Fläche über dem
+            // Namen – dann steht links eine kleine Kachel, die zum Fotografieren einlädt.
+            if !labelPages.isEmpty {
+                labelStage
+            }
 
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: 14) {
+                if labelPages.isEmpty {
+                    labelInvite
+                }
                 VStack(alignment: .leading, spacing: 4) {
                     if !wine.producer.isEmpty {
                         Text(wine.producer)
@@ -127,14 +141,35 @@ struct WineDetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    /// Platzhalter ohne Foto: gestrichelte Kachel im Hochformat eines Etiketts.
+    private var labelInvite: some View {
+        Button {
+            isAddingLabel = true
+        } label: {
+            VStack(spacing: 6) {
+                Image(systemName: "camera")
+                    .font(.title3.weight(.semibold))
+                Text("Etikett")
+                    .font(.caption.weight(.semibold))
+            }
+            .foregroundStyle(Brand.accent)
+            .frame(width: 84, height: 104)
+            .background(Brand.blush, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(Brand.accent.opacity(0.45), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Etikett fotografieren")
+    }
+
     /// Etikett auf zartem Grund, wie die Flasche auf der Bühne der Vorlage.
     @ViewBuilder
     private var labelStage: some View {
         Group {
-            if labelPages.isEmpty {
-                WineTypeIcon(type: wine.type, size: 84)
-                    .padding(.vertical, 24)
-            } else if labelPages.count > 1 {
+            if labelPages.count > 1 {
                 // Der Tipp nur, wenn es eine Rückseite gibt – sonst gäbe es nichts zu wischen.
                 // (Die Variante mit optionalem Tipp gibt es erst ab iOS 26.)
                 LabelPager(pages: labelPages, wineName: wine.name)
@@ -212,54 +247,60 @@ struct WineDetailView: View {
 
     // MARK: Bestand
 
+    /// Zahl und zwei leise Knöpfe zum Korrigieren, darunter die eine Hauptaktion in Grün.
     private var stockCard: some View {
-        VStack(spacing: 16) {
-            Text("Bestand")
-                .font(.headline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            HStack(spacing: 28) {
-                Button {
-                    // Solange Flaschen ohne Platz da sind, bleibt der schnelle Weg schnell.
-                    // Erst wenn alles verortet ist, muss klar sein, welches Fach frei wird.
-                    if wine.placedCount > 0, wine.unplacedCount == 0 {
-                        isTakingFromRack = true
-                    } else {
-                        wine.consumeBottle()
-                        consumeCount += 1
-                    }
-                } label: {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 44))
-                }
-                .disabled(wine.isOutOfStock)
-                .accessibilityLabel("Eine Flasche trinken")
-
-                VStack(spacing: 2) {
+        VStack(spacing: 14) {
+            HStack(alignment: .center, spacing: 10) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("\(wine.quantity)")
-                        .font(.system(size: 48, weight: .bold, design: .rounded).monospacedDigit())
+                        .font(.system(size: 40, weight: .bold, design: .rounded).monospacedDigit())
                         .contentTransition(.numericText())
                     Text(verbatim: bottleWord(Int(wine.quantity)))
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                .frame(minWidth: 90)
-
-                Button {
-                    wine.addBottle()
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 44))
-                }
-                .accessibilityLabel("Eine Flasche hinzufügen")
+                .accessibilityElement(children: .combine)
+                Spacer(minLength: 8)
+                stepButton("minus", label: "Eine Flasche trinken", action: consume)
+                    .disabled(wine.isOutOfStock)
+                stepButton("plus", label: "Eine Flasche hinzufügen") { wine.addBottle() }
             }
             .animation(.snappy, value: wine.quantity)
+
+            Button(action: consume) {
+                Label("Eine Flasche trinken", systemImage: "wineglass")
+            }
+            .buttonStyle(.brand(.action, large: true))
+            .disabled(wine.isOutOfStock)
 
             if wine.isOutOfStock {
                 CalloutBox(kind: .warning, text: tr("Keine Flasche mehr übrig. Du kannst den Wein archivieren oder löschen."))
             }
         }
         .cardStyle()
+    }
+
+    private func stepButton(_ symbol: String, label: LocalizedStringKey, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.body.weight(.bold))
+                .foregroundStyle(Brand.accent)
+                .frame(width: 44, height: 44)
+                .background(Color(.tertiarySystemFill), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+
+    /// Solange Flaschen ohne Platz da sind, bleibt der schnelle Weg schnell.
+    /// Erst wenn alles verortet ist, muss klar sein, welches Fach frei wird.
+    private func consume() {
+        if wine.placedCount > 0, wine.unplacedCount == 0 {
+            isTakingFromRack = true
+        } else {
+            wine.consumeBottle()
+            consumeCount += 1
+        }
     }
 
     // MARK: Angaben
@@ -358,8 +399,10 @@ struct WineDetailView: View {
 
     // MARK: Archiv / Löschen
 
-    private var archiveCard: some View {
-        VStack(spacing: 12) {
+    /// Nebeneinander und ohne Karte: Archivieren ruhig umrandet, Löschen rot umrandet –
+    /// zwei gleich aussehende Knöpfe untereinander luden zum Verwechseln ein.
+    private var archiveButtons: some View {
+        HStack(spacing: 10) {
             Button {
                 wine.isArchived.toggle()
                 wine.managedObjectContext?.saveChanges()
@@ -370,17 +413,17 @@ struct WineDetailView: View {
                 )
                 .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.brandOutline)
 
-            Button(role: .destructive) {
+            Button {
                 isConfirmingDelete = true
             } label: {
                 Label("Löschen", systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.brand(.destructive))
         }
-        .cardStyle()
+        .padding(.top, 4)
     }
 }
 
