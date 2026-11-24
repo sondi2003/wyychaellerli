@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// Das gewählte Land der Statistik: eine grosse Kachel oder eine Flagge im Streifen „weitere Länder“.
+/// Das gewählte Land der Statistik: die Kachel eines Landes.
 struct CatalogSelection: Hashable {
     let country: CatalogOverview.Country
     var id: String { country.id }
 }
 
-/// Die Weine der gewählten Kachel, unter dem Mosaik der Statistik im freien Platz.
+/// Die Weine des gewählten Landes, im Blatt der Statistik.
 ///
-/// Eine eigene Liste, die für sich scrollt: Das Mosaik oben bleibt stehen. Nur Anzeige und nur
+/// Eine eigene Liste, die für sich scrollt: Das Raster dahinter bleibt stehen. Nur Anzeige und nur
 /// Text, aus der Liste, die ohnehin auf dem Gerät liegt. Wer die Weine geliefert hat, steht wie
 /// in der Statistik nirgends.
 struct CatalogSelectionList: View {

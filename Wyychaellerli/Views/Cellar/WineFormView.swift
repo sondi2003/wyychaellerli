@@ -62,6 +62,13 @@ struct WineFormView: View {
                 if viewModel.offersCatalogEntry {
                     catalogUpdateSection
                 }
+                // Hat der Nutzer ein eigenes Foto und der Katalog ein besseres, steht das Angebot
+                // oben bei der Karte – im Fotoabschnitt weiter unten übersah man es.
+                if let data = viewModel.catalogImageData, viewModel.labelImageData != data {
+                    Section {
+                        catalogPhotoRow(data)
+                    }
+                }
                 if showsPhotoSection {
                     Section {
                         if !isManualEntry {
@@ -95,26 +102,8 @@ struct WineFormView: View {
                                     .foregroundStyle(.green)
                             }
                         }
-                        if let data = viewModel.catalogImageData, let image = UIImage(data: data) {
-                            let isUsed = viewModel.labelImageData == data
-                            HStack(spacing: 12) {
-                                AdaptiveLabelImage(image: image, width: 56, height: 70, showsSignature: true)
-                                    .labelLens(data, title: tr("Foto aus dem Katalog"), compact: true)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Foto aus dem Katalog")
-                                        .font(.subheadline.weight(.medium))
-                                    Text(isUsed ? "Wird als Vorderseite verwendet." : "Vielleicht besser als dein Foto.")
-                                        .font(.footnote)
-                                        .foregroundStyle(.secondary)
-                                }
-                                .layoutPriority(1)
-                                Spacer()
-                                Button(isUsed ? (viewModel.hasOwnImageToRestore ? "Mein Foto" : "Entfernen") : "Verwenden") {
-                                    viewModel.toggleCatalogImage()
-                                }
-                                .buttonStyle(.brandOutline)
-                                .fixedSize()
-                            }
+                        if let data = viewModel.catalogImageData, viewModel.labelImageData == data {
+                            catalogPhotoRow(data)
                         }
                         if viewModel.catalogMatch != nil {
                             Label {
@@ -535,6 +524,32 @@ struct WineFormView: View {
             Text("Aus dem gemeinsamen Katalog – tippe auf den Jahrgang, um den Wein zu übernehmen.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Die Zeile „Foto aus dem Katalog“: Angebot (Verwenden) oder Hinweis, dass es gilt.
+    @ViewBuilder
+    private func catalogPhotoRow(_ data: Data) -> some View {
+        if let image = UIImage(data: data) {
+            let isUsed = viewModel.labelImageData == data
+            HStack(spacing: 12) {
+                AdaptiveLabelImage(image: image, width: 56, height: 70, showsSignature: true)
+                    .labelLens(data, title: tr("Foto aus dem Katalog"), compact: true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Foto aus dem Katalog")
+                        .font(.subheadline.weight(.medium))
+                    Text(isUsed ? "Wird als Vorderseite verwendet." : "Vielleicht besser als dein Foto.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .layoutPriority(1)
+                Spacer()
+                Button(isUsed ? (viewModel.hasOwnImageToRestore ? "Mein Foto" : "Entfernen") : "Verwenden") {
+                    viewModel.toggleCatalogImage()
+                }
+                .buttonStyle(.brandOutline)
+                .fixedSize()
+            }
         }
     }
 

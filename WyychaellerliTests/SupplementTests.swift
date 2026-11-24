@@ -231,9 +231,12 @@ struct SharedBrandingTests {
 
     @Test("Vorführung: geteilte Bilder zum Ansehen ablegen")
     func writeSamples() throws {
+        let folder = "/private/tmp/claude-501/-Users-richard-GitHub-wyychaellerli/0f527c51-90ec-407a-8859-4a38d1566c40/scratchpad/crop"
+        // Nur eine Vorführung am Entwicklungsrechner: Fehlt der Ordner, gibt es nichts abzulegen.
+        guard FileManager.default.fileExists(atPath: folder) else { return }
         for name in ["enemigo.png", "riomistico.png"] {
             guard let image = try? faded(name) else { continue }
-            let out = "/private/tmp/claude-501/-Users-richard-GitHub-wyychaellerli/0f527c51-90ec-407a-8859-4a38d1566c40/scratchpad/crop/shared-\(name)"
+            let out = "\(folder)/shared-\(name)"
             try image.brandedForSharing().pngData()?.write(to: URL(fileURLWithPath: out))
         }
     }

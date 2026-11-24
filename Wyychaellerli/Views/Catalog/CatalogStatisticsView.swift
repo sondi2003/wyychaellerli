@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// „Statistik“: der gemeinsame Katalog in Zahlen (`CatalogMosaicCard`).
+/// „Statistik“: der gemeinsame Katalog in Zahlen (`CatalogCountryGrid`).
 ///
 /// Ein eigenes Blatt, aufgerufen über den Statistik-Knopf links oben im Keller – gegenüber
 /// dem Zahnrad. Früher stand die Karte in den Einstellungen; dort suchte sie niemand.
 ///
 /// Der Knopf ist immer da. Ist der Katalog noch klein (`CatalogOverview.minimumForDisplay`),
-/// steht statt des Mosaiks ein ehrlicher Satz: Eine Karte mit zwölf Weinen aus drei Ländern
+/// steht statt des Rasters ein ehrlicher Satz: Eine Karte mit zwölf Weinen aus drei Ländern
 /// würde den Katalog kleiner machen, als er in Wirklichkeit ist.
 struct CatalogStatisticsView: View {
 
@@ -14,7 +14,7 @@ struct CatalogStatisticsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
     @State private var overview: CatalogOverview?
-    /// Die Liste, aus der die Zahlen gerechnet sind: Quelle der Weinliste unter dem Mosaik.
+    /// Die Liste, aus der die Zahlen gerechnet sind: Quelle der Weinliste im Blatt.
     @State private var entries: [CatalogWine] = []
     @State private var selection: CatalogSelection?
 
@@ -22,20 +22,29 @@ struct CatalogStatisticsView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if let overview, overview.isWorthShowing {
-                    CatalogMosaicCard(overview: overview, selectedID: selection?.id) { tapped in
-                        // Dieselbe Kachel noch einmal: Wahl aufheben.
-                        selection = (selection == tapped) ? nil : tapped
-                    }
-                    .padding([.horizontal, .top])
-                    .padding(.bottom, 8)
-                    if let selection {
-                        CatalogSelectionList(selection: selection, entries: entries)
-                    } else {
-                        Text("Tippe auf ein Land, um seine Weine zu sehen.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                            .padding(.top, 12)
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            VStack(spacing: 12) {
+                                CatalogCountryGrid(overview: overview, selectedID: selection?.id) { tapped in
+                                    // Dieselbe Kachel noch einmal: Wahl aufheben.
+                                    selection = (selection == tapped) ? nil : tapped
+                                }
+                                if selection == nil {
+                                    Text("Tippe auf ein Land, um seine Weine zu sehen.")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                        .padding(.top, 4)
+                                }
+                            }
+                            .padding([.horizontal, .top])
+                            // Mit offenem Blatt Platz darunter lassen, damit auch die unterste Reihe nach oben rutschen kann.
+                            .padding(.bottom, selection == nil ? 24 : 360)
+                        }
+                        // Die gewählte Kachel soll nicht unter dem Blatt verschwinden.
+                        .onChange(of: selection?.id) { _, id in
+                            guard let id else { return }
+                            withAnimation { proxy.scrollTo(id, anchor: UnitPoint(x: 0.5, y: 0.25)) }
+                        }
                     }
                 } else if overview != nil {
                     ContentUnavailableView(
@@ -51,6 +60,19 @@ struct CatalogStatisticsView: View {
                 }
             }
             .background(Color(.systemGroupedBackground))
+            // Die Weine des Landes in einem Blatt: erst halb hoch, das Raster bleibt oben bedienbar;
+            // hochziehen für die ganze Liste, nach unten wischen schliesst es.
+            .sheet(isPresented: Binding(
+                get: { selection != nil },
+                set: { if !$0 { selection = nil } }
+            )) {
+                if let selection {
+                    CatalogSelectionList(selection: selection, entries: entries)
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                }
+            }
             .appTitle(tr("Statistik"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
