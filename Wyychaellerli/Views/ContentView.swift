@@ -4,7 +4,7 @@ import SwiftUI
 import TipKit
 import UIKit
 
-/// Die Reiter der App. Der Scan in der Mitte ist kein Reiter, sondern öffnet die Kamera.
+/// Die Reiter der App. Der Scan-Knopf daneben ist kein Reiter, sondern öffnet die Kamera.
 /// Die Einstellungen sind ebenfalls keiner: Man braucht sie selten, sie öffnen sich über
 /// das Zahnrad oben im Keller (`openSettings`).
 enum AppTab: Hashable {
@@ -50,7 +50,7 @@ struct ContentView: View {
     @State private var isShowingSplash = true
     @AppStorage(WalkthroughView.seenKey) private var hasSeenWalkthrough = false
     @State private var isShowingWalkthrough = false
-    /// Der Scan-Knopf in der Mitte der Leiste: Kamera, dann Scan-Blatt, dann Formular.
+    /// Der Scan-Knopf neben der Leiste: Kamera, dann Scan-Blatt, dann Formular.
     @State private var isCapturingFront = false
     @State private var capturedFront: UIImage?
     @State private var frontForScan: CapturedPhoto?
@@ -140,7 +140,7 @@ struct ContentView: View {
             .sheet(isPresented: $isAddingManually) {
                 WineFormView(mode: .add)
             }
-            // Mittelknopf: erst nur die Kamera, ohne Formular und Scan-Blatt darunter –
+            // Scan-Knopf: erst nur die Kamera, ohne Formular und Scan-Blatt darunter –
             // sonst stapeln sich drei Ebenen sichtbar übereinander. Danach das Scan-Blatt mit
             // der Vorderseite (für Rückseite und „Etikett lesen“), danach das Formular.
             .fullScreenCover(isPresented: $isCapturingFront, onDismiss: {

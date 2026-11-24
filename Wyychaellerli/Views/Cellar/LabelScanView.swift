@@ -19,7 +19,7 @@ struct LabelScanView: View {
     @State private var scanningTarget: LabelScanViewModel.Target?
     @State private var isShowingRecognizedText = false
 
-    /// - Parameter initialFront: schon aufgenommenes Foto der Vorderseite – der Mittelknopf
+    /// - Parameter initialFront: schon aufgenommenes Foto der Vorderseite – der Scan-Knopf
     ///   der Leiste öffnet zuerst die Kamera und reicht das Bild hier herein.
     init(initialFront: UIImage? = nil, onResult: @escaping (LabelScanResult) -> Void) {
         self.onResult = onResult

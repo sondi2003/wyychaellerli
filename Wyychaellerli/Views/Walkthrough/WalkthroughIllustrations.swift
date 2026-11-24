@@ -182,6 +182,8 @@ struct StockIllustration: View {
             Spacer()
             Text("\(count)")
                 .font(.subheadline.weight(.semibold).monospacedDigit())
+                // Sonst drückt die gewischte Zeile die Zahl aus der Kapsel.
+                .fixedSize()
                 .padding(.horizontal, 9)
                 .padding(.vertical, 3)
                 .background(Color(.tertiarySystemFill), in: Capsule())

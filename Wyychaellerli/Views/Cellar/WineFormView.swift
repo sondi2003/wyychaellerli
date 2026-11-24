@@ -28,7 +28,7 @@ struct WineFormView: View {
         )
     }
 
-    /// Mit fertigem Scan geöffnet (Mittelknopf der Leiste) – dann gleich auf Doppel prüfen.
+    /// Mit fertigem Scan geöffnet (Scan-Knopf der Leiste) – dann gleich auf Doppel prüfen.
     private let startsWithScan: Bool
     /// Im Formular wurde ein Etikett gescannt – dann gilt der Abgleich über CloudKit.
     @State private var didScanHere = false

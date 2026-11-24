@@ -73,14 +73,14 @@ struct WineRowView: View {
                 // Schrift in Textfarbe auf getöntem Grund: Orange auf Weiss wäre zu schwach.
                 if wine.needsDrinkingSoon {
                     let tone: Color = wine.maturity == .pastPeak ? Brand.danger : Brand.warning
-                    Label {
-                        Text(wine.maturity.title)
-                    } icon: {
+                    // `HStack` statt `Label`: Das Label liess zwischen Symbol und Text eine Lücke
+                    // von fast einer Symbolbreite.
+                    HStack(spacing: 4) {
                         Image(systemName: wine.maturity.symbolName)
                             .foregroundStyle(tone)
+                        Text(wine.maturity.title)
                     }
                     .font(.caption2.weight(.semibold))
-                    .labelStyle(.titleAndIcon)
                     .lineLimit(1)
                     .padding(.horizontal, 7)
                     .padding(.vertical, 2)
